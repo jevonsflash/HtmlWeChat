@@ -27,9 +27,12 @@
         </div>
       </li>
     </ul>
+
     <dialog-add-chat :event="add_chat_event"></dialog-add-chat>
+    >
   </div>
 </template>
+
 
 <script lang='ts'>
 import EventEmitter from "eventemitter3";
@@ -40,52 +43,70 @@ import DialogAddChat from "./dialogs/add_chat.vue";
 import Component from "vue-class-component";
 import Vue from "vue";
 
-@Component({
-  components: { DialogAddChat },
-})
-export default class List extends Vue {
-  add_chat_event: any = null;
 
-  created() {
-    this.add_chat_event = new EventEmitter();
-  }
-
-  getLastMsg(chat) {
-    for (let i = chat.msgs.length - 1; i >= 0; i--) {
-      if (chat.msgs[i].type) {
-        return chat.msgs[i];
-      }
-    }
+export default Vue.extend({
+  components: {
+    DialogAddChat
+  },
+  computed: {
+    ...mapGetters(['chats', 'nowChat'])
+  },
+  data() {
     return {
-      type: constant.MSG_TYPE_TEXT,
-      data: "暂无消息",
-      time: dayjs().format("HH:mm"),
-    };
-  }
-  msgContentText(last_msg) {
-    switch (last_msg.type) {
-      case constant.MSG_TYPE_TEXT:
-        return last_msg.data;
-      case constant.MSG_TYPE_IMG:
-        return "[图片]";
-      case constant.MSG_TYPE_TRANSFER:
-        return "[转账]";
-      case constant.MSG_TYPE_VOICE:
-        return "[语音]";
-      case constant.MSG_TYPE_VIDEO:
-        return "[视频]";
-      case constant.MSG_TYPE_FILE:
-        return "[文件]";
-      case constant.MSG_TYPE_VIDEO_CALL:
-        return "[视频聊天]";
-      case constant.MSG_TYPE_VOICE_CALL:
-        return "[语音聊天]";
+      add_chat_event: null,
+      visible:false
     }
-  }
-  addChat() {
-    this.add_chat_event.emit("open");
-  }
+  },
+  created() {
+    this.add_chat_event = new EventEmitter()
+  },
+  methods: {
+    ...mapMutations(['changeChat']),
+    getLastMsg(chat) {
+      for (let i = chat.msgs.length - 1; i >= 0; i--) {
+        if (chat.msgs[i].type) {
+          return chat.msgs[i]
+        }
+      }
+      return {
+        type: constant.MSG_TYPE_TEXT,
+        data: '暂无消息',
+        time: dayjs().format('HH:mm')
+      }
+    },
+    msgContentText(last_msg) {
+      switch (last_msg.type) {
+        case constant.MSG_TYPE_TEXT:
+          return last_msg.data
+        case constant.MSG_TYPE_IMG:
+          return '[图片]'
+        case constant.MSG_TYPE_TRANSFER:
+          return '[转账]'
+        case constant.MSG_TYPE_VOICE:
+          return '[语音]'
+        case constant.MSG_TYPE_VIDEO:
+          return '[视频]'
+        case constant.MSG_TYPE_FILE:
+          return '[文件]'
+        case constant.MSG_TYPE_VIDEO_CALL:
+          return '[视频聊天]'
+        case constant.MSG_TYPE_VOICE_CALL:
+          return '[语音聊天]'
+      }
+    },
+    addChat() {
+      this.add_chat_event.emit('open')
+    },
+     rowDialogClose() {
+      this.visible = false
+    },
+
+onOpen(){
+this.visible = true
 }
+
+  }
+})
 </script>
 
 <style scoped lang="scss">
@@ -95,7 +116,6 @@ export default class List extends Vue {
   background-color: #ebe8e7;
   display: flex;
   flex-direction: column;
-
   header {
     display: flex;
     align-items: center;
@@ -127,7 +147,6 @@ export default class List extends Vue {
       background-color: #dbd9d8;
     }
   }
-
   ul {
     flex: 1;
     overflow-y: scroll;
@@ -174,11 +193,9 @@ export default class List extends Vue {
         }
       }
     }
-
     li:hover:not(.active) {
       background-color: #dfdcdb;
     }
-
     .active {
       background-color: #c6c5c5;
     }

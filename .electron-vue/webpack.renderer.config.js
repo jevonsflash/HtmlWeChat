@@ -56,11 +56,22 @@ let rendererConfig = {
         use: 'babel-loader',
         exclude: /node_modules/
       },
-      {
+      {                           // 加入对文件的ts识别         
         test: /\.ts$/,
-        use: ['ts-loader'],
         exclude: /node_modules/,
+        enforce: 'pre',
+        loader: 'tslint-loader'
       },
+      {
+        test: /\.tsx?$/,
+        use: {
+          loader: "ts-loader",
+          options: {
+            appendTsSuffixTo: [/\.vue$/],
+          }
+        }
+      },
+
       {
         test: /\.node$/,
         use: 'node-loader'
@@ -75,7 +86,7 @@ let rendererConfig = {
               sass: 'vue-style-loader!css-loader!sass-loader?indentedSyntax=1',
               scss: 'vue-style-loader!css-loader!sass-loader',
               less: 'vue-style-loader!css-loader!less-loader',
-              ts:'transform-decorators-legacy'
+              ts: 'transform-decorators-legacy'
             }
           }
         }
@@ -116,7 +127,7 @@ let rendererConfig = {
   },
   plugins: [
     new VueLoaderPlugin(),
-    new MiniCssExtractPlugin({filename: 'styles.css'}),
+    new MiniCssExtractPlugin({ filename: 'styles.css' }),
     new HtmlWebpackPlugin({
       filename: 'index.html',
       template: path.resolve(__dirname, '../src/index.ejs'),
@@ -154,7 +165,7 @@ let rendererConfig = {
       '@': path.join(__dirname, '../src/renderer'),
       'vue$': 'vue/dist/vue.esm.js'
     },
-    extensions: ['.ts', '.tsx','.js', '.vue', '.json', '.css', '.node']
+    extensions: ['.ts', '.tsx', '.js', '.vue', '.json', '.css', '.node']
   },
   target: 'electron-renderer'
 }

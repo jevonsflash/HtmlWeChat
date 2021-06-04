@@ -44,11 +44,21 @@ let webConfig = {
         include: [ path.resolve(__dirname, '../src/renderer') ],
         exclude: /node_modules/
       },
-      {
+      {                           // 加入对文件的ts识别         
         test: /\.ts$/,
-        use: ['ts-loader'],
         exclude: /node_modules/,
+        enforce: 'pre',
+        loader: 'tslint-loader'
       },
+      {
+        test: /\.tsx?$/,
+        use: {
+        loader: "ts-loader",
+        options: {
+        appendTsSuffixTo: [/\.vue$/],
+                 }
+               }
+             },
       {
         test: /\.vue$/,
         use: {

@@ -23,12 +23,16 @@
   </div>
 </template>
 
-<script>
+<script lang="ts">
+import Vue from 'vue'
+  
+
+
 import lrz from 'lrz'
 import dayjs from 'dayjs'
 import constant from '../../constant'
 import { mapGetters, mapMutations } from 'vuex'
-export default {
+export default Vue.extend({
   props: ['event'],
   data() {
     return {
@@ -53,7 +57,7 @@ export default {
     },
     async submit() {
       try {
-        await this.$refs.form.validate()
+        await (this.$refs.form as any).validate()
         this.pushChat({
           id: this.chats.length,
           user: this.msg.name,
@@ -96,7 +100,7 @@ export default {
   created() {
     this.event.on('open', this.open)
   }
-}
+})
 </script>
 
 <style scoped>
