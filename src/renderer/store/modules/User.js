@@ -1,9 +1,10 @@
-import constant from "../../constant"
 import dayjs from "dayjs"
 import Store from "electron-store"
 const ipcRenderer = require("electron").ipcRenderer
 import { Message } from "element-ui"
 import Vue from "vue"
+import {GlobalEvent} from '@/constant.ts'
+import constant from '@/constant.ts'
 
 const store = new Store()
 
@@ -171,7 +172,7 @@ const mutations = {
         chat.msgs.push(msg)
       }
     }
-    window.globalEvent.emit("pubmsg")
+    GlobalEvent.emit("pubmsg")
   },
   delMsg: (state, id) => {
     let nowChat = state._nowChat || state.chats[0]

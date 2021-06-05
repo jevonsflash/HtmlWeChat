@@ -18,7 +18,7 @@
 </template>
 
 <script>
-import constant from '@/constant.js'
+import constant from '@/constant.ts'
 export default {
   props: ['data', 'direction'],
   data() {

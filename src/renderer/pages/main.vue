@@ -1,38 +1,56 @@
 <template>
   <div id="main">
-    <v-nav class="nav"></v-nav>
-    <v-list class="list"></v-list>
-    <v-chat class="chat"></v-chat>
+    <el-container class="main-container">
+      <el-aside class="frame" width="60px">
+        <Nav @onPannelSwitched="onPannelSwitched"></Nav>
+      </el-aside>
+      <el-main class="frame">
+        <chat v-if="currentPannel == 'chat'"></chat>
+        <contacts v-if="currentPannel == 'contacts'"></contacts>
+      </el-main>
+    </el-container>
   </div>
 </template>
 
-<script>
-import nav from '@/components/nav'
-import list from '@/components/list'
-import chat from '@/components/chat'
-export default {
+<script lang='ts'>
+import Nav from "@/components/nav.vue";
+import Chat from "@/components/chat/index.vue";
+import Contacts from "@/components/contacts/index.vue";
+import Vue from "vue";
+
+export default Vue.extend({
   components: {
-    'v-nav': nav,
-    'v-list': list,
-    'v-chat': chat
-  }
-}
+    Nav,
+    Chat,
+    Contacts,
+  },
+
+  data() {
+    return {
+      currentPannel: "",
+    };
+  },
+  created() {
+    this.currentPannel = "chat";
+  },
+  methods: {
+    onPannelSwitched: function (currentPannel) {
+      this.currentPannel = currentPannel;
+    },
+  },
+});
 </script>
 
 <style scoped lang="scss">
 #main {
   width: 100%;
   height: 100%;
-  display: flex;
-  .nav {
-    width: 60px;
+  .main-container {
+    height: 100%;
   }
-  .list {
-    width: 250px;
+  .frame {
     overflow-x: hidden;
-  }
-  .chat {
-    flex: 1;
+    padding: 0;
   }
 }
 </style>

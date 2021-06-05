@@ -14,7 +14,7 @@ const { VueLoaderPlugin } = require('vue-loader')
 let webConfig = {
   devtool: '#cheap-module-eval-source-map',
   entry: {
-    web: path.join(__dirname, '../src/renderer/main.js')
+    web: path.join(__dirname, '../src/renderer/main.ts')
   },
   module: {
     rules: [
@@ -44,12 +44,7 @@ let webConfig = {
         include: [ path.resolve(__dirname, '../src/renderer') ],
         exclude: /node_modules/
       },
-      {                           // 加入对文件的ts识别         
-        test: /\.ts$/,
-        exclude: /node_modules/,
-        enforce: 'pre',
-        loader: 'tslint-loader'
-      },
+    
       {
         test: /\.tsx?$/,
         use: {

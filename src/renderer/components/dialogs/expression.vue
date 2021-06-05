@@ -15,7 +15,7 @@ export default {
   data() {
     return {
       visible: false,
-      expressions: window.expressions
+      expressions:this.$expressions
     }
   },
   computed: {},
