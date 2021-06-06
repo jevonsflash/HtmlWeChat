@@ -11,8 +11,8 @@ if (process.env.NODE_ENV !== 'development') {
     .replace(/\\/g, '\\\\')
 }
 
-let mainWindow, transferWindow
-let transferIpc
+let mainWindow, transferWindow, loginWindow
+let mainIpc,transferIpc, loginIpc
 const winURL =
   process.env.NODE_ENV === 'development'
     ? `http://localhost:9080`
@@ -23,6 +23,7 @@ function createWindow() {
     minHeight: 450,
     minWidth: 600,
     height: 700,
+    show: false,
     useContentSize: true,
     width: 1000,
     frame: false,
@@ -31,7 +32,14 @@ function createWindow() {
       backgroundThrottling: false
     }
   })
+  mainWindow.once('ready-to-show', event => {
+    mainIpc = event.sender
 
+  })
+  ipc.on('open_main_window', function (event_main, _msg) {
+    mainWindow.center()
+    mainWindow.show()
+  })
   mainWindow.loadURL(winURL)
 
   mainWindow.on('closed', () => {
@@ -45,7 +53,42 @@ function createWindow() {
     }
   })
 }
+function createLoginWindow() {
+  let msg, mainBound
 
+  loginWindow = new BrowserWindow({
+    height: 400,
+    width: 280,
+    frame: false,
+    show: true,
+    resizable: false,
+    minimizable: false,
+    maximizable: false,
+    webPreferences: {
+      backgroundThrottling: false
+    }
+  })
+
+  loginWindow.loadURL(winURL + '#/login')
+
+  loginWindow.on('closed', () => {
+    loginWindow = null
+  })
+
+  loginWindow.once('ready-to-show', event => {
+    loginIpc = event.sender
+    loginIpc.send('login_show')
+    loginWindow.center()
+    loginWindow.show()
+
+    ipc.on('auth_passed', (event, pub_msg) => {
+
+      console.log('auth_passed recived!')
+
+      event_main.sender.send('open_main_window', pub_msg)
+    })
+  })
+}
 function createTransferWindow() {
   let msg, mainBound
 
@@ -73,7 +116,7 @@ function createTransferWindow() {
     transferIpc = event.sender
   })
 
-  ipc.on('open_transfer_window', function(event_main, _msg) {
+  ipc.on('open_transfer_window', function (event_main, _msg) {
     msg = _msg
 
     transferIpc.send('transfer_show', msg)
@@ -104,6 +147,7 @@ function createTransferWindow() {
 app.on('ready', () => {
   createWindow()
   createTransferWindow()
+  createLoginWindow()
 })
 
 app.on('window-all-closed', () => {
@@ -118,21 +162,24 @@ app.on('activate', () => {
   } else if (transferWindow === null) {
     createTransferWindow()
   }
+  else if (loginWindow === null) {
+    createLoginWindow()
+  }
 })
 
 //登录窗口最小化
-ipc.on('window-min', function() {
+ipc.on('window-min', function () {
   mainWindow.minimize()
 })
 //登录窗口最大化
-ipc.on('window-max', function() {
+ipc.on('window-max', function () {
   if (mainWindow.isMaximized()) {
     mainWindow.restore()
   } else {
     mainWindow.maximize()
   }
 })
-ipc.on('window-close', function() {
+ipc.on('window-close', function () {
   mainWindow.close()
   if (transferWindow) {
     transferWindow.close()

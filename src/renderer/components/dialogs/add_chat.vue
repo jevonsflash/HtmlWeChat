@@ -39,7 +39,12 @@ export default Vue.extend({
       visible: false,
       msg: {
         name: '',
-        avatar: ''
+        avatar: '',
+        desc: '',
+        remarkName: '',
+        region: '',
+        wechatId: '',
+
       },
       rules: {
         name: [{ required: true, message: '请输入名字', trigger: 'blur' }],

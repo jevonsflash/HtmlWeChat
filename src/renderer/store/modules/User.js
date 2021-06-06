@@ -1,17 +1,17 @@
 import dayjs from "dayjs"
 import Store from "electron-store"
+import LocalStore from "@/store/LocalStore"
+
 const ipcRenderer = require("electron").ipcRenderer
 import { Message } from "element-ui"
 import Vue from "vue"
 import {GlobalEvent} from '@/constant.ts'
 import constant from '@/constant.ts'
 
-const store = new Store()
+const store = new LocalStore()
 
 const def = {
-  self: {
-    avatar: require("../../assets/avatar.jpg"),
-  },
+ 
   chats: [
     {
       id: 0,
@@ -199,14 +199,10 @@ const mutations = {
       ipcRenderer.send("window-close")
     }, 1000)
   },
-  changeAvatar: (state, avatar) => {
-    console.log("更换头像")
-    state.self.avatar = avatar
-  },
+ 
 }
 
 const getters = {
-  self: (state) => state.self,
   chats: (state) => state.chats,
   nowChat: (state) => {
     if (!state._nowChat) {

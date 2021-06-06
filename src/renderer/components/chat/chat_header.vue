@@ -6,21 +6,21 @@
     <div class="actions" style="-webkit-app-region: no-drag">
       <div class="toolbar">
         <div>
-          <span class="icon-fixation"></span>
+          <svg-icon name="fixaction"></svg-icon>
         </div>
         <div>
-          <span class="icon-min" @click="minus"></span>
+          <svg-icon name="min" @click="minus"></svg-icon>
         </div>
         <div>
-          <span class="icon-max"></span>
+          <svg-icon name="max"></svg-icon>
         </div>
         <div>
-          <span class="icon-close" @click="cross"></span>
+          <svg-icon name="close" @click="cross"></svg-icon>
         </div>
       </div>
       <div class="more">
         <el-dropdown trigger="click">
-          <span class="icon-more"></span>
+          <svg-icon name="more"></svg-icon>
           <el-dropdown-menu slot="dropdown">
             <el-dropdown-item @click.native="actionHandler('voice')">发送语音</el-dropdown-item>
             <el-dropdown-item @click.native="actionHandler('file')">发送文件</el-dropdown-item>
