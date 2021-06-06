@@ -12,7 +12,7 @@ if (process.env.NODE_ENV !== 'development') {
 }
 
 let mainWindow, transferWindow, loginWindow
-let mainIpc,transferIpc, loginIpc
+let mainIpc, transferIpc, loginIpc
 const winURL =
   process.env.NODE_ENV === 'development'
     ? `http://localhost:9080`
@@ -36,9 +36,27 @@ function createWindow() {
     mainIpc = event.sender
 
   })
+  ipc.on('expand_main_window', function (event_main, _msg) {
+    console.log('expand_main_window recived!')
+  let width=  mainWindow.getSize()[0]
+  let height=  mainWindow.getSize()[1]
+    let newwidth = width + 500;
+    mainWindow.setSize(newwidth, height)
+
+  })
+  ipc.on('shrink_main_window', function (event_main, _msg) {
+    console.log('shrink_main_window recived!')
+    let width=  mainWindow.getSize()[0]
+  let height=  mainWindow.getSize()[1]
+    let newwidth = width - 500;
+    mainWindow.setSize(newwidth, height)
+
+  })
+
   ipc.on('open_main_window', function (event_main, _msg) {
     mainWindow.center()
     mainWindow.show()
+    loginWindow.hide()
   })
   mainWindow.loadURL(winURL)
 
@@ -75,18 +93,15 @@ function createLoginWindow() {
     loginWindow = null
   })
 
+
+
   loginWindow.once('ready-to-show', event => {
     loginIpc = event.sender
     loginIpc.send('login_show')
     loginWindow.center()
     loginWindow.show()
 
-    ipc.on('auth_passed', (event, pub_msg) => {
 
-      console.log('auth_passed recived!')
-
-      event_main.sender.send('open_main_window', pub_msg)
-    })
   })
 }
 function createTransferWindow() {
@@ -128,12 +143,7 @@ function createTransferWindow() {
       parseInt(mainBound.y + mainBound.height / 2 - 215)
     )
 
-    // transferWindow.setBounds({
-    //   x: parseInt(mainBound.x + 310 + (mainBound.width - 310) / 2 - 150),
-    //   y: parseInt(mainBound.y + mainBound.height / 2 - 215),
-    //   width: 300,
-    //   height: 430
-    // })
+
     transferWindow.show()
 
     // 转账窗口发布消息到主窗口

@@ -48,8 +48,12 @@
       </el-row>
       <el-row type="flex" justify="center">
         <el-col :span="24">
-          <el-button type='text' class="desc tip" v-if="!islogin">切换账号</el-button>
-          <el-button type='text' class="desc tip" v-else>返回扫二维码登录</el-button>
+          <el-button type="text" class="desc tip" v-if="!islogin"
+            >切换账号</el-button
+          >
+          <el-button type="text" class="desc tip" v-else
+            >返回扫二维码登录</el-button
+          >
         </el-col>
       </el-row>
     </div>
@@ -59,6 +63,7 @@
 <script>
 import constant from "../constant.ts";
 import dayjs from "dayjs";
+import electron from 'electron';
 const ipcRenderer = require("electron").ipcRenderer;
 export default {
   data() {
@@ -67,15 +72,15 @@ export default {
       size: 90,
       islogin: false,
       userAvatarUrl:
-        "https://cube.elemecdn.com/9/c2/f0ee8a3c7c9638a54940382568c9dpng.png",  
-        msg:{
-             name: '',
-        avatar: '',
-        desc: '',
-        remarkName: '',
-        region: '',
-        wechatId: '',
-        }   
+        "https://cube.elemecdn.com/9/c2/f0ee8a3c7c9638a54940382568c9dpng.png",
+      msg: {
+        name: "",
+        avatar: "",
+        desc: "",
+        remarkName: "",
+        region: "",
+        wechatId: "",
+      },
     };
   },
   methods: {
@@ -89,10 +94,9 @@ export default {
       this.islogin = true;
 
       setTimeout(() => {
-
-      ipcRenderer.send('auth_passed', JSON.stringify(msg))
-      console.log('auth_passed send!')
-
+        ipcRenderer.send("open_main_window", JSON.stringify(this.msg));
+        console.log("open_main_window send!");
+        console.log((electron.app || electron.remote.app).getAppPath());
       }, 5 * 1000);
     },
   },

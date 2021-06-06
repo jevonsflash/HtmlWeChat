@@ -8,6 +8,13 @@
         <chat v-if="currentPannel == 'chat'"></chat>
         <contacts v-if="currentPannel == 'contacts'"></contacts>
       </el-main>
+      <el-main class="sub-frame">
+        <transition name="slide-fade">
+          <div v-show="show3">
+            <h1>Building</h1>
+          </div></transition
+        >
+      </el-main>
     </el-container>
   </div>
 </template>
@@ -17,6 +24,7 @@ import Nav from "@/components/nav.vue";
 import Chat from "@/components/chat/index.vue";
 import Contacts from "@/components/contacts/index.vue";
 import Vue from "vue";
+const ipcRenderer = require("electron").ipcRenderer;
 
 export default Vue.extend({
   components: {
@@ -27,11 +35,18 @@ export default Vue.extend({
 
   data() {
     return {
+      show3: true,
       currentPannel: "",
     };
   },
   created() {
     this.currentPannel = "chat";
+    ipcRenderer.on("shrink_main_window", (event, _) => {
+      this.show3 = false;
+    });
+    ipcRenderer.on("expand_main_window", (event, _) => {
+      this.show3 = true;
+    });
   },
   methods: {
     onPannelSwitched: function (currentPannel) {
@@ -51,6 +66,16 @@ export default Vue.extend({
   .frame {
     overflow-x: hidden;
     padding: 0;
+  }
+  .slide-fade-enter-active {
+    transition: all 0.3s ease;
+  }
+  .slide-fade-leave-active {
+    transition: all 0.8s ease;
+  }
+  .slide-fade-enter,
+  .slide-fade-leave-to {
+    transform: translateX(-100px);
   }
 }
 </style>

@@ -1,12 +1,12 @@
 import dayjs from "dayjs"
-import LocalStore from "@/store/LocalStore"
+import electron from 'electron';
 const ipcRenderer = require("electron").ipcRenderer
 import { Message } from "element-ui"
 import Vue from "vue"
 import {GlobalEvent} from '@/constant.ts'
 import constant from '@/constant.ts'
+const Conf = require('conf');
 
-const store = new LocalStore()
 
 const def = {
   self: {
@@ -15,10 +15,15 @@ const def = {
 
 
 }
+const defaultCwd = (electron.app || electron.remote.app).getAppPath();
+var opts = {
+  cwd: defaultCwd,
+  name: 'self_config'
 
+};
+const store = new Conf(opts);
 const state = store.get('data', def)
-// const state = def
-state._nowChat = state.chats[0]
+
 
 const mutations = {
  

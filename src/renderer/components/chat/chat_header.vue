@@ -19,8 +19,10 @@
         </div>
       </div>
       <div class="more">
-        <el-dropdown trigger="click">
-          <svg-icon name="more"></svg-icon>
+          <svg-icon name="more" @click="showMore=!showMore"></svg-icon>
+
+        <!-- <el-dropdown trigger="click">
+          <svg-icon name="more" @click="showMore=!showMore"></svg-icon>
           <el-dropdown-menu slot="dropdown">
             <el-dropdown-item @click.native="actionHandler('voice')">发送语音</el-dropdown-item>
             <el-dropdown-item @click.native="actionHandler('file')">发送文件</el-dropdown-item>
@@ -29,11 +31,11 @@
             <el-dropdown-item @click.native="actionHandler('call')">发送视频或语音通话</el-dropdown-item>
             <el-dropdown-item @click.native="actionHandler('system')">发送系统消息</el-dropdown-item>
             <el-dropdown-item @click.native="actionHandler('set_user')">修改双方信息</el-dropdown-item>
-            <!-- <el-dropdown-item @click.native="actionHandler('msg_manage')">消息管理</el-dropdown-item> -->
+           
             <el-dropdown-item @click.native="actionHandler('change_user_self')">切换为自己</el-dropdown-item>
             <el-dropdown-item @click.native="actionHandler('change_user_opposite')">切换为对方</el-dropdown-item>
           </el-dropdown-menu>
-        </el-dropdown>
+        </el-dropdown> -->
       </div>
       <dialog-file :event="file_event"></dialog-file>
       <dialog-transfer :event="transter_event"></dialog-transfer>
@@ -62,6 +64,7 @@ import DialogSystem from '@/components/dialogs/system.vue'
 import DialogChangeInfo from '@/components/dialogs/change_info.vue'
 import DialogCall from '@/components/dialogs/call.vue'
 import Vue from 'vue'
+
 export default Vue.extend({
   components: {
     DialogFile,
@@ -75,8 +78,22 @@ export default Vue.extend({
   computed: {
     ...mapGetters(['nowChat'])
   },
+  watch:{
+    showMore: function (newshowMore, oldshowMore) {
+     if(newshowMore){
+      ipcRenderer.send('expand_main_window')
+
+     }
+     else{
+      ipcRenderer.send('shrink_main_window')
+
+     }
+     
+    }
+  },
   data() {
     return {
+      showMore:false,
       constant: constant,
       file_event: null,
       transter_event: null,
