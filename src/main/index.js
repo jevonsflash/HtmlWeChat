@@ -194,6 +194,9 @@ ipc.on('window-close', function () {
   if (transferWindow) {
     transferWindow.close()
   }
+  if (loginWindow) {
+    loginWindow.close()
+  }
 })
 /**
  * Auto Updater

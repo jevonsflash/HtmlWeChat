@@ -7,8 +7,8 @@ import { Message } from "element-ui"
 import Vue from "vue"
 import { GlobalEvent } from '@/constant.ts'
 import constant from '@/constant.ts'
+import {defaultCwd} from '@/constant.ts'
 const Conf = require('conf');
-
 
 const def = {
 
@@ -145,10 +145,10 @@ const def = {
   _nowChat: null,
   nowUser: constant.MSG_FROM_SELF,
 }
-const defaultCwd = (electron.app || electron.remote.app).getAppPath();
+
 var opts = {
   cwd: defaultCwd,
-  name: 'user_config'
+  configName: 'user_config'
 
 };
 

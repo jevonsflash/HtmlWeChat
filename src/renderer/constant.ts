@@ -1,4 +1,6 @@
 import { EventEmitter } from "eventemitter3"
+import electron from 'electron';
+const path = require('path');
 
 // 消息类型
 const MSG_TYPE_TEXT = 1 // 文本
@@ -54,7 +56,9 @@ const constant = {
   FILE_TYPE_ZIP,
   FILE_TYPE_PDF
 }
-
+var cwd = (electron.app || electron.remote.app).getAppPath();
+cwd =path.join(cwd,'../../AppData')
 export const GlobalEvent= new EventEmitter();
+export const defaultCwd= cwd;
 
 export default constant

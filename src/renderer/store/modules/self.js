@@ -5,6 +5,7 @@ import { Message } from "element-ui"
 import Vue from "vue"
 import {GlobalEvent} from '@/constant.ts'
 import constant from '@/constant.ts'
+import {defaultCwd} from '@/constant.ts'
 const Conf = require('conf');
 
 
@@ -12,13 +13,11 @@ const def = {
   self: {
     avatar: require("../../assets/avatar.jpg"),
   },
-
-
 }
-const defaultCwd = (electron.app || electron.remote.app).getAppPath();
+
 var opts = {
   cwd: defaultCwd,
-  name: 'self_config'
+  configName: 'self_config'
 
 };
 const store = new Conf(opts);
