@@ -5,9 +5,9 @@ import electron from 'electron';
 const ipcRenderer = require("electron").ipcRenderer
 import { Message } from "element-ui"
 import Vue from "vue"
-import { GlobalEvent } from '@/constant.ts'
+import { GlobalEvent ,defaultCwd} from '@/constant.ts'
 import constant from '@/constant.ts'
-import {defaultCwd} from '@/constant.ts'
+
 const Conf = require('conf');
 
 const def = {
@@ -38,7 +38,7 @@ const def = {
           id: 2,
           type: constant.MSG_TYPE_IMG,
           from: constant.MSG_FROM_OPPOSITE,
-          data: require("../../assets/img_guide_1.png"),
+          data: require("@/assets/img_guide_1.png"),
           time: dayjs().format("HH:mm"),
         },
         {
@@ -53,14 +53,14 @@ const def = {
           id: 4,
           type: constant.MSG_TYPE_IMG,
           from: constant.MSG_FROM_OPPOSITE,
-          data: require("../../assets/img_guide_2.png"),
+          data: require("@/assets/img_guide_2.png"),
           time: dayjs().format("HH:mm"),
         },
         {
           id: 5,
           type: constant.MSG_TYPE_IMG,
           from: constant.MSG_FROM_OPPOSITE,
-          data: require("../../assets/img_guide_3.png"),
+          data: require("@/assets/img_guide_3.png"),
           time: dayjs().format("HH:mm"),
         },
         {
@@ -82,7 +82,7 @@ const def = {
           id: 5,
           type: constant.MSG_TYPE_IMG,
           from: constant.MSG_FROM_OPPOSITE,
-          data: require("../../assets/img_guide_4.png"),
+          data: require("@/assets/img_guide_4.png"),
           time: dayjs().format("HH:mm"),
         },
       ],
@@ -90,7 +90,7 @@ const def = {
     {
       id: 1,
       user: "文件传输助手",
-      avatar: require("../../assets/img_assistant.png"),
+      avatar: require("@/assets/img_assistant.png"),
       msgs: [
         {
           id: 0,
@@ -202,7 +202,6 @@ const mutations = {
   },
   close: (state) => {
     store.set("data", state)
-    Message.success(`数据已保存`)
     setTimeout(() => {
       ipcRenderer.send("window-close")
     }, 1000)

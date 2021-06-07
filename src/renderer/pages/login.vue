@@ -3,7 +3,7 @@
     <el-row>
       <el-col :span="12">
         <div class="title">
-          <span>测试用户</span>
+          <span>微信</span>
         </div>
       </el-col>
       <el-col :span="12">
@@ -29,13 +29,13 @@
             class="avatar"
             shape="square"
             :size="size"
-            :src="userAvatarUrl"
+            :src="msg.avatar"
           ></el-avatar>
         </el-col>
       </el-row>
       <el-row type="flex" justify="center">
         <el-col :span="24">
-          <span class="desc user-name">用户名</span>
+          <span class="desc user-name">{{msg.name}}</span>
         </el-col>
       </el-row>
       <el-row type="flex" justify="center" style="height: 40px">
@@ -60,29 +60,36 @@
   </div>
 </template>
 
-<script>
-import constant from "../constant.ts";
+<script lang='ts'>
+import constant from "@/constant.ts";
 import dayjs from "dayjs";
-import electron from 'electron';
+import electron from "electron";
+import UserInfo from "@/model/UserInfo";
+import { mapGetters } from "vuex";
+import Vue from "vue";
 const ipcRenderer = require("electron").ipcRenderer;
-export default {
+export default Vue.extend({
+  computed: {
+    ...mapGetters(["self"]),
+  },
   data() {
     return {
       step: 1,
       size: 90,
       islogin: false,
-      userAvatarUrl:
-        "https://cube.elemecdn.com/9/c2/f0ee8a3c7c9638a54940382568c9dpng.png",
-      msg: {
-        name: "",
-        avatar: "",
-        desc: "",
-        remarkName: "",
-        region: "",
-        wechatId: "",
-      },
+      msg: null,
     };
   },
+  created() {
+    this.msg = new UserInfo();
+    this.msg.name = this.self.name;
+    this.msg.avatar = this.self.avatar;
+    this.msg.desc = this.self.desc;
+    this.msg.remarkName = this.self.remarkName;
+    this.msg.region = this.self.region;
+    this.msg.wechatId = this.self.wechatId;
+  },
+
   methods: {
     minus() {
       ipcRenderer.send("window-min");
@@ -100,7 +107,7 @@ export default {
       }, 5 * 1000);
     },
   },
-};
+});
 </script>
 
 <style scoped lang="scss">

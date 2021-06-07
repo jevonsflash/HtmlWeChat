@@ -74,6 +74,7 @@ export default Vue.extend({
         offsetLeft: 0,
         // 右键点击距上位置
         offsetTop: 0,
+        width:148,
         menuList: [
           // 无需按键监听可以不传keyCode
           { label: "置顶", id: 1, emitType: "onTop" },

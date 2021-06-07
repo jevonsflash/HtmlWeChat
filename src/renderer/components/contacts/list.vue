@@ -5,29 +5,36 @@
         <span class="icon-sreach"></span>
         <span>搜索</span>
       </div>
-      <div class="add" @click="addChat">
+      <div class="add" @click="addContact">
         <span class="icon-add"></span>
       </div>
     </header>
+    <div class="list-container">
+      <el-row>
+        <el-col :span="24" v-for="(contact, index) in contacts" :key="index">
+          <div
+            @click="changeContact(contact.id)"
+            @contextmenu.prevent="onContextMenu"
+            :class="{ active: nowContact && nowContact.id == contact.id, item: true }"
+          >
+            <context-menu
+              ref="contactContextMenu"
+              :context-menu-show.sync="contextShow"
+              :config="contextConfig"
+            >
+            </context-menu>
 
-    <ul>
-      <li
-        @click="changeChat(chat.id)"
-        :class="{ active: nowChat && nowChat.id == chat.id }"
-        v-for="(chat, index) in chats"
-        :key="index"
-      >
-        <img :src="chat.avatar" />
-        <div class="meta">
-          <div class="top">
-            <span class="name">{{ chat.user }}</span>
-            <span class="time"></span>
-          </div>
-          <div class="last_msg"></div>
-        </div>
-      </li>
-    </ul>
-
+            <img :src="contact.avatar" />
+            <div class="meta">
+              <div class="top">
+                <span class="name">{{ contact.user }}</span>
+              </div>
+              
+            </div>
+          </div></el-col
+        >
+      </el-row>
+    </div>
   </div>
 </template>
 
@@ -38,39 +45,62 @@ import dayjs from "dayjs";
 import { mapGetters, mapMutations } from "vuex";
 import Vue from "vue";
 
-
 export default Vue.extend({
   computed: {
-    ...mapGetters(['chats', 'nowChat'])
+    ...mapGetters(["contacts", "nowContact"]),
   },
   data() {
     return {
-      add_chat_event: null,
-      visible:false
-    }
+      add_contact_event: null,
+      visible: false,
+       contextShow: false,
+      contextConfig: {
+        // 右键点击距左位置
+        offsetLeft: 0,
+        // 右键点击距上位置
+        offsetTop: 0,
+        width:128,
+        menuList: [
+          // 无需按键监听可以不传keyCode
+          { label: "发消息", id: 1, emitType: "sendMsg" },
+          { label: "发送名片", id: 2, emitType: "sendCard" },
+          { label: "删除好友", id: 3, emitType: "remove" },
+        
+        ],
+      },
+    };
   },
   created() {
-    this.add_chat_event = new EventEmitter()
+    this.add_contact_event = new EventEmitter();
   },
   methods: {
-    ...mapMutations(['changeChat']),
-  
-  
-   
-    addChat() {
-      this.add_chat_event.emit('open')
-    },
-     rowDialogClose() {
-      this.visible = false
+    ...mapMutations(["changeContact"]),
+ 
+    
+    onContextMenu({ clientX, clientY }) {
+      Object.assign(this, {
+        contextConfig: {
+          offsetLeft: clientX,
+          offsetTop: clientY,
+        },
+        contextShow: true,
+      });
     },
 
-onOpen(){
-this.visible = true
-}
+    addContact() {
+      this.add_contact_event.emit("open");
+    },
+    rowDialogClose() {
+      this.visible = false;
+    },
 
-  }
-})
+    onOpen() {
+      this.visible = true;
+    },
+  },
+});
 </script>
+
 
 <style scoped lang="scss">
 #list {
@@ -110,14 +140,14 @@ this.visible = true
       background-color: #dbd9d8;
     }
   }
-  ul {
+  .list-container {
     flex: 1;
     overflow-y: scroll;
     width: 267px;
     padding: 0px;
     margin: 0px;
     list-style: none;
-    li {
+    .item {
       padding: 13px;
       display: flex;
       align-items: center;
@@ -156,7 +186,7 @@ this.visible = true
         }
       }
     }
-    li:hover:not(.active) {
+    .item:hover:not(.active) {
       background-color: #dfdcdb;
     }
     .active {

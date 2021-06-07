@@ -36,22 +36,22 @@ export default {
   created() {
     switch (this.data.file_type) {
       case constant.FILE_TYPE_UNKNOWN:
-        this.data.icon = require('../../assets/ic_file_unnkonwn.png')
+        this.data.icon = require('@/assets/ic_file_unnkonwn.png')
         break
       case constant.FILE_TYPE_TEXT:
-        this.data.icon = require('../../assets/ic_file_text.png')
+        this.data.icon = require('@/assets/ic_file_text.png')
         break
       case constant.FILE_TYPE_EXCEL:
-        this.data.icon = require('../../assets/ic_file_excel.png')
+        this.data.icon = require('@/assets/ic_file_excel.png')
         break
       case constant.FILE_TYPE_WORD:
-        this.data.icon = require('../../assets/ic_file_word.png')
+        this.data.icon = require('@/assets/ic_file_word.png')
         break
       case constant.FILE_TYPE_ZIP:
-        this.data.icon = require('../../assets/ic_file_zip.png')
+        this.data.icon = require('@/assets/ic_file_zip.png')
         break
       case constant.FILE_TYPE_PDF:
-        this.data.icon = require('../../assets/ic_file_pdf.png')
+        this.data.icon = require('@/assets/ic_file_pdf.png')
         break
     }
   }

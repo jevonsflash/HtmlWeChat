@@ -1,7 +1,7 @@
 <template>
   <ul
     class="context-menu"
-    :style="{ left: `${config.offsetLeft}px`, top: `${config.offsetTop}px` }"
+    :style="{ left: `${config.offsetLeft}px`, top: `${config.offsetTop}px`, width:`${config.width}px` }"
     v-show="contextMenuShow"
   >
     <li
@@ -68,13 +68,12 @@ export default {
 .context-menu {
   position: fixed;
   border: 1px solid #eee;
-  box-shadow: 0 0.5em 1em 0 rgba(0, 0, 0, 0.1);
+  box-shadow: 0 1px 3px rgba(0,0,0,0.4);
   border-radius: 1px;
   background: #fff;
   z-index: 999;
   font-size: 14px;
   display: block;
-  width: 200px;
   li {
     display: flex;
     justify-content: space-between;
@@ -82,7 +81,7 @@ export default {
     padding: 2px 10px 2px 30px;
     cursor: pointer;
     &:hover {
-      background: #42b983;
+      background: #E2E2E2;
       color: #fff;
     }
   }

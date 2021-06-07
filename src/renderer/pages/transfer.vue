@@ -19,7 +19,7 @@
 </template>
 
 <script>
-import constant from '../constant.ts'
+import constant from "@/constant.ts";
 import dayjs from 'dayjs'
 const ipcRenderer = require('electron').ipcRenderer
 export default {

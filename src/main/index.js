@@ -190,7 +190,9 @@ ipc.on('window-max', function () {
   }
 })
 ipc.on('window-close', function () {
-  mainWindow.close()
+  if (mainWindow) {
+    mainWindow.close()
+  }
   if (transferWindow) {
     transferWindow.close()
   }
