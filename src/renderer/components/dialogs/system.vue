@@ -1,6 +1,5 @@
 <template>
   <div id="dialog_system">
-    <el-dialog title="系统消息" :visible="visible" @close="rowDialogClose">
       <el-form ref="form" :rules="rules" :model="msg" style="width:100%">
         <el-form-item label="消息内容" prop="content">
           <el-input v-model="msg.content"></el-input>
@@ -8,7 +7,6 @@
       </el-form>
       
       <el-button @click="submit" style="width:100%;">发 送</el-button>
-    </el-dialog>
   </div>
 </template>
 

@@ -1,6 +1,5 @@
 <template>
   <div id="dialog_transfer">
-    <el-dialog title="转账" :visible="visible" @close="rowDialogClose">
       <el-form ref="form" :rules="rules" :model="msg" style="width:100%">
         <el-form-item label="金额" prop="num">
           <el-input v-model="msg.num" placeholder="金额，例如：16.00"></el-input>
@@ -11,7 +10,6 @@
       </el-form>
       
       <el-button @click="submit" style="width:100%;">发 送</el-button>
-    </el-dialog>
   </div>
 </template>
 

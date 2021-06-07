@@ -1,6 +1,5 @@
 <template>
   <div id="dialog_chang_avatar">
-    <el-dialog title="修改双方信息" :visible="visible" @close="rowDialogClose">
       <el-form ref="form" :model="msg" style="width:100%">
         <el-form-item class="el_avatar" label="我的头像" prop="self_avatar">
           <!-- <el-input v-model="msg.self_avatar" placeholder="头像URL"></el-input> -->
@@ -29,7 +28,6 @@
       </el-form>
 
       <el-button @click="submit" style="width:100%;">更 换</el-button>
-    </el-dialog>
   </div>
 </template>
 

@@ -9,27 +9,40 @@
         <span class="icon-add"></span>
       </div>
     </header>
+    <div class="list-container">
+      <el-row>
+        <el-col :span="24" v-for="(chat, index) in chats" :key="index">
+          <div
+            @click="changeChat(chat.id)"
+            @contextmenu.prevent="onContextMenu"
+            :class="{ active: nowChat && nowChat.id == chat.id, item: true }"
+          >
+            <context-menu
+              ref="chatContextMenu"
+              :context-menu-show.sync="contextShow"
+              :config="contextConfig"
+              @onTop="onTop"
+              @setUnread="setUnread"
+              @noBother="noBother"
+              @disable="disable"
+              @removeChat="removeChat(chat.id)"
+            >
+            </context-menu>
 
-    <ul>
-      <li
-        @click="changeChat(chat.id)"
-        :class="{ active: nowChat && nowChat.id == chat.id }"
-        v-for="(chat, index) in chats"
-        :key="index"
-      >
-        <img :src="chat.avatar" />
-        <div class="meta">
-          <div class="top">
-            <span class="name">{{ chat.user }}</span>
-            <span class="time">{{ getLastMsg(chat).time }}</span>
-          </div>
-          <div class="last_msg">{{ msgContentText(getLastMsg(chat)) }}</div>
-        </div>
-      </li>
-    </ul>
+            <img :src="chat.avatar" />
+            <div class="meta">
+              <div class="top">
+                <span class="name">{{ chat.user }}</span>
+                <span class="time">{{ getLastMsg(chat).time }}</span>
+              </div>
+              <div class="last_msg">{{ msgContentText(getLastMsg(chat)) }}</div>
+            </div>
+          </div></el-col
+        >
+      </el-row>
+    </div>
 
     <dialog-add-chat :event="add_chat_event"></dialog-add-chat>
-    
   </div>
 </template>
 
@@ -37,75 +50,128 @@
 <script lang='ts'>
 import EventEmitter from "eventemitter3";
 import dayjs from "dayjs";
-import constant from '@/constant.ts';
+import constant from "@/constant.ts";
 import { mapGetters, mapMutations } from "vuex";
 import DialogAddChat from "@/components/dialogs/add_chat.vue";
+import contextMenu from "@/components/contextMenu/index.vue";
 import Vue from "vue";
-
 
 export default Vue.extend({
   components: {
-    DialogAddChat
+    DialogAddChat,
+    contextMenu,
   },
   computed: {
-    ...mapGetters(['chats', 'nowChat'])
+    ...mapGetters(["chats", "nowChat"]),
   },
   data() {
     return {
       add_chat_event: null,
-      visible:false
-    }
+      visible: false,
+      contextShow: false,
+      contextConfig: {
+        // 右键点击距左位置
+        offsetLeft: 0,
+        // 右键点击距上位置
+        offsetTop: 0,
+        menuList: [
+          // 无需按键监听可以不传keyCode
+          { label: "置顶", id: 1, emitType: "onTop" },
+          { label: "标为未读", id: 2, emitType: "setUnread" },
+          { label: "消息免打扰", id: 3, emitType: "noBother" },
+          {
+            label: "在独立窗口中打开",
+            id: 4,
+            emitType: "openInIndependentWindow",
+          },
+          { label: "不显示聊天", id: 5, emitType: "disable" },
+          { label: "删除聊天", id: 6, emitType: "removeChat" },
+        ],
+      },
+    };
   },
+
   created() {
-    this.add_chat_event = new EventEmitter()
+    this.add_chat_event = new EventEmitter();
   },
   methods: {
-    ...mapMutations(['changeChat']),
+    ...mapMutations(["changeChat", "delChat"]),
+    onTop() {
+      console.log("onTop");
+      this.contextShow = false;
+    },
+    setUnread() {
+      console.log("setUnread");
+    },
+    noBother() {
+      console.log("noBother");
+    },
+    openInIndependentWindow() {
+      console.log("openInIndependentWindow");
+    },
+    disable() {
+      console.log("disable");
+    },
+    removeChat(id) {
+      console.log("removeChat");
+      this.delChat(id);
+      this.contextShow = false;
+    },
+
+    onContextMenu({ clientX, clientY }) {
+      Object.assign(this, {
+        contextConfig: {
+          offsetLeft: clientX,
+          offsetTop: clientY,
+        },
+        contextShow: true,
+      });
+    },
+
     getLastMsg(chat) {
       for (let i = chat.msgs.length - 1; i >= 0; i--) {
         if (chat.msgs[i].type) {
-          return chat.msgs[i]
+          return chat.msgs[i];
         }
       }
       return {
         type: constant.MSG_TYPE_TEXT,
-        data: '暂无消息',
-        time: dayjs().format('HH:mm')
-      }
+        data: "暂无消息",
+        time: dayjs().format("HH:mm"),
+      };
     },
     msgContentText(last_msg) {
       switch (last_msg.type) {
         case constant.MSG_TYPE_TEXT:
-          return last_msg.data
+          return last_msg.data;
         case constant.MSG_TYPE_IMG:
-          return '[图片]'
+          return "[图片]";
         case constant.MSG_TYPE_TRANSFER:
-          return '[转账]'
+          return "[转账]";
         case constant.MSG_TYPE_VOICE:
-          return '[语音]'
+          return "[语音]";
         case constant.MSG_TYPE_VIDEO:
-          return '[视频]'
+          return "[视频]";
         case constant.MSG_TYPE_FILE:
-          return '[文件]'
+          return "[文件]";
         case constant.MSG_TYPE_VIDEO_CALL:
-          return '[视频聊天]'
+          return "[视频聊天]";
         case constant.MSG_TYPE_VOICE_CALL:
-          return '[语音聊天]'
+          return "[语音聊天]";
       }
     },
     addChat() {
-      this.add_chat_event.emit('open')
+      this.add_chat_event.emit("open");
     },
-     rowDialogClose() {
-      this.visible = false
+    rowDialogClose() {
+      this.visible = false;
     },
 
-onOpen(){
-this.visible = true
-}
-
-  }
-})
+    onOpen() {
+      this.visible = true;
+    },
+  },
+});
 </script>
 
 <style scoped lang="scss">
@@ -146,14 +212,14 @@ this.visible = true
       background-color: #dbd9d8;
     }
   }
-  ul {
+  .list-container {
     flex: 1;
     overflow-y: scroll;
     width: 267px;
     padding: 0px;
     margin: 0px;
     list-style: none;
-    li {
+    .item {
       padding: 13px;
       display: flex;
       align-items: center;
@@ -192,7 +258,7 @@ this.visible = true
         }
       }
     }
-    li:hover:not(.active) {
+    .item:hover:not(.active) {
       background-color: #dfdcdb;
     }
     .active {

@@ -34,7 +34,6 @@
         </el-row>
       </div>
     </div>
-    <dialog-chat-manage :event="chat_manage_event"></dialog-chat-manage>
   </div>
 </template>
 
@@ -43,12 +42,8 @@ import EventEmitter from "eventemitter3";
 import constant from "@/constant.ts";
 import { Message } from "element-ui";
 import { mapGetters, mapMutations } from "vuex";
-import DialogChatManage from "./dialogs/chat_manage.vue";
 import Vue from "vue";
 export default Vue.extend({
-  components: {
-    DialogChatManage,
-  },
   computed: {
     ...mapGetters(["self"]),
   },
@@ -74,8 +69,8 @@ export default Vue.extend({
           pannel: "chat",
         },
         {
-          name: "qq",
-          pannel: "contacts",
+          name: "dashboard",
+          pannel: "setting",
         },
         {
           name: "qq",
@@ -106,9 +101,7 @@ export default Vue.extend({
         Message.success(`已切换为对方`);
       }
     },
-    chatManage() {
-      this.chat_manage_event.emit("open");
-    },
+
   },
 });
 </script>

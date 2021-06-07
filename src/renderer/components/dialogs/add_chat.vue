@@ -1,6 +1,6 @@
 <template>
   <div id="dialog_add_chat">
-    <el-dialog title="添加聊天" :visible="visible" @close="rowDialogClose">
+  
       <el-form ref="form" :rules="rules" :model="msg" style="width:100%">
         <el-form-item label="名字" prop="name">
           <el-input v-model="msg.name" placeholder="名字"></el-input>
@@ -19,7 +19,7 @@
       </el-form>
       
       <el-button @click="submit" style="width:100%;">添 加</el-button>
-    </el-dialog>
+    
   </div>
 </template>
 
@@ -77,7 +77,7 @@ export default Vue.extend({
               id: 1,
               type: constant.MSG_TYPE_TEXT,
               from: constant.MSG_FROM_OPPOSITE,
-              data: '你好',
+              data: '你好,你的头像是'+this.msg.avatar,
               time: dayjs().format('HH:mm')
             }
           ],

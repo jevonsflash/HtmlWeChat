@@ -110,10 +110,14 @@
     <footer>
       <div class="toolbar">
         <div>
-          <span @click="expressionShow"><svg-icon name="emoji"></svg-icon></span>
-          <span><svg-icon name='file'></svg-icon></span>
-          <span><svg-icon name='cut'></svg-icon></span>
-          <span><svg-icon name="message"></svg-icon></span>
+          <span @click="expressionShow"
+            ><svg-icon name="emoji"></svg-icon
+          ></span>
+          <span><svg-icon name="file"></svg-icon></span>
+          <span><svg-icon name="cut"></svg-icon></span>
+          <span
+            ><svg-icon name="message" @click="chatManage"></svg-icon
+          ></span>
         </div>
         <div>
           <span><svg-icon name="call"></svg-icon></span>
@@ -129,6 +133,7 @@
     </footer>
 
     <dialog-expression :event="event_expression"></dialog-expression>
+    <dialog-chat-manage :event="chat_manage_event"></dialog-chat-manage>
   </div>
 </template>
 
@@ -153,10 +158,14 @@ import MessageCallVoice from "@/components/messages/message_call_voice.vue";
 import MessageCallVideo from "@/components/messages/message_call_video.vue";
 
 import DialogExpression from "@/components/dialogs/expression.vue";
+
+import DialogChatManage from "@/components/dialogs/chat_manage.vue";
+
 import Vue from "vue";
 
 export default Vue.extend({
   components: {
+    DialogChatManage,
     ChatHeader,
     MessageText,
     MessageImgR,
@@ -178,10 +187,12 @@ export default Vue.extend({
       message: "",
       constant: constant,
       event_expression: null,
+      chat_manage_event: null,
     };
   },
   created() {
     this.event_expression = new EventEmitter();
+    this.chat_manage_event = new EventEmitter();
     this.event_expression.on("selExpression", this.selExpression);
 
     window.addEventListener("keydown", (e) => {
@@ -196,6 +207,9 @@ export default Vue.extend({
   },
   methods: {
     ...mapMutations(["pushMessage", "changeNowUser", "delMsg"]),
+    chatManage() {
+      this.chat_manage_event.emit("open");
+    },
     getClass(from) {
       return from == constant.MSG_FROM_SELF ? "self" : "opposite";
     },

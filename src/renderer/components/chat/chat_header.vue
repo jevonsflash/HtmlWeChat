@@ -1,7 +1,9 @@
 <template>
   <div id="chat_header">
     <div class="name" style="-webkit-app-region: no-drag">
-      <div @click="changeUser(constant.MSG_FROM_OPPOSITE)">{{nowChat.user}}</div>
+      <div @click="changeUser(constant.MSG_FROM_OPPOSITE)">
+        {{ nowChat.user }}
+      </div>
     </div>
     <div class="actions" style="-webkit-app-region: no-drag">
       <div class="toolbar">
@@ -19,152 +21,58 @@
         </div>
       </div>
       <div class="more">
-          <svg-icon name="more" @click="showMore=!showMore"></svg-icon>
-
-        <!-- <el-dropdown trigger="click">
-          <svg-icon name="more" @click="showMore=!showMore"></svg-icon>
-          <el-dropdown-menu slot="dropdown">
-            <el-dropdown-item @click.native="actionHandler('voice')">发送语音</el-dropdown-item>
-            <el-dropdown-item @click.native="actionHandler('file')">发送文件</el-dropdown-item>
-            <el-dropdown-item @click.native="actionHandler('transter')">发送转账</el-dropdown-item>
-            <el-dropdown-item @click.native="actionHandler('img_video')">发送图片和视频</el-dropdown-item>
-            <el-dropdown-item @click.native="actionHandler('call')">发送视频或语音通话</el-dropdown-item>
-            <el-dropdown-item @click.native="actionHandler('system')">发送系统消息</el-dropdown-item>
-            <el-dropdown-item @click.native="actionHandler('set_user')">修改双方信息</el-dropdown-item>
-           
-            <el-dropdown-item @click.native="actionHandler('change_user_self')">切换为自己</el-dropdown-item>
-            <el-dropdown-item @click.native="actionHandler('change_user_opposite')">切换为对方</el-dropdown-item>
-          </el-dropdown-menu>
-        </el-dropdown> -->
+        <svg-icon name="more" @click="showMore = !showMore"></svg-icon>
       </div>
-      <dialog-file :event="file_event"></dialog-file>
-      <dialog-transfer :event="transter_event"></dialog-transfer>
-      <dialog-img-video :event="img_video_event"></dialog-img-video>
-      <dialog-voice :event="voice_event"></dialog-voice>
-      <dialog-system :event="system_event"></dialog-system>
-      <dialog-change-info :event="change_info_event"></dialog-change-info>
-      <dialog-call :event="call_event"></dialog-call>
-
     </div>
   </div>
 </template>
 
 <script lang='ts'>
-import EventEmitter from 'eventemitter3'
-import constant from '@/constant'
-import { Message } from 'element-ui'
-import { mapGetters, mapMutations } from 'vuex'
-const ipcRenderer = require('electron').ipcRenderer
+import EventEmitter from "eventemitter3";
+import constant from "@/constant";
+import { Message } from "element-ui";
+import { mapGetters, mapMutations } from "vuex";
+const ipcRenderer = require("electron").ipcRenderer;
 
-import DialogFile from '@/components/dialogs/file.vue'
-import DialogTransfer from '@/components/dialogs/transfer.vue'
-import DialogImgVideo from '@/components/dialogs/img_video.vue'
-import DialogVoice from '@/components/dialogs/voice.vue'
-import DialogSystem from '@/components/dialogs/system.vue'
-import DialogChangeInfo from '@/components/dialogs/change_info.vue'
-import DialogCall from '@/components/dialogs/call.vue'
-import Vue from 'vue'
+import Vue from "vue";
 
 export default Vue.extend({
-  components: {
-    DialogFile,
-    DialogTransfer,
-    DialogImgVideo,
-    DialogVoice,
-    DialogSystem,
-    DialogChangeInfo,
-    DialogCall
-  },
   computed: {
-    ...mapGetters(['nowChat'])
+    ...mapGetters(["nowChat"]),
   },
-  watch:{
+  watch: {
     showMore: function (newshowMore, oldshowMore) {
-     if(newshowMore){
-      ipcRenderer.send('expand_main_window')
-
-     }
-     else{
-      ipcRenderer.send('shrink_main_window')
-
-     }
-     
-    }
+      if (newshowMore) {
+        ipcRenderer.send("expand_main_window");
+      } else {
+        ipcRenderer.send("shrink_main_window");
+      }
+    },
   },
   data() {
     return {
-      showMore:false,
-      constant: constant,
-      file_event: null,
-      transter_event: null,
-      img_video_event: null,
-      voice_event: null,
-      system_event: null,
-      change_info_event: null,
-      call_event: null,
-    }
+      showMore: false,
+    };
   },
-  created() {
-    this.file_event = new EventEmitter()
-    this.transter_event = new EventEmitter()
-    this.img_video_event = new EventEmitter()
-    this.voice_event = new EventEmitter()
-    this.system_event = new EventEmitter()
-    this.change_info_event = new EventEmitter()
-    this.call_event = new EventEmitter()
-  },
+
   methods: {
-    ...mapMutations(['changeNowUser']),
+    ...mapMutations(["changeNowUser"]),
     minus() {
-      ipcRenderer.send('window-min')
+      ipcRenderer.send("window-min");
     },
     cross() {
-      this.$store.commit('close')
+      this.$store.commit("close");
     },
     changeUser(user) {
-      this.changeNowUser(user)
+      this.changeNowUser(user);
       if (user == constant.MSG_FROM_SELF) {
-        Message.success(`已切换为自己`)
+        Message.success(`已切换为自己`);
       } else {
-        Message.success(`已切换为对方`)
+        Message.success(`已切换为对方`);
       }
     },
-    actionHandler(action) {
-      switch (action) {
-        case 'file':
-          this.file_event.emit('open')
-          break
-        case 'transter':
-          this.transter_event.emit('open')
-          break
-        case 'img_video':
-          this.img_video_event.emit('open')
-          break
-        case 'voice':
-          this.voice_event.emit('open')
-          break
-        case 'call':
-          this.call_event.emit('open')
-          break
-        case 'system':
-          this.system_event.emit('open')
-          break
-        case 'set_user':
-          this.change_info_event.emit('open')
-          break
-        case 'msg_manage':
-          this.voice_event.emit('open')
-          break
-        case 'change_user_self':
-          this.changeUser(constant.MSG_FROM_SELF)
-          break
-        case 'change_user_opposite':
-          this.changeUser(constant.MSG_FROM_OPPOSITE)
-          break
-      }
-    }
-  }
-})
+  },
+});
 </script>
 
 <style scoped lang="scss">

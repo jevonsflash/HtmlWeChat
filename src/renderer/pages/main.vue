@@ -7,6 +7,7 @@
       <el-main class="frame">
         <chat v-if="currentPannel == 'chat'"></chat>
         <contacts v-if="currentPannel == 'contacts'"></contacts>
+        <setting v-if="currentPannel == 'setting'"></setting>
       </el-main>
       <el-main class="sub-frame">
         <transition name="slide-fade">
@@ -23,6 +24,7 @@
 import Nav from "@/components/nav.vue";
 import Chat from "@/components/chat/index.vue";
 import Contacts from "@/components/contacts/index.vue";
+import Setting from "@/components/setting/index.vue";
 import Vue from "vue";
 const ipcRenderer = require("electron").ipcRenderer;
 
@@ -31,6 +33,7 @@ export default Vue.extend({
     Nav,
     Chat,
     Contacts,
+    Setting
   },
 
   data() {

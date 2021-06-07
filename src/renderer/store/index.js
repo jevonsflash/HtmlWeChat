@@ -2,14 +2,14 @@ import Vue from 'vue'
 import Vuex from 'vuex'
 
 import modules from './modules'
-import User from './modules/User'
+import chat from './modules/chat'
 import self from './modules/self'
 
 Vue.use(Vuex)
 
 export default new Vuex.Store({
   modules:{
-    User,self
+    chat,self
   },
   strict: process.env.NODE_ENV !== 'production'
 })

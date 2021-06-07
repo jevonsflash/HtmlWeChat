@@ -148,7 +148,7 @@ const def = {
 
 var opts = {
   cwd: defaultCwd,
-  configName: 'user_config'
+  configName: 'chat_config'
 
 };
 
@@ -194,6 +194,7 @@ const mutations = {
     state.chats.push(chat)
   },
   delChat: (state, id) => {
+    console.log('delChat2')
     let chat_index = state.chats.findIndex((chat) => {
       return chat.id == id
     })

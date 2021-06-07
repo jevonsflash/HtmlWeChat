@@ -1,6 +1,5 @@
 <template>
   <div id="dialog_call">
-    <el-dialog title="视频和语音通话" :visible="visible" @close="rowDialogClose">
       <el-form ref="form" :rules="rules" :model="msg" style="width:100%">
         <el-form-item label="类型" prop="type">
           <el-select v-model="msg.type" placeholder="请选择类型" style="width:100%">
@@ -20,7 +19,6 @@
       </el-form>
       
       <el-button @click="submit" style="width:100%;">发 送</el-button>
-    </el-dialog>
   </div>
 </template>
 

@@ -1,6 +1,5 @@
 <template>
   <div id="dialog_file">
-    <el-dialog title="发送文件" :visible="visible" @close="rowDialogClose">
       <el-form ref="form" :rules="rules" :model="msg" style="width:100%">
         <el-form-item label="类型" prop="file_type">
           <el-select v-model="msg.file_type" placeholder="请选择文件类型" style="width:100%">
@@ -21,7 +20,6 @@
       </el-form>
       
       <el-button @click="submit" style="width:100%;">发 送</el-button>
-    </el-dialog>
   </div>
 </template>
 
