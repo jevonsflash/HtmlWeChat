@@ -5,17 +5,20 @@
         <span class="icon-sreach"></span>
         <span>搜索</span>
       </div>
-      <div class="add" @click="addContact">
-        <span class="icon-add"></span>
+      <div class="add">
+        <svg-icon name="user" @click="addContact"></svg-icon>
       </div>
     </header>
-    <div class="list-container">
+    <overlay-scrollbars :options="osComponentOptions" class="list-container">
       <el-row>
         <el-col :span="24" v-for="(contact, index) in contacts" :key="index">
           <div
-            @click="changeContact(contact.id)"
+            @click="changeContact(contact)"
             @contextmenu.prevent="onContextMenu"
-            :class="{ active: nowContact && nowContact.id == contact.id, item: true }"
+            :class="{
+              active: nowContact && nowContact.id == contact.id,
+              item: true,
+            }"
           >
             <context-menu
               ref="contactContextMenu"
@@ -27,14 +30,14 @@
             <img :src="contact.avatar" />
             <div class="meta">
               <div class="top">
-                <span class="name">{{ contact.user }}</span>
+                <span class="name">{{ contact.name }}</span>
               </div>
-              
             </div>
           </div></el-col
         >
       </el-row>
-    </div>
+    </overlay-scrollbars>
+    <dialog-add-contact :event="add_contact_event"></dialog-add-contact>
   </div>
 </template>
 
@@ -42,30 +45,43 @@
 <script lang='ts'>
 import EventEmitter from "eventemitter3";
 import dayjs from "dayjs";
+import DialogAddContact from "@/components/dialogs/add_contact.vue";
+import contextMenu from "@/components/contextMenu/index.vue";
 import { mapGetters, mapMutations } from "vuex";
 import Vue from "vue";
 
 export default Vue.extend({
+  components: {
+    DialogAddContact,
+    contextMenu,
+  },
   computed: {
-    ...mapGetters(["contacts", "nowContact"]),
+    ...mapGetters(["contacts"]),
   },
   data() {
     return {
       add_contact_event: null,
       visible: false,
-       contextShow: false,
+      contextShow: false,
+      osComponentOptions: {
+        resize: "none",
+        paddingAbsolute: true,
+        scrollbars: {
+          autoHide: "never",
+          clickScrolling: true,
+        },
+      },
       contextConfig: {
         // 右键点击距左位置
         offsetLeft: 0,
         // 右键点击距上位置
         offsetTop: 0,
-        width:128,
+        width: 128,
         menuList: [
           // 无需按键监听可以不传keyCode
           { label: "发消息", id: 1, emitType: "sendMsg" },
           { label: "发送名片", id: 2, emitType: "sendCard" },
           { label: "删除好友", id: 3, emitType: "remove" },
-        
         ],
       },
     };
@@ -74,9 +90,10 @@ export default Vue.extend({
     this.add_contact_event = new EventEmitter();
   },
   methods: {
-    ...mapMutations(["changeContact"]),
- 
-    
+    changeContact(msg) {
+      this.$emit("onChangeContact", msg);
+    },
+
     onContextMenu({ clientX, clientY }) {
       Object.assign(this, {
         contextConfig: {
@@ -141,12 +158,10 @@ export default Vue.extend({
     }
   }
   .list-container {
-    flex: 1;
-    overflow-y: scroll;
     width: 267px;
+    height: 100%;
     padding: 0px;
     margin: 0px;
-    list-style: none;
     .item {
       padding: 13px;
       display: flex;
@@ -166,14 +181,6 @@ export default Vue.extend({
           width: 100%;
           display: flex;
           justify-content: space-between;
-          .name {
-            font-size: 14px;
-            font-weight: bold;
-          }
-          .time {
-            color: #9c9a9a;
-            font-size: 12px;
-          }
         }
         .last_msg {
           overflow: hidden;

@@ -10,10 +10,7 @@
         <div class="actions">
           <div class="toolbar">
             <div>
-              <svg-icon name="min" @click="minus"></svg-icon>
-            </div>
-            <div>
-              <svg-icon name="max"></svg-icon>
+              <svg-icon name="gear"></svg-icon>
             </div>
             <div>
               <svg-icon name="close" @click="cross"></svg-icon>
@@ -88,6 +85,7 @@ export default Vue.extend({
     this.msg.remarkName = this.self.remarkName;
     this.msg.region = this.self.region;
     this.msg.wechatId = this.self.wechatId;
+    this.msg.sex = this.self.sex;
   },
 
   methods: {

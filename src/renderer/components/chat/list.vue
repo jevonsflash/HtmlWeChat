@@ -5,11 +5,12 @@
         <span class="icon-sreach"></span>
         <span>搜索</span>
       </div>
-      <div class="add" @click="addChat">
-        <span class="icon-add"></span>
+      <div class="add">
+        <svg-icon name="user" @click="addChat"></svg-icon>
       </div>
     </header>
-    <div class="list-container">
+
+    <overlay-scrollbars :options="osComponentOptions" class="list-container">
       <el-row>
         <el-col :span="24" v-for="(chat, index) in chats" :key="index">
           <div
@@ -39,8 +40,8 @@
             </div>
           </div></el-col
         >
-      </el-row>
-    </div>
+      </el-row></overlay-scrollbars
+    >
 
     <dialog-add-chat :event="add_chat_event"></dialog-add-chat>
   </div>
@@ -69,12 +70,20 @@ export default Vue.extend({
       add_chat_event: null,
       visible: false,
       contextShow: false,
+      osComponentOptions: {
+        resize: "none",
+        paddingAbsolute: true,
+        scrollbars: {
+          autoHide: "never",
+          clickScrolling: true,
+        },
+      },
       contextConfig: {
         // 右键点击距左位置
         offsetLeft: 0,
         // 右键点击距上位置
         offsetTop: 0,
-        width:148,
+        width: 148,
         menuList: [
           // 无需按键监听可以不传keyCode
           { label: "置顶", id: 1, emitType: "onTop" },
@@ -214,12 +223,8 @@ export default Vue.extend({
     }
   }
   .list-container {
-    flex: 1;
-    overflow-y: scroll;
     width: 267px;
-    padding: 0px;
-    margin: 0px;
-    list-style: none;
+    height: 100%;
     .item {
       padding: 13px;
       display: flex;

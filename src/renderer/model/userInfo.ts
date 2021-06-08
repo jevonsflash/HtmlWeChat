@@ -4,7 +4,8 @@ class UserInfo {
     desc: string;
     remarkName: string;
     region: string;
-    wechatId: string
+    wechatId: string;
+    sex: string;
 }
 
 export default UserInfo

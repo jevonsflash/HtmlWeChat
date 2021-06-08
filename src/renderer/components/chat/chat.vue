@@ -1,10 +1,10 @@
 <template>
   <div id="chat">
-    <chat-header class="chat_header" style="-webkit-app-region: drag">
+    <chat-header class="header" style="-webkit-app-region: drag">
     </chat-header>
 
-    <div class="chat_body">
-      <div class="chat_window" ref="chatWindow">
+    <div class="body">
+      <div class="window" ref="chatWindow">
         <div
           class="message"
           v-for="(msg, index) in getNowChat().msgs"
@@ -325,15 +325,15 @@ export default Vue.extend({
   background-color: #f5f5f5;
   display: flex;
   flex-direction: column;
-  .chat_header {
+  .header {
     height: 60px;
   }
 
-  .chat_body {
+  .body {
     flex: 1;
     overflow-y: hidden;
     overflow-x: hidden;
-    .chat_window {
+    .window {
       height: 100%;
       width: calc(100% + #{17px});
       overflow-y: scroll;

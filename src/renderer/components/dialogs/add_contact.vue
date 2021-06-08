@@ -2,9 +2,24 @@
   <div id="dialog_add_chat">
   <el-dialog title="添加聊天" :visible="visible" @close="rowDialogClose">
       <el-form ref="form" :rules="rules" :model="msg" style="width:100%">
-        <el-form-item label="名字" prop="name">
-          <el-input v-model="msg.name" placeholder="名字"></el-input>
-        </el-form-item>
+       <el-form-item label="昵称">
+        <el-input v-model="msg.name"></el-input>
+      </el-form-item>
+      <el-form-item label="简介">
+        <el-input v-model="msg.desc"></el-input>
+      </el-form-item>
+      <el-form-item label="备注">
+        <el-input v-model="msg.remarkName"></el-input>
+      </el-form-item>
+      <el-form-item label="地区">
+        <el-input v-model="msg.region"></el-input>
+      </el-form-item>
+      <el-form-item label="微信号">
+        <el-input v-model="msg.wechatId"></el-input>
+      </el-form-item>
+       <el-form-item label="性别">
+        <el-input v-model="msg.sex"></el-input>
+      </el-form-item>
         <el-form-item class="image" label="头像" prop="avatar">
           <!-- <el-input v-model="msg.avatar" placeholder="头像URL"></el-input> -->
           <el-upload
@@ -32,7 +47,7 @@ import lrz from 'lrz'
 import dayjs from 'dayjs'
 import constant from "@/constant";
 import { mapGetters, mapMutations } from 'vuex'
-import UserInfo from '@/model/userInfo';
+import UserInfo from '@/model/userInfo'
 export default Vue.extend({
   props: ['event'],
   data() {
@@ -46,42 +61,17 @@ export default Vue.extend({
     }
   },
   computed: {
-    ...mapGetters(['chats'])
+    ...mapGetters(['contacts'])
   },
   methods: {
-    ...mapMutations(['pushChat']),
+    ...mapMutations(['pushContact']),
     rowDialogClose() {
       this.visible = false
     },
     async submit() {
       try {
         await (this.$refs.form as any).validate()
-        this.pushChat({
-          id: this.chats.length,
-          user: this.msg.name,
-          avatar: this.msg.avatar,
-          msgs: [
-            {
-              id: 0,
-              from: constant.MSG_FROM_SYSTEM,
-              data: '你们已成为好友'
-            },
-            {
-              id: 1,
-              type: constant.MSG_TYPE_TEXT,
-              from: constant.MSG_FROM_OPPOSITE,
-              data: '你好,你的头像是'+this.msg.avatar,
-              time: dayjs().format('HH:mm')
-            }
-          ],
-          last_msg: {
-            id: 1,
-            type: constant.MSG_TYPE_TEXT,
-            from: constant.MSG_FROM_OPPOSITE,
-            data: '你好',
-            time: dayjs().format('HH:mm')
-          }
-        })
+        this.pushContact(this.msg)
       } catch (err) {}
     },
     open() {

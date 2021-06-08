@@ -1,7 +1,7 @@
 <template>
   <div id="submain">
     <el-container class="main-container">
-      <el-aside width="280px">
+      <el-aside width="267px" style="overflow:hidden">
         <list></list>
       </el-aside>
       <el-main style="padding: 0">

@@ -17,6 +17,7 @@ const def = {
     remarkName: "快乐风男",
     region: "中国 广州",
     wechatId: "0",
+    sex: "男",
   },
 }
 
@@ -38,6 +39,7 @@ const mutations = {
     state.self.remarkName = data.remarkName
     state.self.region = data.region
     state.self.wechatId = data.wechatId
+    state.self.sex = data.sex
   },
 
   close: (state) => {

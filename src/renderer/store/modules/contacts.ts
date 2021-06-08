@@ -33,6 +33,7 @@ const mutations = {
     state.contacts[contact_index].desc = data.desc
     state.contacts[contact_index].remarkName = data.remarkName
     state.contacts[contact_index].region = data.region
+    state.contacts[contact_index].sex = data.sex
   },
 
 

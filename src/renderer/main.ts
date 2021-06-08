@@ -7,8 +7,8 @@ import store from './store'
 import SvgIcon from 'vue-svgicon'
 import EventEmitter from 'eventemitter3'
 import {GlobalEvent} from '@/constant'
-
-
+import { OverlayScrollbarsPlugin } from "overlayscrollbars-vue";
+import 'overlayscrollbars/css/OverlayScrollbars.css';
 import '@/style/normalize.css'
 import '@/style/weui.css'
 
@@ -17,6 +17,7 @@ import '@/icons/components'
 import 'element-ui/lib/theme-chalk/index.css'
 import ElementUI from 'element-ui'
 
+Vue.use(OverlayScrollbarsPlugin);
 if (!process.env.IS_WEB) Vue.use(require('vue-electron'))
 Vue.prototype.$http = axios
 Vue.config.productionTip = false

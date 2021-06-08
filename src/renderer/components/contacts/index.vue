@@ -1,11 +1,11 @@
 <template>
   <div id="submain">
     <el-container class="main-container">
-      <el-aside width="280px">
-        <list></list>
+      <el-aside width="267px">
+        <list @onChangeContact="onChangeContact"></list>
       </el-aside>
       <el-main style="padding: 0">
-        <detail></detail>
+        <detail :msg="currentMsg"></detail>
       </el-main>
     </el-container>
   </div>
@@ -19,6 +19,17 @@ export default Vue.extend({
   components: {
     List,
     Detail,
+  },
+
+  data() {
+    return {
+      currentMsg: null,
+    };
+  },
+  methods: {
+    onChangeContact(msg) {
+      this.currentMsg = msg;
+    },
   },
 });
 </script>

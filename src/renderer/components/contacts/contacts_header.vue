@@ -1,8 +1,8 @@
 <template>
   <div id="chat_header">
     <div class="name" style="-webkit-app-region: no-drag">
-      <div @click="changeUser(constant.MSG_FROM_OPPOSITE)">
-        {{ nowChat.user }}
+      <div>
+        {{ title }}
       </div>
     </div>
     <div class="actions" style="-webkit-app-region: no-drag">
@@ -28,33 +28,14 @@
 </template>
 
 <script lang='ts'>
-import EventEmitter from "eventemitter3";
 import constant from "@/constant";
 import HeaderVue from "@/components/header";
-import { Message } from "element-ui";
-import { mapGetters, mapMutations } from "vuex";
 const ipcRenderer = require("electron").ipcRenderer;
 
 import Vue from "vue";
 
 export default HeaderVue.extend({
-  computed: {
-    ...mapGetters(["nowChat"]),
-  },
-
-
-  methods: {
-    ...mapMutations(["changeNowUser"]),
-  
-    changeUser(user) {
-      this.changeNowUser(user);
-      if (user == constant.MSG_FROM_SELF) {
-        Message.success(`已切换为自己`);
-      } else {
-        Message.success(`已切换为对方`);
-      }
-    },
-  },
+  props: { title: { type: String, default: "" } },
 });
 </script>
 
