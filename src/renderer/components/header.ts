@@ -10,6 +10,7 @@ export default Vue.extend({
       } else {
         ipcRenderer.send("shrink_main_window");
       }
+      this.$emit('onShowMore',this.showMore)
     },
   },
   data() {
