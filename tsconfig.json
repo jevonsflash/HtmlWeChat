@@ -15,7 +15,7 @@
     "noImplicitAny": false,
     "strictPropertyInitialization": false,
     "types": [
-      "node"
+      "node","webpack-env"
     ],
     "paths": {
       "@/*": [

@@ -12,22 +12,45 @@
       <div class="tab-frame">
         <el-row v-for="(item, index) in tabButtons" :key="index">
           <el-col :span="24">
-            <svg-icon
+            <img
+              @mouseenter="changeImgSrc($event, true)"
+              @mouseleave="changeImgSrc($event, false)"
+              :src="currentPannel === item.pannel ? item.url2 : item.url"
               :name="item.name"
-              :class="currentPannel === item.pannel ? 'active' : 'de-active'"
               @click="switchPannel(item.pannel)"
+              width="20"
+              height="20"
+          /></el-col>
+        </el-row>
+        <el-row>
+          <el-col :span="24">
+            <img
+              src="@/assets/nav/look.png"
+              @click="goTo('look')"
               width="20"
               height="20"
           /></el-col>
         </el-row>
       </div>
       <div class="setting-frame">
-        <el-row v-for="(item, index) in settingButtons" :key="index">
+        <el-row>
           <el-col :span="24">
             <svg-icon
+              name="dashboard"
+              :class="currentPannel === 'setting' ? 'active' : 'de-active'"
+              @click="switchPannel('setting')"
+              width="20"
+              height="20"
+          /></el-col>
+        </el-row>
+        <el-row v-for="(item, index) in settingButtons" :key="index">
+          <el-col :span="24">
+            <img
+              @mouseenter="changeImgSrc($event, true)"
+              @mouseleave="changeImgSrc($event, false)"
+              :src="currentPannel === item.pannel ? item.url2 : item.url"
               :name="item.name"
-              :class="currentPannel === item.pannel ? 'active' : 'de-active'"
-              @click="switchPannel(item.pannel)"
+              @click="goTo(item.pannel)"
               width="20"
               height="20"
           /></el-col>
@@ -51,30 +74,48 @@ export default Vue.extend({
     return {
       tabButtons: [
         {
-          name: "bug",
+          url: require("@/assets/nav/chat_deactive.png"),
+          url2: require("@/assets/nav/chat_active.png"),
+          name: "chat",
           pannel: "chat",
         },
         {
-          name: "qq",
+          url: require("@/assets/nav/contacts_deactive.png"),
+          url2: require("@/assets/nav/contacts_active.png"),
+          name: "contacts",
           pannel: "contacts",
         },
         {
-          name: "qq",
+          url: require("@/assets/nav/app_deactive.png"),
+          url2: require("@/assets/nav/app_active.png"),
+          name: "app",
           pannel: "app",
+        },
+        {
+          url: require("@/assets/nav/file_deactive.png"),
+          url2: require("@/assets/nav/file_active.png"),
+          name: "file",
+          pannel: "file",
         },
       ],
       settingButtons: [
         {
-          name: "bug",
-          pannel: "chat",
+          url: require("@/assets/nav/miniprograme.png"),
+          url2: require("@/assets/nav/miniprograme.png"),
+          name: "miniprograme",
+          pannel: "miniprograme",
         },
         {
-          name: "dashboard",
-          pannel: "setting",
+          url: require("@/assets/nav/phone.png"),
+          url2: require("@/assets/nav/phone.png"),
+          name: "phone",
+          pannel: "phone",
         },
         {
-          name: "qq",
-          pannel: "app",
+          url: require("@/assets/nav/menu.png"),
+          url2: require("@/assets/nav/menu.png"),
+          name: "menu",
+          pannel: "menu",
         },
       ],
       currentPannel: "chat",
@@ -82,10 +123,24 @@ export default Vue.extend({
       chat_manage_event: null,
     };
   },
+
   created() {
     this.chat_manage_event = new EventEmitter();
   },
   methods: {
+    goTo(page) {
+      console.log("goto" + page);
+      this.$emit('goto',page)
+    },
+    changeImgSrc(event, isEnter) {
+      var element = undefined;
+      if (isEnter) {
+        element = event.fromElement;
+      } else {
+        element = event.toElement;
+      }
+    },
+
     switchPannel(pannel) {
       this.currentPannel = pannel;
       this.$emit("onPannelSwitched", this.currentPannel);
@@ -101,7 +156,6 @@ export default Vue.extend({
         Message.success(`已切换为对方`);
       }
     },
-
   },
 });
 </script>
@@ -110,7 +164,7 @@ export default Vue.extend({
 #nav {
   width: 100%;
   height: 100%;
-  background: linear-gradient(#202020, #2a2a2a);
+  background: linear-gradient(#29292c, #2a2a2a);
   display: flex;
   flex-direction: column;
   align-items: center;
