@@ -10,7 +10,7 @@ export default Vue.extend({
       } else {
         ipcRenderer.send("shrink_main_window");
       }
-      this.$emit('onShowMore',this.showMore)
+      this.$emit('onShowMore', this.showMore)
     },
   },
   data() {
@@ -20,13 +20,16 @@ export default Vue.extend({
   },
 
   methods: {
-   
+    setShowMore(showMore) {
+      this.showMore = showMore;
+    },
+
     minus() {
       ipcRenderer.send("window-min");
     },
     cross() {
       this.$store.commit("close");
     },
-    
+
   },
 });

@@ -21,7 +21,7 @@
         </div>
       </div>
       <div class="more">
-        <svg-icon name="more" @click="showMore = !showMore"></svg-icon>
+        <i class="el-icon-more"  @click="showMore = !showMore"/>
       </div>
     </div>
   </div>

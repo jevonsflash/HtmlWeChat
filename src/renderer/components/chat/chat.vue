@@ -1,140 +1,211 @@
 <template>
-  <div id="chat">
-    <chat-header class="header" style="-webkit-app-region: drag">
-    </chat-header>
+  <el-container id="chat">
+    <el-main class="frame">
+      <chat-header
+        ref="chatHeader"
+        class="header"
+        style="-webkit-app-region: drag"
+        @onShowMore="onShowMore"
+      >
+      </chat-header>
 
-    <div class="body">
-      <div class="window" ref="chatWindow">
-        <div
-          class="message"
-          v-for="(msg, index) in getNowChat().msgs"
-          :key="index"
-        >
-          <div class="sys_msg" v-if="msg.from == constant.MSG_FROM_SYSTEM">
-            <span @click="delMsg(msg.id)">{{ msg.data }}</span>
+      <div class="body">
+        <div class="window" ref="chatWindow">
+          <div
+            class="message"
+            v-for="(msg, index) in getNowChat().msgs"
+            :key="index"
+          >
+            <div class="sys_msg" v-if="msg.from == constant.MSG_FROM_SYSTEM">
+              <span @click="delMsg(msg.id)">{{ msg.data }}</span>
+            </div>
+            <div v-else :class="getClass(msg.from)">
+              <img
+                @click="delMsg(msg.id)"
+                v-if="msg.from == constant.MSG_FROM_OPPOSITE"
+                :src="nowChat.avatar"
+                alt=""
+              />
+
+              <!-- 文字消息 -->
+              <message-text
+                v-if="msg.type == constant.MSG_TYPE_TEXT"
+                :direction="msg.from"
+                :msg="msg.data"
+              ></message-text>
+
+              <!-- 图片消息 -->
+              <message-img-l
+                v-if="
+                  msg.type == constant.MSG_TYPE_IMG &&
+                  msg.from == constant.MSG_FROM_OPPOSITE
+                "
+                :src="msg.data"
+              ></message-img-l>
+              <message-img-r
+                v-if="
+                  msg.type == constant.MSG_TYPE_IMG &&
+                  msg.from == constant.MSG_FROM_SELF
+                "
+                :src="msg.data"
+              ></message-img-r>
+
+              <!-- 视频消息 -->
+              <message-video-l
+                v-if="
+                  msg.type == constant.MSG_TYPE_VIDEO &&
+                  msg.from == constant.MSG_FROM_OPPOSITE
+                "
+                :data="msg.data"
+              ></message-video-l>
+              <message-video-r
+                v-if="
+                  msg.type == constant.MSG_TYPE_VIDEO &&
+                  msg.from == constant.MSG_FROM_SELF
+                "
+                :data="msg.data"
+              ></message-video-r>
+
+              <!-- 转账消息 -->
+              <message-transfer
+                @click.native="openTransferWindow(msg)"
+                v-if="msg.type == constant.MSG_TYPE_TRANSFER"
+                :direction="msg.from"
+                :data="msg.data"
+              ></message-transfer>
+
+              <!-- 语言消息 -->
+              <message-voice
+                v-if="msg.type == constant.MSG_TYPE_VOICE"
+                :direction="msg.from"
+                :data="msg.data"
+              ></message-voice>
+
+              <!-- 文件消息 -->
+              <message-file
+                v-if="msg.type == constant.MSG_TYPE_FILE"
+                :direction="msg.from"
+                :data="msg.data"
+              ></message-file>
+
+              <!-- 语音通话消息 -->
+              <message-call-voice
+                v-if="msg.type == constant.MSG_TYPE_VOICE_CALL"
+                :direction="msg.from"
+                :data="msg.data"
+              ></message-call-voice>
+
+              <!-- 视频通话消息 -->
+              <message-call-video
+                v-if="msg.type == constant.MSG_TYPE_VIDEO_CALL"
+                :direction="msg.from"
+                :data="msg.data"
+              ></message-call-video>
+
+              <img
+                @click="delMsg(msg.id)"
+                v-if="msg.from == constant.MSG_FROM_SELF"
+                :src="self.avatar"
+                alt=""
+              />
+            </div>
           </div>
-          <div v-else :class="getClass(msg.from)">
-            <img
-              @click="delMsg(msg.id)"
-              v-if="msg.from == constant.MSG_FROM_OPPOSITE"
-              :src="nowChat.avatar"
-              alt=""
-            />
+        </div>
+      </div>
 
-            <!-- 文字消息 -->
-            <message-text
-              v-if="msg.type == constant.MSG_TYPE_TEXT"
-              :direction="msg.from"
-              :msg="msg.data"
-            ></message-text>
-
-            <!-- 图片消息 -->
-            <message-img-l
-              v-if="
-                msg.type == constant.MSG_TYPE_IMG &&
-                msg.from == constant.MSG_FROM_OPPOSITE
-              "
-              :src="msg.data"
-            ></message-img-l>
-            <message-img-r
-              v-if="
-                msg.type == constant.MSG_TYPE_IMG &&
-                msg.from == constant.MSG_FROM_SELF
-              "
-              :src="msg.data"
-            ></message-img-r>
-
-            <!-- 视频消息 -->
-            <message-video-l
-              v-if="
-                msg.type == constant.MSG_TYPE_VIDEO &&
-                msg.from == constant.MSG_FROM_OPPOSITE
-              "
-              :data="msg.data"
-            ></message-video-l>
-            <message-video-r
-              v-if="
-                msg.type == constant.MSG_TYPE_VIDEO &&
-                msg.from == constant.MSG_FROM_SELF
-              "
-              :data="msg.data"
-            ></message-video-r>
-
-            <!-- 转账消息 -->
-            <message-transfer
-              @click.native="openTransferWindow(msg)"
-              v-if="msg.type == constant.MSG_TYPE_TRANSFER"
-              :direction="msg.from"
-              :data="msg.data"
-            ></message-transfer>
-
-            <!-- 语言消息 -->
-            <message-voice
-              v-if="msg.type == constant.MSG_TYPE_VOICE"
-              :direction="msg.from"
-              :data="msg.data"
-            ></message-voice>
-
-            <!-- 文件消息 -->
-            <message-file
-              v-if="msg.type == constant.MSG_TYPE_FILE"
-              :direction="msg.from"
-              :data="msg.data"
-            ></message-file>
-
-            <!-- 语音通话消息 -->
-            <message-call-voice
-              v-if="msg.type == constant.MSG_TYPE_VOICE_CALL"
-              :direction="msg.from"
-              :data="msg.data"
-            ></message-call-voice>
-
-            <!-- 视频通话消息 -->
-            <message-call-video
-              v-if="msg.type == constant.MSG_TYPE_VIDEO_CALL"
-              :direction="msg.from"
-              :data="msg.data"
-            ></message-call-video>
-
-            <img
-              @click="delMsg(msg.id)"
-              v-if="msg.from == constant.MSG_FROM_SELF"
-              :src="self.avatar"
-              alt=""
-            />
+      <footer>
+        <div class="toolbar">
+          <div>
+            <span @click="expressionShow"
+              ><svg-icon name="emoji"></svg-icon
+            ></span>
+            <span><svg-icon name="file"></svg-icon></span>
+            <span><svg-icon name="cut"></svg-icon></span>
+            <span
+              ><svg-icon name="message" @click="chatManage"></svg-icon
+            ></span>
+          </div>
+          <div>
+            <span><svg-icon name="call"></svg-icon></span>
+            <span><svg-icon name="video"></svg-icon></span>
           </div>
         </div>
-      </div>
-    </div>
-
-    <footer>
-      <div class="toolbar">
         <div>
-          <span @click="expressionShow"
-            ><svg-icon name="emoji"></svg-icon
-          ></span>
-          <span><svg-icon name="file"></svg-icon></span>
-          <span><svg-icon name="cut"></svg-icon></span>
-          <span
-            ><svg-icon name="message" @click="chatManage"></svg-icon
-          ></span>
+          <textarea rows="3" v-model="message" @keyup.enter="submit"></textarea>
         </div>
-        <div>
-          <span><svg-icon name="call"></svg-icon></span>
-          <span><svg-icon name="video"></svg-icon></span>
+        <div class="sent_warp">
+          <button @click="submit">发送(S)</button>
         </div>
-      </div>
-      <div>
-        <textarea rows="3" v-model="message" @keyup.enter="submit"></textarea>
-      </div>
-      <div class="sent_warp">
-        <button @click="submit">发送(S)</button>
-      </div>
-    </footer>
+      </footer>
 
-    <dialog-expression :event="event_expression"></dialog-expression>
-    <dialog-chat-manage :event="chat_manage_event"></dialog-chat-manage>
-  </div>
+      <dialog-expression :event="event_expression"></dialog-expression>
+      <dialog-chat-manage :event="chat_manage_event"></dialog-chat-manage
+    ></el-main>
+    <el-aside width="250" v-if="showMenu">
+      <div class="menu-frame" ref="menu" :tabindex="1" @blur="onBlur">
+        <el-row>
+          <el-col :span="24">
+            <div class="weui-grids">
+              <div
+                class="weui-grid"
+                v-for="item of avatars"
+                :key="item.title"
+                @click="onSelectedAvatar(item.url)"
+              >
+                <div class="block">
+                  <el-row>
+                    <el-col :span="24">
+                      <el-avatar
+                        :src="item.url"
+                        shape="square"
+                        :size="35"
+                      ></el-avatar
+                    ></el-col>
+                  </el-row>
+                  <el-row>
+                    <el-col :span="24">
+                      <span class="title">{{ item.title }}</span></el-col
+                    >
+                  </el-row>
+                </div>
+              </div>
+            </div></el-col
+          >
+        </el-row>
+        <el-row>
+          <div class="weui-loadmore_line"></div>
+        </el-row>
+        <el-row class="option-frame">
+          <el-col :span="12">
+            <span class="option-text">消息免打扰</span>
+          </el-col>
+          <el-col :span="12">
+            <el-switch
+              class="switch"
+              v-model="value1"
+              active-color="green"
+              inactive-color="#CBCBCB"
+            >
+            </el-switch>
+          </el-col>
+        </el-row>
+        <el-row class="option-frame">
+          <el-col :span="12">
+            <span class="option-text">顶置聊天</span>
+          </el-col>
+          <el-col :span="12">
+            <el-switch
+              class="switch"
+              v-model="value2"
+              active-color="green"
+              inactive-color="#CBCBCB"
+            >
+            </el-switch>
+          </el-col>
+        </el-row>
+      </div>
+    </el-aside>
+  </el-container>
 </template>
 
 <script lang='ts'>
@@ -162,6 +233,7 @@ import DialogExpression from "@/components/dialogs/expression.vue";
 import DialogChatManage from "@/components/dialogs/chat_manage.vue";
 
 import Vue from "vue";
+import { nextTick } from "vue/types/umd";
 
 export default Vue.extend({
   components: {
@@ -184,16 +256,25 @@ export default Vue.extend({
   },
   data() {
     return {
+      showMenu: false,
       message: "",
       constant: constant,
       event_expression: null,
       chat_manage_event: null,
+      avatars: [],
+
+      value1: true,
+      value2: true,
     };
   },
+
   created() {
     this.event_expression = new EventEmitter();
     this.chat_manage_event = new EventEmitter();
     this.event_expression.on("selExpression", this.selExpression);
+    let joinIcon = require("@/assets/join.png");
+    this.avatars.push({ url: joinIcon, title: "添加" });
+    this.avatars.push({ url: this.nowChat.avatar, title: this.nowChat.user });
 
     window.addEventListener("keydown", (e) => {
       if (e.ctrlKey && e.keyCode == 83) {
@@ -207,6 +288,20 @@ export default Vue.extend({
   },
   methods: {
     ...mapMutations(["pushMessage", "changeNowUser", "delMsg"]),
+
+    onBlur() {
+      this.onShowMore(false);
+      (this.$refs.chatHeader as any).setShowMore(false);
+    },
+
+    onShowMore(isShow) {
+      this.showMenu = isShow;
+      if (isShow) {
+        this.$nextTick(() => {
+          (this.$refs.menu as any).focus();
+        });
+      }
+    },
     chatManage() {
       this.chat_manage_event.emit("open");
     },
@@ -319,138 +414,178 @@ export default Vue.extend({
 
 <style scoped lang="scss">
 #chat {
-  position: relative;
   width: 100%;
   height: 100%;
-  background-color: #f5f5f5;
-  display: flex;
-  flex-direction: column;
-  .header {
-    height: 60px;
-  }
+  .frame {
+    position: relative;
+    padding: 0;
+    width: 100%;
+    height: 100%;
+    background-color: #f5f5f5;
+    display: flex;
+    flex-direction: column;
+    .header {
+      height: 60px;
+    }
 
-  .body {
-    flex: 1;
-    overflow-y: hidden;
-    overflow-x: hidden;
-    .window {
-      height: 100%;
-      width: calc(100% + #{17px});
-      overflow-y: scroll;
-      padding: 0px;
-      margin: 0px;
-      > .message:last-of-type {
-        margin-bottom: 8px;
+    .body {
+      flex: 1;
+      overflow-y: hidden;
+      overflow-x: hidden;
+      .window {
+        height: 100%;
+        width: calc(100% + #{17px});
+        overflow-y: scroll;
+        padding: 0px;
+        margin: 0px;
+        > .message:last-of-type {
+          margin-bottom: 8px;
+        }
       }
-    }
-    .opposite,
-    .self {
-      display: flex;
-      padding: 0 28px;
-      margin-top: 15px;
-      img {
-        width: 35px;
-        height: 35px;
-        cursor: pointer;
+      .opposite,
+      .self {
+        display: flex;
+        padding: 0 28px;
+        margin-top: 15px;
+        img {
+          width: 35px;
+          height: 35px;
+          cursor: pointer;
+        }
       }
-    }
-    .opposite {
-      justify-content: flex-start;
-      img {
-        margin-right: 8px;
+      .opposite {
+        justify-content: flex-start;
+        img {
+          margin-right: 8px;
+        }
       }
-    }
-    .self {
-      justify-content: flex-end;
-      img {
-        margin-left: 8px;
+      .self {
+        justify-content: flex-end;
+        img {
+          margin-left: 8px;
+        }
       }
-    }
-    .sys_msg {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      margin-top: 15px;
-      > span {
-        cursor: pointer;
-        font-size: 12px;
-        color: #fff;
-        background-color: #dadada;
-        border-radius: 2px;
-        padding: 3px 8px;
-      }
-    }
-  }
-
-  footer {
-    height: 145px;
-    background-color: white;
-    border-top: 1px solid #e5e5e5;
-    padding: 6px 15px;
-    .toolbar {
-      width: 100%;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      div {
+      .sys_msg {
         display: flex;
         align-items: center;
+        justify-content: center;
+        margin-top: 15px;
         > span {
           cursor: pointer;
+          font-size: 12px;
+          color: #fff;
+          background-color: #dadada;
+          border-radius: 2px;
+          padding: 3px 8px;
+        }
+      }
+    }
+
+    footer {
+      height: 145px;
+      background-color: white;
+      border-top: 1px solid #e5e5e5;
+      padding: 6px 15px;
+      .toolbar {
+        width: 100%;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        div {
           display: flex;
-          justify-content: center;
           align-items: center;
-          width: 34px;
-          height: 30px;
           > span {
-            font-size: 18px;
+            cursor: pointer;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            width: 34px;
+            height: 30px;
+            > span {
+              font-size: 18px;
+            }
+            .icon-cut {
+              font-size: 16px;
+              font-weight: bold;
+            }
+            &:hover {
+              background-color: #efefef;
+            }
           }
-          .icon-cut {
-            font-size: 16px;
-            font-weight: bold;
+        }
+        div:last-child {
+          .icon-call_1 {
+            font-weight: 100;
+            font-size: 20px;
           }
-          &:hover {
-            background-color: #efefef;
+          .icon-video_1 {
+            font-weight: 500;
+            font-size: 22px;
           }
         }
       }
-      div:last-child {
-        .icon-call_1 {
-          font-weight: 100;
-          font-size: 20px;
-        }
-        .icon-video_1 {
-          font-weight: 500;
-          font-size: 22px;
-        }
-      }
-    }
-    textarea {
-      width: 100%;
-      height: 100%;
-      resize: none;
-      border: none;
-      outline: none;
-      font-size: 14px;
-      font-weight: 500px;
-      padding: 8px;
-    }
-    .sent_warp {
-      display: flex;
-      justify-content: flex-end;
-      button {
-        width: 68px;
-        height: 26px;
-        border: 1px solid #e5e5e5;
-        background-color: #f5f5f5;
-        font-size: 14px;
+      textarea {
+        width: 100%;
+        height: 100%;
+        resize: none;
+        border: none;
         outline: none;
-        cursor: pointer;
+        font-size: 14px;
+        font-weight: 500px;
+        padding: 8px;
       }
-      button:hover {
-        background-color: #129611;
-        color: #fff;
+      .sent_warp {
+        display: flex;
+        justify-content: flex-end;
+        button {
+          width: 68px;
+          height: 26px;
+          border: 1px solid #e5e5e5;
+          background-color: #f5f5f5;
+          font-size: 14px;
+          outline: none;
+          cursor: pointer;
+        }
+        button:hover {
+          background-color: #129611;
+          color: #fff;
+        }
       }
+    }
+  }
+
+  .menu-frame {
+    outline: 0px;
+    background-color: #f5f5f5;
+    padding: 20px;
+    width: 250px;
+    height: 100%;
+    .weui-grid {
+      width: 25%;
+      padding: 10px 0px;
+    }
+    .title {
+      width: 100%;
+      margin-bottom: 10px;
+      font-size: 12px;
+      color: #8492a6;
+    }
+    .block {
+      text-align: center;
+      font-size: 14px;
+    }
+
+    .option-text {
+      font-size: 14px;
+    }
+
+    .switch {
+      float: right;
+      margin-right: 10px;
+    }
+
+    .option-frame {
+      margin-top: 20px;
     }
   }
 }

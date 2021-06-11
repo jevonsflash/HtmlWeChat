@@ -18,6 +18,7 @@ const winURL =
     ? `http://localhost:9080`
     : `file://${__dirname}/index.html`
 
+const menuWidth = 250
 function createWindow() {
   mainWindow = new BrowserWindow({
     minHeight: 450,
@@ -40,7 +41,7 @@ function createWindow() {
     console.log('expand_main_window recived!')
   let width=  mainWindow.getSize()[0]
   let height=  mainWindow.getSize()[1]
-    let newwidth = width + 500;
+    let newwidth = width + menuWidth;
     mainWindow.setSize(newwidth, height)
 
   })
@@ -48,7 +49,7 @@ function createWindow() {
     console.log('shrink_main_window recived!')
     let width=  mainWindow.getSize()[0]
   let height=  mainWindow.getSize()[1]
-    let newwidth = width - 500;
+    let newwidth = width - menuWidth;
     mainWindow.setSize(newwidth, height)
 
   })

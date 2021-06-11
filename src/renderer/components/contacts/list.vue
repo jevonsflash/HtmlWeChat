@@ -16,7 +16,7 @@
             @click="changeContact(contact)"
             @contextmenu.prevent="onContextMenu"
             :class="{
-              active: nowContact && nowContact.id == contact.id,
+              active: false,
               item: true,
             }"
           >
