@@ -7,7 +7,8 @@
         <el-popover
         style="background-color:red"
           ref="popframe"
-          class="miniprograme-frame"
+          :offset="400"
+          
           placement="right"
           width="400"
           v-model="visible.miniprograme"
@@ -15,11 +16,11 @@
         >
           <miniprograme></miniprograme>
 
-          <div class="fake-block" slot="reference"></div>
+          <div class="miniprograme-frame" slot="reference"></div>
         </el-popover>
            <el-popover
           ref="popframe"
-          class="phone-frame"
+  
           placement="right"
           width="400"
           v-model="visible.phone"
@@ -27,11 +28,11 @@
         >
           <phone></phone>
 
-          <div class="fake-block" slot="reference"></div>
+          <div class="miniprograme-frame" slot="reference"></div>
         </el-popover>
            <el-popover
           ref="popframe"
-          class="menu-frame"
+       
           placement="right"
           width="400"
           v-model="visible.menu"
@@ -39,7 +40,7 @@
         >
           <menu></menu>
 
-          <div class="fake-block" slot="reference"></div>
+          <div class="miniprograme-frame" slot="reference"></div>
         </el-popover>
       </el-aside>
       <el-main class="main-frame">
@@ -113,20 +114,16 @@ export default Vue.extend({
   width: 100%;
   height: 100%;
   .miniprograme-frame {
-    top: unset;
-    bottom: 95px;
+    background-color: red;
+    width: 0;
+    position:absolute;
+    left: 60px;
+    height: 100%;
+    top: 0;
+    clear: both;
+
   }
-  .phone-frame {
-    top: unset;
-    bottom: 30px;
-  }
-  .phone-frame {
-    top: unset;
-    bottom: 30px;
-  }
-  .fake-block {
-    float: right;
-  }
+  
   .main-container {
     height: 100%;
   }
