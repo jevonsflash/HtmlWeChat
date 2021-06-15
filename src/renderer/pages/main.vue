@@ -7,12 +7,13 @@
         <el-popover
         style="background-color:red"
           ref="popframe"
-          :offset="400"
-          
+          :offset="460"
+          :visible-arrow="false"
           placement="right"
           width="400"
           v-model="visible.miniprograme"
           trigger="manual"
+           popper-class="popover-frame"
         >
           <miniprograme></miniprograme>
 
@@ -109,7 +110,7 @@ export default Vue.extend({
 });
 </script>
 
-<style scoped lang="scss">
+<style lang="scss">
 #main {
   width: 100%;
   height: 100%;
@@ -149,5 +150,10 @@ export default Vue.extend({
   .slide-fade-leave-to {
     transform: translateX(-100px);
   }
+}
+
+.popover-frame{
+  padding: 0  !important;
+
 }
 </style>
