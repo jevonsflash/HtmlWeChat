@@ -1,69 +1,55 @@
 <template>
-    <div>
-        <el-row>
-          <el-col :span="24">
-            <div class="weui-grids">
-              <div
-                class="weui-grid"
-                v-for="item of miniprograms"
-                :key="item.title"
-                
-              >
-                <div class="block">
-                  <el-row>
-                    <el-col :span="24">
-                      <el-avatar
-                        :src="item.url"
-                        shape="square"
-                        :size="35"
-                      ></el-avatar
-                    ></el-col>
-                  </el-row>
-                  <el-row>
-                    <el-col :span="24">
-                      <span class="title">{{ item.title }}</span></el-col
-                    >
-                  </el-row>
-                </div>
-              </div>
-            </div></el-col
-          >
-        </el-row>
-    </div>
+  <div id="main">
+    <el-row>
+      <el-col :span="24">
+        <div class="title-frame-left">
+          <span class="title">意见反馈</span>
+        </div>
+      </el-col>
+      
+    </el-row>
+  
+    <el-row>
+      <el-col :span="24">
+        <div class="title-frame-left">
+          <span class="title">备份与恢复</span>
+        </div>
+      </el-col>
+      
+    </el-row>
+     <el-row>
+      <el-col :span="24">
+        <div class="title-frame-left" style="margin-bottom:20px">
+          <span class="title">设置</span>
+        </div>
+      </el-col>
+      
+    </el-row>
+  </div>
 </template>
 
-<script lang="ts">
-import Vue from 'vue'
-var Enumerable = require("linq");
+<script lang="ts" scoped>
+import Vue from "vue";
+
 
 export default Vue.extend({
-created(){
-    const req = require.context("@/assets/miniprograme", false, /\.png$/);
-    const re = /\.\/(.*)\.png/;
-    const matcher = (str: string) => {
-      let match = str.match(re);
-      if (match !== null) return match[1];
-      return "";
-    };
-    const requireAll = (requireContext: any) => {
-      let result = Enumerable.from(requireContext.keys())
-        .select((c) => {
-          return { url: req(c), title: matcher(c) };
-        })
-        .toArray();
-      return result;
-    };
-
-    this.miniprograms = requireAll(req);
-},
-
-    data(){
-        return{
-            miniprograms:{
-
-            }
-
-        }
-    }
-})
+ 
+});
 </script>
+
+<style lang="scss" scoped>
+#main {
+  background-color: #2e2e2e;
+  
+  .title{
+    color:white;
+    font-size: 14px;
+  }
+  .title-frame-left {
+    margin-left: 20px;
+    margin-top: 20px;
+
+  }
+
+}
+</style>

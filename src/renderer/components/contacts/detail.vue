@@ -2,8 +2,8 @@
   <div id="detail">
     <contacts-header class="header" style="-webkit-app-region: drag">
     </contacts-header>
-    <div class="weui-form-preview main-frame">
-      <div class="weui-form-preview__hd">
+    <div class="main-frame">
+      <div>
         <el-row>
           <el-col :span="12">
             <el-row>
@@ -82,7 +82,7 @@ export default Vue.extend({
   },
 });
 </script>
-<style lang="scss">
+<style lang="scss" scoped>
 #detail {
   position: relative;
   width: 100%;
@@ -91,8 +91,8 @@ export default Vue.extend({
   display: flex;
   flex-direction: column;
   .main-frame {
-    width: 380px;
-    margin: 0 auto;
+        width: 350px;
+    margin: 30px auto 0 auto;
     background-color: #f5f5f5;
   }
 

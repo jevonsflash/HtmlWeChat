@@ -66,15 +66,18 @@ export default Vue.extend({
   methods: {
     ...mapMutations(['pushContact']),
     rowDialogClose() {
+      
       this.visible = false
     },
     async submit() {
       try {
         await (this.$refs.form as any).validate()
         this.pushContact(this.msg)
+        this.rowDialogClose()
       } catch (err) {}
     },
     open() {
+    this.msg=new UserInfo()
       this.visible = true
     },
     async upImg(req) {

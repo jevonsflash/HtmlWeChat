@@ -5,41 +5,45 @@
         <Nav @onPannelSwitched="onPannelSwitched" @goto="onGoto"></Nav>
 
         <el-popover
-        style="background-color:red"
+          style="background-color: red"
           ref="popframe"
           :offset="460"
           :visible-arrow="false"
           placement="right"
-          width="400"
+          width="300"
           v-model="visible.miniprograme"
           trigger="manual"
-           popper-class="popover-frame"
+          popper-class="popover-frame"
         >
           <miniprograme></miniprograme>
 
           <div class="miniprograme-frame" slot="reference"></div>
         </el-popover>
-           <el-popover
+        <el-popover
           ref="popframe"
-  
+          :offset="460"
+          :visible-arrow="false"
           placement="right"
-          width="400"
+          width="250"
           v-model="visible.phone"
           trigger="manual"
+          popper-class="popover-frame"
         >
           <phone></phone>
 
           <div class="miniprograme-frame" slot="reference"></div>
         </el-popover>
-           <el-popover
+        <el-popover
           ref="popframe"
-       
+          :offset="460"
+          :visible-arrow="false"
           placement="right"
-          width="400"
+          width="150"
           v-model="visible.menu"
           trigger="manual"
+          popper-class="popover-frame"
         >
-          <menu></menu>
+          <Menu></Menu>
 
           <div class="miniprograme-frame" slot="reference"></div>
         </el-popover>
@@ -74,6 +78,8 @@ export default Vue.extend({
     Setting,
     Favourite,
     Miniprograme,
+    Menu,
+    Phone,
   },
 
   data() {
@@ -91,15 +97,20 @@ export default Vue.extend({
   },
   methods: {
     onGoto(page) {
-      this.visible.miniprograme = false;
-      this.visible.menu = false;
-      this.visible.phone = false;
+
       if (page == "miniprograme") {
-        this.visible.miniprograme = true;
+        this.visible.miniprograme = !this.visible.miniprograme;
+        this.visible.menu = false;
+        this.visible.phone = false;
       } else if (page == "menu") {
-        this.visible.menu = true;
+        this.visible.menu = !this.visible.menu;
+        this.visible.miniprograme = false;
+
+        this.visible.phone = false;
       } else if (page == "phone") {
-        this.visible.phone = true;
+        this.visible.phone = !this.visible.phone;
+        this.visible.miniprograme = false;
+        this.visible.menu = false;
       }
     },
 
@@ -110,21 +121,20 @@ export default Vue.extend({
 });
 </script>
 
-<style lang="scss">
+<style lang="scss" scoped>
 #main {
   width: 100%;
   height: 100%;
   .miniprograme-frame {
     background-color: red;
     width: 0;
-    position:absolute;
+    position: absolute;
     left: 60px;
     height: 100%;
     top: 0;
     clear: both;
-
   }
-  
+
   .main-container {
     height: 100%;
   }
@@ -151,9 +161,9 @@ export default Vue.extend({
     transform: translateX(-100px);
   }
 }
-
-.popover-frame{
-  padding: 0  !important;
-
+</style>
+<style lang="scss">
+.popover-frame {
+  padding: 0 !important;
 }
 </style>

@@ -117,7 +117,7 @@ export default Vue.extend({
 });
 </script>
 
-<style lang="scss">
+<style lang="scss" scoped>
 #main {
   background-color: #2e2e2e;
 
