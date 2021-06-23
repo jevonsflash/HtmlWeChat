@@ -2,7 +2,7 @@
   <div id="nav">
     <div class="avatar">
       <img
-        @click="changeUser(constant.MSG_FROM_SELF)"
+        @click="editSelf()"
         :src="self.avatar"
         alt=""
       />
@@ -57,21 +57,31 @@
         </el-row>
       </div>
     </div>
+      <dialog-change-self-info
+      :event="edit_contact_event"
+      :msg="self"
+    ></dialog-change-self-info>
   </div>
 </template>
 
 <script lang='ts'>
 import EventEmitter from "eventemitter3";
 import constant from "@/constant.ts";
+import DialogChangeSelfInfo from "@/components/dialogs/change_self_info.vue";
 import { Message } from "element-ui";
 import { mapGetters, mapMutations } from "vuex";
 import Vue from "vue";
 export default Vue.extend({
+    components: {
+    DialogChangeSelfInfo,
+  },
   computed: {
     ...mapGetters(["self"]),
   },
   data() {
     return {
+      edit_contact_event: null,
+
       tabButtons: [
         {
           url: require("@/assets/nav/chat_deactive.png"),
@@ -126,6 +136,9 @@ export default Vue.extend({
 
   created() {
     this.chat_manage_event = new EventEmitter();
+        this.edit_contact_event = new EventEmitter();
+
+
   },
   methods: {
     goTo(page) {
@@ -147,15 +160,11 @@ export default Vue.extend({
       console.log(pannel);
     },
 
-    ...mapMutations(["changeNowUser"]),
-    changeUser(user) {
-      this.changeNowUser(user);
-      if (user == constant.MSG_FROM_SELF) {
-        Message.success(`已切换为自己`);
-      } else {
-        Message.success(`已切换为对方`);
-      }
-    },
+    editSelf(){
+      this.edit_contact_event.emit("open");
+
+    }
+
   },
 });
 </script>

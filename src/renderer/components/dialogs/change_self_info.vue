@@ -1,8 +1,9 @@
 <template>
-  <div id="dialog_chang_avatar" v-if="msg!=undefined">
-    <el-dialog title="修改好友资料" :visible="visible" @close="rowDialogClose">
+  <div id="dialog_chang_avatar">
+    <el-dialog title="修改我的资料" :visible="visible" @close="rowDialogClose">
       <el-form ref="form" :model="msg" style="width: 100%">
         <el-form-item class="el_avatar" label="我的头像" prop="avatar">
+          <!-- <el-input v-model="msg.avatar" placeholder="头像URL"></el-input> -->
           <el-upload
             class="avatar-uploader"
             action="#"
@@ -30,8 +31,10 @@
         </el-form-item>
       </el-form>
 
-      <el-button @click="submit" style="width: 100%">更 换</el-button>
-    </el-dialog>
+      <el-button @click="submit" style="width: 100%"
+        >更 换</el-button
+      ></el-dialog
+    >
   </div>
 </template>
 
@@ -41,36 +44,30 @@ import dayjs from "dayjs";
 import constant from "../../constant";
 import { mapGetters, mapMutations } from "vuex";
 export default {
-  props: ["event", "name"],
+  props: ["event"],
   data() {
     return {
       visible: false,
-      msg:undefined
+      msg:undefined,
     };
   },
-  watch:{
-    name: function (value) {
-      console.log(value)
-    }
+  computed: {
+    ...mapGetters(["self"]),
   },
-
   methods: {
-    ...mapMutations(["updateContact","getContact"]),
+    ...mapMutations(["updateSelf"]),
     rowDialogClose() {
       this.visible = false;
     },
     async submit() {
       try {
         await this.$refs.form.validate();
-        this.updateContact(this.msg);
-    
+        this.updateSelf(this.msg);
       } catch (err) {}
     },
     open() {
       this.visible = true;
-      this.msg= this.getUserInfo(this.name)
-      console.info(this.msg)
-
+      this.msg= this.self;
     },
     async selfAvatarUP(req) {
       try {
@@ -79,6 +76,7 @@ export default {
         this.msg.avatar = lrzfile.base64;
       } catch (err) {}
     },
+   
   },
   created() {
     this.event.on("open", this.open);

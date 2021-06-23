@@ -16,7 +16,7 @@
             @click="changeContact(contact)"
             @contextmenu.prevent="onContextMenu"
             :class="{
-              active: false,
+              active: nowContact && nowContact.name == contact.name,
               item: true,
             }"
           >
@@ -24,6 +24,8 @@
               ref="contactContextMenu"
               :context-menu-show.sync="contextShow"
               :config="contextConfig"
+              @edit="edit(contact)"
+              @remove="remove(contact)"
             >
             </context-menu>
 
@@ -38,6 +40,10 @@
       </el-row>
     </overlay-scrollbars>
     <dialog-add-contact :event="add_contact_event"></dialog-add-contact>
+    <dialog-change-info
+      :event="edit_contact_event"
+      :name="nowContact.name"
+    ></dialog-change-info>
   </div>
 </template>
 
@@ -48,19 +54,25 @@ import dayjs from "dayjs";
 import DialogAddContact from "@/components/dialogs/add_contact.vue";
 import contextMenu from "@/components/contextMenu/index.vue";
 import { mapGetters, mapMutations } from "vuex";
+import DialogChangeInfo from "@/components/dialogs/change_info.vue";
+
 import Vue from "vue";
+var Enumerable = require("linq");
 
 export default Vue.extend({
   components: {
     DialogAddContact,
     contextMenu,
+    DialogChangeInfo,
   },
   computed: {
     ...mapGetters(["contacts"]),
+    ...mapGetters(["group"]),
   },
   data() {
     return {
       add_contact_event: null,
+      edit_contact_event: null,
       visible: false,
       contextShow: false,
       osComponentOptions: {
@@ -82,15 +94,30 @@ export default Vue.extend({
           { label: "发消息", id: 1, emitType: "sendMsg" },
           { label: "发送名片", id: 2, emitType: "sendCard" },
           { label: "删除好友", id: 3, emitType: "remove" },
+          { label: "编辑好友", id: 4, emitType: "edit" },
         ],
       },
+      nowContact: undefined,
     };
   },
   created() {
     this.add_contact_event = new EventEmitter();
+    this.edit_contact_event = new EventEmitter();
+    this.nowContact = Enumerable.from(this.contacts).firstOrDefault();
   },
   methods: {
+    edit(row) {
+      console.log("edit id:" + row.name);
+      this.nowContact = row;
+      this.contextShow = false;
+      this.edit_contact_event.emit("open");
+    },
+    remove(row) {
+      console.log("edit id:" + row.name);
+    },
+
     changeContact(msg) {
+      this.nowContact = msg;
       this.$emit("onChangeContact", msg);
     },
 

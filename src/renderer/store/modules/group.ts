@@ -91,10 +91,10 @@ const state = store.get('data', def)
 
 const mutations = {
  
-  updateContact: (state, data:UserInfo) => {
+  updateGroup: (state, data:UserInfo) => {
     console.log("更换头像")
     let contact_index = state.contacts.findIndex((contact) => {
-      return contact.name == data.name
+      return contact.wechatId == data.wechatId
     })
     state.contacts[contact_index].avatar = data.avatar
     state.contacts[contact_index].name = data.name
@@ -104,18 +104,11 @@ const mutations = {
     state.contacts[contact_index].sex = data.sex
   },
 
-  getContact(state, name:string){
-    let contact_index = state.contacts.findIndex((contact) => {
-      return contact.name == name
-    })
-    return state.contacts[contact_index];
-  },
 
-  pushContact: (state, contact:UserInfo) => {
+  pushGroup: (state, contact:UserInfo) => {
     state.contacts.push(contact)
   },
-  delContact: (state, id) => {
-    console.log('delContact2')
+  delGroup: (state, id) => {
     let contact_index = state.contacts.findIndex((contact) => {
       return contact.id == id
     })

@@ -123,7 +123,7 @@ export default Vue.extend({
       console.log("disable");
     },
     removeChat(id) {
-      console.log("removeChat");
+      console.log("removeChat id:"+id);
       this.delChat(id);
       this.contextShow = false;
     },

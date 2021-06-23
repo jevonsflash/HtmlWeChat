@@ -16,14 +16,13 @@ const def = {
     {
       id: 0,
       user: "新手入门",
-      avatar:
-        "https://avatar-static.segmentfault.com/325/564/3255641526-59ace0589088d_big64",
+      avatar: require("@/assets/defaultAvatars/1.png"),
       msgs: [
         {
           id: 0,
           type: constant.MSG_TYPE_TEXT,
           from: constant.MSG_FROM_OPPOSITE,
-          data: "欢迎使用html_wechat，这里是新手教程。",
+          data: "微信，是一个生活方式",
           time: dayjs().format("HH:mm"),
         },
         {
@@ -31,14 +30,14 @@ const def = {
           type: constant.MSG_TYPE_TEXT,
           from: constant.MSG_FROM_OPPOSITE,
           data:
-            "一、当你需要添加聊天对象的时候，点击聊天列表右上角的加号，即可添加聊天对象，对象头像需使用网络图片",
+            "超过十亿人使用的手机应用",
           time: dayjs().format("HH:mm"),
         },
         {
           id: 2,
           type: constant.MSG_TYPE_IMG,
           from: constant.MSG_FROM_OPPOSITE,
-          data: require("@/assets/img_guide_1.png"),
+          data: require("@/assets/defaultImageMsg/1.png"),
           time: dayjs().format("HH:mm"),
         },
         {
@@ -46,45 +45,31 @@ const def = {
           type: constant.MSG_TYPE_TEXT,
           from: constant.MSG_FROM_OPPOSITE,
           data:
-            "二、切换身份输入消息，可通过<br/>1. 点击聊天窗口对方用户名切换到对方（快捷键ctrl+o）<br/>2. 点击左上角自己的头像切换到自己（快捷键ctrl+s）<br/>",
+            "支持发送语音短信、视频、图片和文字<br/>支持发送语音短信、视频、图片和文字<br/>支持发送语音短信、视频、图片和文字<br/>",
           time: dayjs().format("HH:mm"),
         },
         {
           id: 4,
           type: constant.MSG_TYPE_IMG,
           from: constant.MSG_FROM_OPPOSITE,
-          data: require("@/assets/img_guide_2.png"),
+          data: require("@/assets/defaultImageMsg/2.png"),
           time: dayjs().format("HH:mm"),
         },
         {
           id: 5,
           type: constant.MSG_TYPE_IMG,
           from: constant.MSG_FROM_OPPOSITE,
-          data: require("@/assets/img_guide_3.png"),
+          data: require("@/assets/defaultImageMsg/3.png"),
           time: dayjs().format("HH:mm"),
         },
         {
           id: 6,
           type: constant.MSG_TYPE_TEXT,
           from: constant.MSG_FROM_OPPOSITE,
-          data: "三、点击消息列表中双方头像可删除对应的消息",
+          data: "可以群聊，仅耗少量流量，适合大部分智能手机",
           time: dayjs().format("HH:mm"),
         },
-        {
-          id: 6,
-          type: constant.MSG_TYPE_TEXT,
-          from: constant.MSG_FROM_OPPOSITE,
-          data:
-            "四、聊天输入框上的按钮只有表情是可用的，其他功能，比如生成语音、视频、文件等气泡请通过右上角更多按钮。",
-          time: dayjs().format("HH:mm"),
-        },
-        {
-          id: 5,
-          type: constant.MSG_TYPE_IMG,
-          from: constant.MSG_FROM_OPPOSITE,
-          data: require("@/assets/img_guide_4.png"),
-          time: dayjs().format("HH:mm"),
-        },
+      
       ],
     },
     {

@@ -116,9 +116,47 @@
       <footer>
         <div class="toolbar">
           <div>
-            <span @click="expressionShow"
-              ><svg-icon name="emoji"></svg-icon
-            ></span>
+            <el-popover
+              placement="top"
+              trigger="manual"
+              width="475"
+              v-model="expressionVisible"
+            >
+              <span
+                @click="expressionVisible = !expressionVisible"
+                slot="reference"
+                ><svg-icon name="emoji"></svg-icon
+              ></span>
+
+              <div class="weui-tab">
+                <div class="weui-tab__panel">
+                  <el-scrollbar style="height: 325px">
+                    <img
+                      class="expression-img"
+                      @click="selExpression(expression)"
+                      v-for="expression in expressions"
+                      :key="expression.index"
+                      :src="expression.img"
+                      alt=""
+                  /></el-scrollbar>
+                </div>
+                <div class="weui-navbar">
+                  <div class="weui-navbar__item">
+                    <img :src="exp1" class="exp-menu" />
+                  </div>
+                  <div class="weui-navbar__item weui-bar__item_on">
+                    <img :src="exp2" class="exp-menu" />
+                  </div>
+                  <div class="weui-navbar__item weui-bar__item_on">
+                    <img :src="exp3" class="exp-menu" />
+                  </div>
+                  <div class="weui-navbar__item weui-bar__item_on">
+                    <img :src="exp4" class="exp-menu" />
+                  </div>
+                </div>
+              </div>
+            </el-popover>
+
             <span><svg-icon name="file"></svg-icon></span>
             <span><svg-icon name="cut"></svg-icon></span>
             <span
@@ -138,7 +176,6 @@
         </div>
       </footer>
 
-      <dialog-expression :event="event_expression"></dialog-expression>
       <dialog-chat-manage :event="chat_manage_event"></dialog-chat-manage
     ></el-main>
     <el-aside width="250" v-if="showMenu">
@@ -227,9 +264,6 @@ import MessageVideoL from "@/components/messages/message_video_l.vue";
 import MessageFile from "@/components/messages/message_file.vue";
 import MessageCallVoice from "@/components/messages/message_call_voice.vue";
 import MessageCallVideo from "@/components/messages/message_call_video.vue";
-
-import DialogExpression from "@/components/dialogs/expression.vue";
-
 import DialogChatManage from "@/components/dialogs/chat_manage.vue";
 
 import Vue from "vue";
@@ -249,7 +283,6 @@ export default Vue.extend({
     MessageFile,
     MessageCallVoice,
     MessageCallVideo,
-    DialogExpression,
   },
   computed: {
     ...mapGetters(["nowChat", "self", "nowUser"]),
@@ -262,24 +295,29 @@ export default Vue.extend({
       event_expression: null,
       chat_manage_event: null,
       avatars: [],
-
+      expressions: (this as any).$expressions,
+      expressionVisible: false,
       value1: true,
       value2: true,
+
+      exp1: require("@/assets/expressionMenu/p0.png"),
+      exp2: require("@/assets/expressionMenu/p3.png"),
+      exp3: require("@/assets/expressionMenu/p1.png"),
+      exp4: require("@/assets/expressionMenu/p2.png"),
     };
   },
 
   created() {
     this.event_expression = new EventEmitter();
     this.chat_manage_event = new EventEmitter();
-    this.event_expression.on("selExpression", this.selExpression);
     let joinIcon = require("@/assets/join.png");
     this.avatars.push({ url: joinIcon, title: "添加" });
     this.avatars.push({ url: this.nowChat.avatar, title: this.nowChat.user });
 
     window.addEventListener("keydown", (e) => {
-      if (e.ctrlKey && e.keyCode == 83) {
+      if ( e.keyCode == 120) {
         this.changeUser(constant.MSG_FROM_SELF);
-      } else if (e.ctrlKey && e.keyCode == 79) {
+      } else if ( e.keyCode == 121) {
         this.changeUser(constant.MSG_FROM_OPPOSITE);
       }
     });
@@ -361,11 +399,10 @@ export default Vue.extend({
       console.log("发送转账消息", msg);
       ipcRenderer.send("open_transfer_window", JSON.stringify(msg));
     },
-    expressionShow() {
-      this.event_expression.emit("open");
-    },
+
     selExpression(expression) {
       this.message = this.message + `[i-${expression.index}]`;
+      this.expressionVisible = false;
     },
     messageTransferHTML(str) {
       let strs = str.split("[i-");
@@ -413,9 +450,26 @@ export default Vue.extend({
 </script>
 
 <style scoped lang="scss">
+.expression-img {
+  cursor: pointer;
+  width: 26px;
+  height: 26px;
+}
+
+.weui-navbar {
+  height: 40px;
+  .weui-navbar__item {
+    padding: 5px 0;
+    .exp-menu {
+      width: 30px;
+      height: 30px;
+    }
+  }
+}
 #chat {
   width: 100%;
   height: 100%;
+
   .frame {
     position: relative;
     padding: 0;

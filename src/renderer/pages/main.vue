@@ -55,7 +55,11 @@
         <setting v-if="currentPannel == 'setting'"></setting>
       </el-main>
     </el-container>
+      <div class="top-tip">
+    <span>当前版本仅供试用</span>
   </div>
+  </div>
+
 </template>
 
 <script lang='ts'>
@@ -122,6 +126,14 @@ export default Vue.extend({
 </script>
 
 <style lang="scss" scoped>
+.top-tip{
+    display: block;
+    position: absolute;
+    top: 0;
+    left: 50%;
+    background-color: red;
+    color: white;
+}
 #main {
   width: 100%;
   height: 100%;

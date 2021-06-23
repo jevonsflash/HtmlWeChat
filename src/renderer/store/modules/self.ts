@@ -32,7 +32,7 @@ const state = store.get('data', def)
 
 const mutations = {
  
-  changeAvatar: (state, data:UserInfo) => {
+  updateSelf: (state, data:UserInfo) => {
     state.self.avatar = data.avatar
     state.self.name = data.name
     state.self.desc = data.desc
