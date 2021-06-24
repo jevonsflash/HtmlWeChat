@@ -9,7 +9,7 @@ const Conf = require('conf');
 
 
 const def = {
-  contacts: [
+  group: [
     {
       name: "小珂",
       desc: "这是小柯的空间",
@@ -82,7 +82,7 @@ const def = {
 
 var opts = {
   cwd: defaultCwd,
-  configName: 'contacts_config'
+  configName: 'group_config'
 
 };
 const store = new Conf(opts);
@@ -93,26 +93,26 @@ const mutations = {
  
   updateGroup: (state, data:UserInfo) => {
     console.log("更换头像")
-    let contact_index = state.contacts.findIndex((contact) => {
+    let contact_index = state.group.findIndex((contact) => {
       return contact.wechatId == data.wechatId
     })
-    state.contacts[contact_index].avatar = data.avatar
-    state.contacts[contact_index].name = data.name
-    state.contacts[contact_index].desc = data.desc
-    state.contacts[contact_index].remarkName = data.remarkName
-    state.contacts[contact_index].region = data.region
-    state.contacts[contact_index].sex = data.sex
+    state.group[contact_index].avatar = data.avatar
+    state.group[contact_index].name = data.name
+    state.group[contact_index].desc = data.desc
+    state.group[contact_index].remarkName = data.remarkName
+    state.group[contact_index].region = data.region
+    state.group[contact_index].sex = data.sex
   },
 
 
   pushGroup: (state, contact:UserInfo) => {
-    state.contacts.push(contact)
+    state.group.push(contact)
   },
   delGroup: (state, id) => {
-    let contact_index = state.contacts.findIndex((contact) => {
+    let contact_index = state.group.findIndex((contact) => {
       return contact.id == id
     })
-    state.contacts.splice(contact_index, 1)
+    state.group.splice(contact_index, 1)
   },
   close: (state) => {
     store.set("data", state)
@@ -126,7 +126,7 @@ const mutations = {
 
 
 const getters = {
-  contacts: (state) => state.contacts,
+  group: (state) => state.group,
 
 }
 

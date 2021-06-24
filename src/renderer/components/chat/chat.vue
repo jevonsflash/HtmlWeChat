@@ -267,7 +267,6 @@ import MessageCallVideo from "@/components/messages/message_call_video.vue";
 import DialogChatManage from "@/components/dialogs/chat_manage.vue";
 
 import Vue from "vue";
-import { nextTick } from "vue/types/umd";
 
 export default Vue.extend({
   components: {

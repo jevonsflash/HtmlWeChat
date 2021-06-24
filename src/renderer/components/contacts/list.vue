@@ -9,7 +9,7 @@
         <svg-icon name="user" @click="addContact"></svg-icon>
       </div>
     </header>
-    <overlay-scrollbars :options="osComponentOptions" class="list-container">
+    <el-scrollbar class="list-container">
       <el-row>
         <el-col :span="24" v-for="(contact, index) in contacts" :key="index">
           <div
@@ -23,9 +23,10 @@
             <context-menu
               ref="contactContextMenu"
               :context-menu-show.sync="contextShow"
+              :context="contact"
               :config="contextConfig"
-              @edit="edit(contact)"
-              @remove="remove(contact)"
+              @edit="edit"
+              @remove="remove"
             >
             </context-menu>
 
@@ -38,7 +39,7 @@
           </div></el-col
         >
       </el-row>
-    </overlay-scrollbars>
+    </el-scrollbar>
     <dialog-add-contact :event="add_contact_event"></dialog-add-contact>
     <dialog-change-info
       :event="edit_contact_event"
@@ -69,6 +70,16 @@ export default Vue.extend({
     ...mapGetters(["contacts"]),
     ...mapGetters(["group"]),
   },
+
+watch:{
+nowContact:function(v){
+  console.log("aaaa"+v)
+  console.log(v)
+  console.log("bbbb"+v)
+}
+
+},
+
   data() {
     return {
       add_contact_event: null,
@@ -106,14 +117,12 @@ export default Vue.extend({
     this.nowContact = Enumerable.from(this.contacts).firstOrDefault();
   },
   methods: {
-    edit(row) {
-      console.log("edit id:" + row.name);
-      this.nowContact = row;
+    edit() {
       this.contextShow = false;
       this.edit_contact_event.emit("open");
     },
-    remove(row) {
-      console.log("edit id:" + row.name);
+    remove() {
+      
     },
 
     changeContact(msg) {

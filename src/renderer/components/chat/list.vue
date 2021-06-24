@@ -10,7 +10,7 @@
       </div>
     </header>
 
-    <overlay-scrollbars :options="osComponentOptions" class="list-container">
+    <el-scrollbar class="list-container">
       <el-row>
         <el-col :span="24" v-for="(chat, index) in chats" :key="index">
           <div
@@ -40,7 +40,7 @@
             </div>
           </div></el-col
         >
-      </el-row></overlay-scrollbars
+      </el-row></el-scrollbar
     >
 
     <dialog-add-chat :event="add_chat_event"></dialog-add-chat>
