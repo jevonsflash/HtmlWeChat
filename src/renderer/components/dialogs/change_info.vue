@@ -1,5 +1,5 @@
 <template>
-  <div id="dialog_chang_avatar" v-if="msg!=undefined">
+  <div id="dialog_chang_avatar" v-if="msg != undefined">
     <el-dialog title="修改好友资料" :visible="visible" @close="rowDialogClose">
       <el-form ref="form" :model="msg" style="width: 100%">
         <el-form-item class="el_avatar" label="我的头像" prop="avatar">
@@ -45,17 +45,19 @@ export default {
   data() {
     return {
       visible: false,
-      msg:undefined
+      msg: undefined,
     };
   },
-  watch:{
+  watch: {
     name: function (value) {
-      console.log(value)
-    }
+      console.log(value);
+    },
   },
-
+  computed: {
+    ...mapGetters(["contacts"]),
+  },
   methods: {
-    ...mapMutations(["updateContact","getContact"]),
+    ...mapMutations(["updateContact"]),
     rowDialogClose() {
       this.visible = false;
     },
@@ -63,14 +65,16 @@ export default {
       try {
         await this.$refs.form.validate();
         this.updateContact(this.msg);
-    
       } catch (err) {}
     },
     open() {
       this.visible = true;
-      this.msg= this.getUserInfo(this.name)
-      console.info(this.msg)
+      let contact_index = this.contacts.findIndex((contact) => {
+        return contact.name == this.name;
+      });
 
+      this.msg = this.contacts[contact_index];
+      console.info(this.msg);
     },
     async selfAvatarUP(req) {
       try {

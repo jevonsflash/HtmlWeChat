@@ -3,22 +3,20 @@
     <contacts-header class="header" style="-webkit-app-region: drag">
     </contacts-header>
     <div class="main-frame">
-      <div>
+      <span>
         <el-row>
           <el-col :span="12">
             <el-row>
               <el-col :span="24">
                 <el-container direction="horizontal">
-                  <span class="page__title" style="text-align: left, font-size:40px">{{
-                    msg.name
-                  }}</span>
+                  <span class="header-title">{{ msg.name }}</span>
 
                   <el-avatar :size="20" :src="getAvatarUrl" /></el-container
               ></el-col>
             </el-row>
             <el-row>
               <el-col :span="24">
-                <span class="page__desc" style="text-align: left">{{
+                <span class="header-desc" style="text-align: left">{{
                   msg.desc
                 }}</span>
               </el-col>
@@ -33,7 +31,9 @@
             ></el-avatar>
           </el-col>
         </el-row>
-      </div>
+      </span>
+      <el-divider></el-divider>
+      <span>
       <div class="weui-form-preview__bd">
         <div class="weui-form-preview__item">
           <label class="weui-form-preview__label">备注</label>
@@ -48,9 +48,12 @@
           <span class="weui-form-preview__value">{{ msg.wechatId }}</span>
         </div>
       </div>
-      <div class="weui-form-preview__ft">
+      </span>
+      <el-divider></el-divider>
+
+      <span>
         <a class="weui-btn weui-btn_primary">发消息</a>
-      </div>
+      </span>
     </div>
   </div>
 </template>
@@ -67,9 +70,10 @@ export default Vue.extend({
   props: ["msg"],
   computed: {
     getAvatarUrl() {
-      let result= this.msg.sex == "男"
-        ? require("@/assets/male.png")
-        : require("@/assets/female.png");
+      let result =
+        this.msg.sex == "男"
+          ? require("@/assets/male.png")
+          : require("@/assets/female.png");
 
       return result;
     },
@@ -90,8 +94,22 @@ export default Vue.extend({
   background-color: #f5f5f5;
   display: flex;
   flex-direction: column;
+  .header-title {
+    
+      text-align: left;
+      font-size: 20px;
+    
+  }
+  .header-desc{
+       text-align: left;
+      font-size: 14px;
+          color: rgba(0,0,0,0.5);
+  }
+  .avatar {
+    float: right;
+  }
   .main-frame {
-        width: 350px;
+    width: 350px;
     margin: 30px auto 0 auto;
     background-color: #f5f5f5;
   }

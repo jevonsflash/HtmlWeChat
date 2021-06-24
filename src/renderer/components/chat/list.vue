@@ -18,17 +18,7 @@
             @contextmenu.prevent="onContextMenu"
             :class="{ active: nowChat && nowChat.id == chat.id, item: true }"
           >
-            <context-menu
-              ref="chatContextMenu"
-              :context-menu-show.sync="contextShow"
-              :config="contextConfig"
-              @onTop="onTop"
-              @setUnread="setUnread"
-              @noBother="noBother"
-              @disable="disable"
-              @removeChat="removeChat(chat.id)"
-            >
-            </context-menu>
+          
 
             <img :src="chat.avatar" />
             <div class="meta">
@@ -38,7 +28,21 @@
               </div>
               <div class="last_msg">{{ msgContentText(getLastMsg(chat)) }}</div>
             </div>
-          </div></el-col
+          </div>
+          
+            <context-menu
+              ref="chatContextMenu"
+              :context-menu-show.sync="contextShow"
+              :config="contextConfig"
+              @onTop="onTop"
+              @setUnread="setUnread"
+              @noBother="noBother"
+              @disable="disable"
+              @removeChat="removeChat"
+            >
+            </context-menu>
+          
+          </el-col
         >
       </el-row></el-scrollbar
     >
@@ -122,9 +126,8 @@ export default Vue.extend({
     disable() {
       console.log("disable");
     },
-    removeChat(id) {
-      console.log("removeChat id:"+id);
-      this.delChat(id);
+    removeChat() {
+      this.delChat(this.nowChat.id);
       this.contextShow = false;
     },
 

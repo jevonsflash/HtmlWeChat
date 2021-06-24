@@ -20,7 +20,16 @@
               item: true,
             }"
           >
-            <context-menu
+           
+
+            <img :src="contact.avatar" />
+            <div class="meta">
+              <div class="top">
+                <span class="name">{{ contact.name }}</span>
+              </div>
+            </div>
+          </div>
+           <context-menu
               ref="contactContextMenu"
               :context-menu-show.sync="contextShow"
               :context="contact"
@@ -29,14 +38,8 @@
               @remove="remove"
             >
             </context-menu>
-
-            <img :src="contact.avatar" />
-            <div class="meta">
-              <div class="top">
-                <span class="name">{{ contact.name }}</span>
-              </div>
-            </div>
-          </div></el-col
+          
+          </el-col
         >
       </el-row>
     </el-scrollbar>
@@ -71,14 +74,6 @@ export default Vue.extend({
     ...mapGetters(["group"]),
   },
 
-watch:{
-nowContact:function(v){
-  console.log("aaaa"+v)
-  console.log(v)
-  console.log("bbbb"+v)
-}
-
-},
 
   data() {
     return {
@@ -114,7 +109,7 @@ nowContact:function(v){
   created() {
     this.add_contact_event = new EventEmitter();
     this.edit_contact_event = new EventEmitter();
-    this.nowContact = Enumerable.from(this.contacts).firstOrDefault();
+    this.changeContact(Enumerable.from(this.contacts).firstOrDefault());
   },
   methods: {
     edit() {

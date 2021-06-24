@@ -104,13 +104,6 @@ const mutations = {
     state.contacts[contact_index].sex = data.sex
   },
 
-  getContact(state, name:string){
-    let contact_index = state.contacts.findIndex((contact) => {
-      return contact.name == name
-    })
-    return state.contacts[contact_index];
-  },
-
   pushContact: (state, contact:UserInfo) => {
     state.contacts.push(contact)
   },

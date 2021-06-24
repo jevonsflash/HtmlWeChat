@@ -59,7 +59,6 @@ export default {
       this.$emit("update:contextMenuShow", false);
     },
     handleClick(item) {
-      console.log(this.context)
       item.emitType && this.$emit(item.emitType);
     },
   },
