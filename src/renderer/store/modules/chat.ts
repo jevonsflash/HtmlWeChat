@@ -5,126 +5,41 @@ import electron from 'electron';
 const ipcRenderer = require("electron").ipcRenderer
 import { Message } from "element-ui"
 import Vue from "vue"
-import { GlobalEvent ,defaultCwd} from '@/constant.ts'
+import { GlobalEvent, defaultCwd } from '@/constant.ts'
 import constant from '@/constant.ts'
+const path = require('path');
 
 const Conf = require('conf');
-
+const fs = require('fs')
+const defaultMsg = {
+  id: 0,
+  type: constant.MSG_TYPE_TEXT,
+  from: constant.MSG_FROM_OPPOSITE,
+  data: "微信，是一个生活方式",
+  time: dayjs().format("HH:mm"),
+}
 const def = {
 
   chats: [
     {
       id: 0,
-      user: "新手入门",
+      user: "小珂",
+      desc: "这是小柯的空间",
+      region: "广东 广州",
+      wechatId: "wxid-0123546516",
+      sex: "男",
       avatar: require("@/assets/defaultAvatars/1.png"),
-      msgs: [
-        {
-          id: 0,
-          type: constant.MSG_TYPE_TEXT,
-          from: constant.MSG_FROM_OPPOSITE,
-          data: "微信，是一个生活方式",
-          time: dayjs().format("HH:mm"),
-        },
-        {
-          id: 1,
-          type: constant.MSG_TYPE_TEXT,
-          from: constant.MSG_FROM_OPPOSITE,
-          data:
-            "超过十亿人使用的手机应用",
-          time: dayjs().format("HH:mm"),
-        },
-        {
-          id: 2,
-          type: constant.MSG_TYPE_IMG,
-          from: constant.MSG_FROM_OPPOSITE,
-          data: require("@/assets/defaultImageMsg/1.png"),
-          time: dayjs().format("HH:mm"),
-        },
-        {
-          id: 3,
-          type: constant.MSG_TYPE_TEXT,
-          from: constant.MSG_FROM_OPPOSITE,
-          data:
-            "支持发送语音短信、视频、图片和文字<br/>支持发送语音短信、视频、图片和文字<br/>支持发送语音短信、视频、图片和文字<br/>",
-          time: dayjs().format("HH:mm"),
-        },
-        {
-          id: 4,
-          type: constant.MSG_TYPE_IMG,
-          from: constant.MSG_FROM_OPPOSITE,
-          data: require("@/assets/defaultImageMsg/2.png"),
-          time: dayjs().format("HH:mm"),
-        },
-        {
-          id: 5,
-          type: constant.MSG_TYPE_IMG,
-          from: constant.MSG_FROM_OPPOSITE,
-          data: require("@/assets/defaultImageMsg/3.png"),
-          time: dayjs().format("HH:mm"),
-        },
-        {
-          id: 6,
-          type: constant.MSG_TYPE_TEXT,
-          from: constant.MSG_FROM_OPPOSITE,
-          data: "可以群聊，仅耗少量流量，适合大部分智能手机",
-          time: dayjs().format("HH:mm"),
-        },
-      
-      ],
+      msgs: [defaultMsg],
     },
     {
       id: 1,
       user: "文件传输助手",
+      desc: "这是文件传输助手",
+      region: "广东 广州",
+      wechatId: "wxid-0123546517",
+      sex: "男",
       avatar: require("@/assets/img_assistant.png"),
-      msgs: [
-        {
-          id: 0,
-          type: constant.MSG_TYPE_FILE,
-          from: constant.MSG_FROM_OPPOSITE,
-          data: {
-            file_type: constant.FILE_TYPE_WORD,
-            name: "新建文本文档.doc",
-            size: "26kb",
-          },
-          time: dayjs().format("HH:mm"),
-        },
-        {
-          id: 1,
-          type: constant.MSG_TYPE_VOICE_CALL,
-          from: constant.MSG_FROM_OPPOSITE,
-          data: {
-            len: "00:45",
-          },
-          time: dayjs().format("HH:mm"),
-        },
-        {
-          id: 2,
-          type: constant.MSG_TYPE_VOICE_CALL,
-          from: constant.MSG_FROM_SELF,
-          data: {
-            len: "00:14",
-          },
-          time: dayjs().format("HH:mm"),
-        },
-        {
-          id: 3,
-          type: constant.MSG_TYPE_VIDEO_CALL,
-          from: constant.MSG_FROM_SELF,
-          data: {
-            len: "00:14",
-          },
-          time: dayjs().format("HH:mm"),
-        },
-        {
-          id: 4,
-          type: constant.MSG_TYPE_VIDEO_CALL,
-          from: constant.MSG_FROM_OPPOSITE,
-          data: {
-            len: "00:14",
-          },
-          time: dayjs().format("HH:mm"),
-        },
-      ],
+      msgs: [defaultMsg],
     },
   ],
   _nowChat: null,
@@ -139,53 +54,135 @@ var opts = {
 
 const store = new Conf(opts);
 const state = store.get('data', def)
-// const state = def
-state._nowChat = state.chats[0]
+
+
+const getChat: Function = (state, id) => {
+  var currentChat = state.chats.find((it) => it.id == id);
+  return currentChat;
+}
+
+const getChatByName: Function = (state, name) => {
+  var currentChat = state.chats.find((it) => it.name == name);
+  return currentChat;
+}
+
+const getChatConfStore: Function = (state, id) => {
+  var currentChat = getChat(state, id);
+  if (currentChat != null) {
+    var currentChatConfigOpts = {
+      cwd: path.join(defaultCwd, "chat"),
+      configName: currentChat.user
+
+    };
+    let currentChatstore = new Conf(currentChatConfigOpts);
+    return currentChatstore;
+  }
+  else { return null; }
+}
+
+
+const getChatConfStoreByName: Function = (state, name) => {
+  var currentChat = getChatByName(state, name);
+  if (currentChat != null) {
+    var currentChatConfigOpts = {
+      cwd: path.join(defaultCwd, "chat"),
+      configName: currentChat.user
+
+    };
+    let currentChatstore = new Conf(currentChatConfigOpts);
+    return currentChatstore;
+  }
+  else { return null; }
+}
 
 const mutations = {
   changeChat: (state, id) => {
-    state._nowChat = state.chats.find((it) => it.id == id)
-  },
-  changeNowChatInfo: (state, chat) => {
-    if (state._nowChat) {
-      state._nowChat.user = chat.user
-      state._nowChat.avatar = chat.avatar
-      state._nowChat = state._nowChat
-    } else {
-      state.chats[0].user = chat.user
-      state.chats[0].avatar = chat.avatar
-      state.chats = state.chats
-    }
-  },
-  pushMessage: (state, msg) => {
-    for (let i = 0; i < state.chats.length; i++) {
-      let chat = state.chats[i]
-      if (chat.id == msg.chat_id) {
-        chat.msgs.push(msg)
+    let currentChat = getChat(state, id);
+    let currentChatstore = getChatConfStore(state, id);
+    let currentChatPayload = currentChatstore.get('data', null)
+    if (currentChatPayload == null) {
+
+      let a = {
+        id: currentChat.id,
+        user: currentChat.user,
+        desc: currentChat.desc,
+        region: currentChat.region,
+        wechatId: currentChat.wechatId,
+        sex: currentChat.sex,
+        avatar: currentChat.avatar,
+        msgs: [defaultMsg]
       }
+      currentChat.msgs.push(defaultMsg)
+
+      currentChatstore.set("data", a)
+    }
+    state._nowChat = currentChatPayload;
+  },
+
+  pushMessage: (state, msg) => {
+    let currentChat = getChat(state, msg.chat_id);
+    let currentChatstore = getChatConfStore(state, msg.chat_id);
+    let currentChatPayload = currentChatstore.get('data', null)
+    if (currentChatPayload == null) {
+
+      let a = {
+        id: currentChat.id,
+        user: currentChat.user,
+        desc: currentChat.desc,
+        region: currentChat.region,
+        wechatId: currentChat.wechatId,
+        sex: currentChat.sex,
+        avatar: currentChat.avatar,
+        msgs: [defaultMsg]
+      }
+      currentChat.msgs.push(defaultMsg)
+      currentChatstore.set("data", a)
+    }
+    currentChatPayload.msgs.push(msg);
+    currentChatstore.set("data", currentChatPayload)
+    currentChat.msgs = [];
+    currentChat.msgs.push(msg)
+    if (state._nowChat.id == msg.chat_id) {
+      state._nowChat.msgs.push(msg);
+
     }
     GlobalEvent.emit("pubmsg")
   },
-  delMsg: (state, id) => {
-    let nowChat = state._nowChat || state.chats[0]
-    nowChat.msgs = nowChat.msgs.filter((msg) => {
-      return msg.id != id
-    })
-  },
+
+
+
   changeNowUser: (state, nowUser) => {
     state.nowUser = nowUser
   },
   pushChat: (state, chat) => {
+    let currentChatstore = getChatConfStoreByName(state, chat.user);
+    if (currentChatstore != null) {
+      let currentChatPayload = currentChatstore.get('data', null)
+      if (currentChatPayload != null) {
+        chat.msgs = currentChatPayload.msgs;
+        currentChatPayload.id = chat.id
+        currentChatstore.set("data", currentChatPayload)
+      }
+    }
     state.chats.push(chat)
   },
   delChat: (state, id) => {
-    console.log('delChat2')
     let chat_index = state.chats.findIndex((chat) => {
       return chat.id == id
     })
-    state.chats.splice(chat_index, 1)
+
+    if (chat_index != -1) {
+      let currentChatstore = getChatConfStore(state, id);
+      let currentChatPayload = currentChatstore.get('data', null)
+      if (currentChatPayload != null) {
+        let file = path.join(defaultCwd, "chat", state.chats[chat_index].user + ".json");
+        fs.rm(file);
+      }
+      state.chats.splice(chat_index, 1)
+    }
   },
   close: (state) => {
+    state._nowChat = null;
     store.set("data", state)
     setTimeout(() => {
       ipcRenderer.send("window-close")
@@ -196,12 +193,7 @@ const mutations = {
 
 const getters = {
   chats: (state) => state.chats,
-  nowChat: (state) => {
-    if (!state._nowChat) {
-      state._nowChat = state.chats[0] || {}
-    }
-    return state._nowChat
-  },
+  nowChat: (state) => state._nowChat,
   nowUser: (state) => state.nowUser,
 }
 

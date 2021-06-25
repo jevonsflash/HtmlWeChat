@@ -1,11 +1,7 @@
 <template>
   <div id="nav">
     <div class="avatar">
-      <img
-        @click="editSelf()"
-        :src="self.avatar"
-        alt=""
-      />
+      <img @click="editSelf()" :src="self.avatar" alt="" />
     </div>
 
     <div>
@@ -57,7 +53,7 @@
         </el-row>
       </div>
     </div>
-      <dialog-change-self-info
+    <dialog-change-self-info
       :event="edit_contact_event"
       :msg="self"
     ></dialog-change-self-info>
@@ -72,7 +68,7 @@ import { Message } from "element-ui";
 import { mapGetters, mapMutations } from "vuex";
 import Vue from "vue";
 export default Vue.extend({
-    components: {
+  components: {
     DialogChangeSelfInfo,
   },
   computed: {
@@ -135,15 +131,15 @@ export default Vue.extend({
   },
 
   created() {
+    this.$globalEvent.on("switch-pannel", this.switchPannel);
+
     this.chat_manage_event = new EventEmitter();
-        this.edit_contact_event = new EventEmitter();
-
-
+    this.edit_contact_event = new EventEmitter();
   },
   methods: {
     goTo(page) {
       console.log("goto" + page);
-      this.$emit('goto',page)
+      this.$emit("goto", page);
     },
     changeImgSrc(event, isEnter) {
       var element = undefined;
@@ -160,11 +156,9 @@ export default Vue.extend({
       console.log(pannel);
     },
 
-    editSelf(){
+    editSelf() {
       this.edit_contact_event.emit("open");
-
-    }
-
+    },
   },
 });
 </script>

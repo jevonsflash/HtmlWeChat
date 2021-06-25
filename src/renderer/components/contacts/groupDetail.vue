@@ -7,32 +7,33 @@
     >
     </contacts-header>
     <div class="main-frame">
-      <div class="grid">
-        <div v-for="(item, index) of msg.member" :key="index">
-          <el-popover
-            placement="bottom"
-            title="标题"
-            width="200"
-            trigger="click"
-            content="这是一段内容,这是一段内容,这是一段内容,这是一段内容。"
-          >
-            <div class="block" slot="reference">
-              <el-avatar :size="50"  class="avatar"
-               shape="square"
-              :src="item.avatar"></el-avatar>
-              <span class="title">{{ item.name }}</span>
+      <el-container style="height: 100%">
+        <el-main>
+          <div class="grid">
+            <div v-for="(item, index) of msg.member" :key="index">
+              <el-popover placement="bottom" width="300" trigger="click">
+                <contact-detail :msg="item"></contact-detail>
+                <div class="block" slot="reference">
+                  <el-avatar
+                    :size="50"
+                    class="avatar"
+                    shape="square"
+                    :src="item.avatar"
+                  ></el-avatar>
+                  <span class="title">{{ item.name }}</span>
+                </div>
+              </el-popover>
             </div>
-          </el-popover>
-        </div>
-      </div>
-      <span>
-        <a class="weui-btn weui-btn_primary">发消息</a>
-      </span>
+          </div></el-main
+        >
+        <el-footer><a class="weui-btn weui-btn_primary">发消息</a></el-footer>
+      </el-container>
     </div>
   </div>
 </template>
 <script lang='ts'>
 import ContactsHeader from "@/components/contacts/contacts_header.vue";
+import ContactDetail from "@/components/dialogs/contact_detail.vue";
 import EventEmitter from "eventemitter3";
 import { mapGetters, mapMutations } from "vuex";
 import Vue from "vue";
@@ -40,6 +41,7 @@ import Vue from "vue";
 export default Vue.extend({
   components: {
     ContactsHeader,
+    ContactDetail,
   },
   props: ["msg"],
   computed: {
@@ -70,9 +72,10 @@ export default Vue.extend({
   flex-direction: column;
 
   .main-frame {
-    
-    margin: 15px 70px;
+    padding: 15px 70px;
     background-color: #f5f5f5;
+    height: 100%;
+    overflow: hidden;
   }
 
   .header {
@@ -82,7 +85,7 @@ export default Vue.extend({
   .grid {
     position: relative;
     display: grid;
-    width:100%;
+    width: 100%;
     grid-template-columns: repeat(auto-fill, 80px);
 
     .title {
@@ -98,7 +101,7 @@ export default Vue.extend({
       flex-direction: column;
       flex-grow: 0;
     }
-    .avatar{
+    .avatar {
       margin-top: 13px;
       margin: 0 auto;
     }

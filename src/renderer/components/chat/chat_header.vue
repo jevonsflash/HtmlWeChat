@@ -1,7 +1,7 @@
 <template>
   <div id="chat_header">
     <div class="name" style="-webkit-app-region: no-drag">
-      <div @click="changeUser(constant.MSG_FROM_OPPOSITE)">
+      <div>
         {{ nowChat.user }}
       </div>
     </div>
@@ -40,20 +40,6 @@ import Vue from "vue";
 export default HeaderVue.extend({
   computed: {
     ...mapGetters(["nowChat"]),
-  },
-
-
-  methods: {
-    ...mapMutations(["changeNowUser"]),
-  
-    changeUser(user) {
-      this.changeNowUser(user);
-      if (user == constant.MSG_FROM_SELF) {
-        Message.success(`已切换为自己`);
-      } else {
-        Message.success(`已切换为对方`);
-      }
-    },
   },
 });
 </script>
