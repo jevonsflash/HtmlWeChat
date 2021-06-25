@@ -5,7 +5,13 @@
         <list @onChangeContact="onChangeContact"></list>
       </el-aside>
       <el-main style="padding: 0">
-        <detail :msg="currentMsg"></detail>
+        <detail v-if="type == 'contact'" :msg="currentMsg"></detail>
+        <gzh-detail v-else-if="type == 'gzh'" :msg="currentMsg"></gzh-detail>
+        <group-detail
+          v-else-if="type == 'group'"
+          :msg="currentMsg"
+        ></group-detail>
+        <new-friend v-else-if="type == 'newFriend'" :msg="currentMsg"></new-friend>
       </el-main>
     </el-container>
   </div>
@@ -15,20 +21,29 @@
 import Vue from "vue";
 import List from "./list.vue";
 import Detail from "./detail.vue";
+import GzhDetail from "./gzhDetail.vue";
+import GroupDetail from "./groupDetail.vue";
+import NewFriend from "./newFriend.vue";
+
 export default Vue.extend({
   components: {
     List,
     Detail,
+    GroupDetail,
+    GzhDetail,
+    NewFriend,
   },
 
   data() {
     return {
+      type: null,
       currentMsg: null,
     };
   },
   methods: {
-    onChangeContact(msg) {
+    onChangeContact(msg, type) {
       this.currentMsg = msg;
+      this.type = type;
     },
   },
 });

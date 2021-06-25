@@ -1,5 +1,5 @@
 <template>
-  <div id="dialog_chang_avatar">
+  <div id="dialog_chang_avatar" v-if="msg!=null">
     <el-dialog title="修改我的资料" :visible="visible" @close="rowDialogClose">
       <el-form ref="form" :model="msg" style="width: 100%">
         <el-form-item class="el_avatar" label="我的头像" prop="avatar">
@@ -48,7 +48,7 @@ export default {
   data() {
     return {
       visible: false,
-      msg:undefined,
+      msg:null,
     };
   },
   computed: {

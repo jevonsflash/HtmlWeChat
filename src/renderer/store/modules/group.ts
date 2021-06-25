@@ -5,17 +5,19 @@ import { Message } from "element-ui"
 import Vue from "vue"
 import { GlobalEvent, defaultCwd } from '@/constant.ts'
 import UserInfo from "@/model/userInfo";
+import GroupInfo from "@/model/groupInfo";
 const Conf = require('conf');
 
 
 const def = {
   group: [
     {
+      id: "测试群",
       name: "测试群",
-      remark: "测试群",
-      notice: "测试群",
-      myname: "测试群",
 
+      notice: "测试群",
+      myName: "测试群",
+      remarkName: "群聊备注",
       member: [{
         name: "小珂",
         desc: "这是小柯的空间",
@@ -81,10 +83,32 @@ const def = {
         avatar: require("@/assets/defaultAvatars/9.png"),
       }]
 
+    },
+    {
+      id: "测试群2",
+      name: "测试群2",
+
+      notice: "测试群2",
+      myName: "测试群2",
+      member: [{
+        name: "小珂",
+        desc: "这是小柯的空间",
+        region: "广东 广州",
+        wechatId: "wxid-0123546516",
+        sex: "男",
+        avatar: require("@/assets/defaultAvatars/2.png"),
+      },
+      {
+        name: "强哥",
+        desc: "阿里巴巴集团首席风险官（CRO）",
+        region: "广东 广州",
+        wechatId: "wxid-0123546516",
+        sex: "男",
+        avatar: require("@/assets/defaultAvatars/3.png"),
+      },
+      ]
+
     }
-
-
-
 
   ]
 }
@@ -100,28 +124,44 @@ const state = store.get('data', def)
 
 const mutations = {
 
-  updateGroup: (state, data: UserInfo) => {
+  updateGroup: (state, data: GroupInfo) => {
     console.log("更换头像")
-    let contact_index = state.group.findIndex((contact) => {
-      return contact.wechatId == data.wechatId
+    let group_index = state.group.findIndex((group) => {
+      return group.id == data.id
     })
-    state.group[contact_index].avatar = data.avatar
-    state.group[contact_index].name = data.name
-    state.group[contact_index].desc = data.desc
-    state.group[contact_index].remarkName = data.remarkName
-    state.group[contact_index].region = data.region
-    state.group[contact_index].sex = data.sex
+    state.group[group_index].name = data.name
+    state.group[group_index].myName = data.myName
+    state.group[group_index].notice = data.notice
+    state.group[group_index].remarkName = data.remarkName
   },
 
+  pushGroupMember: (state, data:{id:string, member: UserInfo}) => {
+    let group_index = state.group.findIndex((group) => {
+      return group.id == data.id
+    })
+    state.group[group_index].member.push(data.member)
+  },
 
-  pushGroup: (state, contact: UserInfo) => {
-    state.group.push(contact)
+  delGroupMember: (state,  data:{id:string, name: string}) => {
+    let group_index = state.group.findIndex((group) => {
+      return group.id == data.id
+    })
+
+    let member_index = state.group[group_index].member.findIndex((member) => {
+      return member.name == data.name
+    })
+    state.group[group_index].member.splice(member_index, 1)
+  },
+
+  pushGroup: (state, group: GroupInfo) => {
+    group.id = state.group.lenth;
+    state.group.push(group)
   },
   delGroup: (state, id) => {
-    let contact_index = state.group.findIndex((contact) => {
-      return contact.id == id
+    let group_index = state.group.findIndex((group) => {
+      return group.id == id
     })
-    state.group.splice(contact_index, 1)
+    state.group.splice(group_index, 1)
   },
   close: (state) => {
     store.set("data", state)

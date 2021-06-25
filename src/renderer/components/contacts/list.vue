@@ -11,25 +11,86 @@
     </header>
     <el-scrollbar class="list-container">
       <el-row>
-        <el-col :span="24" v-for="(contact, index) in contacts" :key="index">
-          <div
-            @click="changeContact(contact)"
-            @contextmenu.prevent="onContextMenu"
-            :class="{
-              active: nowContact && nowContact.name == contact.name,
-              item: true,
-            }"
-          >
-           
+        <el-col :span="24">
+          <el-divider></el-divider>
 
-            <img :src="contact.avatar" />
-            <div class="meta">
-              <div class="top">
-                <span class="name">{{ contact.name }}</span>
+          <span class="list-title">{{ newFriendContract.name }}</span>
+
+          <span>
+            <div
+              @click="changeContact(newFriendContract,'newFriend')"
+              @contextmenu.prevent="onContextMenu"
+              :class="{
+                active: nowContact && nowContact.name == newFriendContract.name,
+                item: true,
+              }"
+            >
+              <img :src="newFriendContract.avatar" />
+              <div class="meta">
+                <div class="top">
+                  <span class="name">{{ newFriendContract.name }}</span>
+                </div>
               </div>
             </div>
-          </div>
-           <context-menu
+            <context-menu
+              :context-menu-show.sync="contextShow"
+              :config="contextConfig"
+              @edit="edit"
+              @remove="remove"
+            >
+            </context-menu>
+          </span>
+        </el-col>
+        <el-col :span="24">
+          <el-divider></el-divider>
+
+          <span class="list-title">{{ gzhContract.name }}</span>
+
+          <span>
+            <div
+              @click="changeContact(gzhContract,'gzh')"
+              @contextmenu.prevent="onContextMenu"
+              :class="{
+                active: nowContact && nowContact.name == gzhContract.name,
+                item: true,
+              }"
+            >
+              <img :src="gzhContract.avatar" />
+              <div class="meta">
+                <div class="top">
+                  <span class="name">{{ gzhContract.name }}</span>
+                </div>
+              </div>
+            </div>
+            <context-menu
+              :context-menu-show.sync="contextShow"
+              :config="contextConfig"
+              @edit="edit"
+              @remove="remove"
+            >
+            </context-menu>
+          </span>
+        </el-col>
+        <el-col :span="24" v-for="(contact, index) in contacts" :key="index">
+          <el-divider v-if="index == 0"></el-divider>
+          <span v-if="index == 0" class="list-title">朋友</span>
+          <span>
+            <div
+              @click="changeContact(contact,'contact')"
+              @contextmenu.prevent="onContextMenu"
+              :class="{
+                active: nowContact && nowContact.name == contact.name,
+                item: true,
+              }"
+            >
+              <img :src="contact.avatar" />
+              <div class="meta">
+                <div class="top">
+                  <span class="name">{{ contact.name }}</span>
+                </div>
+              </div>
+            </div>
+            <context-menu
               ref="contactContextMenu"
               :context-menu-show.sync="contextShow"
               :context="contact"
@@ -38,9 +99,46 @@
               @remove="remove"
             >
             </context-menu>
-          
-          </el-col
-        >
+          </span>
+        </el-col>
+        <el-col :span="24" v-for="(group, index) in group" :key="group.id">
+          <span v-if="index == 0" class="list-title">群聊</span>
+          <el-divider v-if="index == 0"></el-divider>
+
+          <span>
+            <div
+              @click="changeContact(group,'group')"
+              @contextmenu.prevent="onContextMenu"
+              :class="{
+                active: nowContact && nowContact.name == group.name,
+                item: true,
+              }"
+            >
+              <div class="grid">
+                <img
+                  v-for="(member, index) in group.member"
+                  :key="index"
+                  class="block"
+                  :src="member.avatar"
+                />
+              </div>
+
+              <div class="meta">
+                <div class="top">
+                  <span class="name">{{ group.name }}</span>
+                </div>
+              </div>
+            </div>
+            <context-menu
+              :context-menu-show.sync="contextShow"
+              :context="group"
+              :config="contextConfig"
+              @edit="edit"
+              @remove="remove"
+            >
+            </context-menu>
+          </span>
+        </el-col>
       </el-row>
     </el-scrollbar>
     <dialog-add-contact :event="add_contact_event"></dialog-add-contact>
@@ -74,9 +172,16 @@ export default Vue.extend({
     ...mapGetters(["group"]),
   },
 
-
   data() {
     return {
+      newFriendContract: {
+        name: "新的朋友",
+        avatar: require("@/assets/newfriend.png"),
+      },
+      gzhContract: {
+        name: "公众号",
+        avatar: require("@/assets/gzh.png"),
+      },
       add_contact_event: null,
       edit_contact_event: null,
       visible: false,
@@ -109,20 +214,18 @@ export default Vue.extend({
   created() {
     this.add_contact_event = new EventEmitter();
     this.edit_contact_event = new EventEmitter();
-    this.changeContact(Enumerable.from(this.contacts).firstOrDefault());
+    this.changeContact(Enumerable.from(this.contacts).firstOrDefault(),"contact");
   },
   methods: {
     edit() {
       this.contextShow = false;
       this.edit_contact_event.emit("open");
     },
-    remove() {
-      
-    },
+    remove() {},
 
-    changeContact(msg) {
+    changeContact(msg, type) {
       this.nowContact = msg;
-      this.$emit("onChangeContact", msg);
+      this.$emit("onChangeContact", msg, type);
     },
 
     onContextMenu({ clientX, clientY }) {
@@ -193,6 +296,11 @@ export default Vue.extend({
     height: 100%;
     padding: 0px;
     margin: 0px;
+    .list-title {
+      font-size: 12px;
+      margin: 15px;
+      color: gray;
+    }
     .item {
       padding: 13px;
       display: flex;
@@ -229,6 +337,23 @@ export default Vue.extend({
     }
     .active {
       background-color: #c6c5c5;
+    }
+
+    .grid {
+      position: relative;
+      display: grid;
+      height: 40px;
+      width: 40px;
+      grid-template-columns: repeat(auto-fill, 13px);
+      margin-right: 13px;
+      .block {
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        flex-grow: 0;
+        height: 12px;
+        width: 12px;
+      }
     }
   }
 }
