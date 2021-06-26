@@ -26,7 +26,7 @@
             </div>
           </div></el-main
         >
-        <el-footer><a class="weui-btn weui-btn_primary">发消息</a></el-footer>
+        <el-footer><a class="weui-btn weui-btn_primary" @click="gotoChat">发消息</a></el-footer>
       </el-container>
     </div>
   </div>
@@ -37,6 +37,9 @@ import ContactDetail from "@/components/dialogs/contact_detail.vue";
 import EventEmitter from "eventemitter3";
 import { mapGetters, mapMutations } from "vuex";
 import Vue from "vue";
+import { GlobalEvent } from "@/constant";
+import Enumerable from "linq";
+import UserInfo from "@/renderer/model/userInfo";
 
 export default Vue.extend({
   components: {
@@ -45,20 +48,39 @@ export default Vue.extend({
   },
   props: ["msg"],
   computed: {
-    getAvatarUrl() {
-      let result =
-        this.msg.sex == "男"
-          ? require("@/assets/male.png")
-          : require("@/assets/female.png");
-
-      return result;
-    },
+    ...mapGetters(["chats"]),
   },
 
   data() {
     return {
       size: 60,
     };
+  },
+
+  methods: {
+    ...mapMutations(["pushChat", "changeChat"]),
+
+    gotoChat() {
+      var currentChat = this.chats.find((it) => it.user == this.msg.name);
+      if (currentChat == null) {
+        let newChat = {
+          id: this.chats.length,
+          user: this.msg.name,
+          avatar:  Enumerable.from(this.msg.member as Array<UserInfo>).select(c=>c.avatar).toArray(),
+          desc: "",
+          region: "",
+          wechatId: this.msg.id,
+          sex: "",
+          msgs: [],
+        };
+        this.pushChat(newChat);
+        this.changeChat(newChat.id);
+      } else {
+        this.changeChat(currentChat.id);
+      }
+
+      GlobalEvent.emit("switch-pannel", "chat");
+    },
   },
 });
 </script>

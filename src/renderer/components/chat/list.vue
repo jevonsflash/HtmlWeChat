@@ -18,9 +18,18 @@
             @contextmenu.prevent="onContextMenu"
             :class="{ active: nowChat && nowChat.id == chat.id, item: true }"
           >
-          
+            <div class="grid" v-if="isArray(chat.avatar)">
+              <img
+                v-for="(item, index) in chat.avatar"
+                :key="index"
+                class="block"
+                :src="item"
+              />
+            </div>
+            <div v-else>
+              <img :src="chat.avatar" />
+            </div>
 
-            <img :src="chat.avatar" />
             <div class="meta">
               <div class="top">
                 <span class="name">{{ chat.user }}</span>
@@ -29,23 +38,20 @@
               <div class="last_msg">{{ msgContentText(getLastMsg(chat)) }}</div>
             </div>
           </div>
-          
-            <context-menu
-              ref="chatContextMenu"
-              :context-menu-show.sync="contextShow"
-              :config="contextConfig"
-              @onTop="onTop"
-              @setUnread="setUnread"
-              @noBother="noBother"
-              @disable="disable"
-              @removeChat="removeChat"
-            >
-            </context-menu>
-          
-          </el-col
-        >
-      </el-row></el-scrollbar
-    >
+
+          <context-menu
+            ref="chatContextMenu"
+            :context-menu-show.sync="contextShow"
+            :config="contextConfig"
+            @onTop="onTop"
+            @setUnread="setUnread"
+            @noBother="noBother"
+            @disable="disable"
+            @removeChat="removeChat"
+          >
+          </context-menu>
+        </el-col> </el-row
+    ></el-scrollbar>
 
     <dialog-add-chat :event="add_chat_event"></dialog-add-chat>
   </div>
@@ -110,6 +116,12 @@ export default Vue.extend({
   },
   methods: {
     ...mapMutations(["changeChat", "delChat"]),
+
+    isArray(obj) {
+      var result = obj instanceof Array;
+      return result;
+    },
+
     onTop() {
       console.log("onTop");
       this.contextShow = false;
@@ -228,6 +240,23 @@ export default Vue.extend({
   .list-container {
     width: 267px;
     height: 100%;
+    .grid {
+      position: relative;
+      display: grid;
+      height: 40px;
+      width: 40px;
+      grid-template-columns: repeat(auto-fill, 13px);
+      margin-right: 13px;
+      .block {
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        flex-grow: 0;
+        height: 12px;
+        width: 12px;
+      }
+    }
+
     .item {
       padding: 13px;
       display: flex;

@@ -3,21 +3,27 @@
     <div class="content" :class="_direction">
       <!-- {{msg}} -->
       <div class="message" v-html="msg"></div>
-      <div class="arrows" :class="_direction">
-      </div>
+      <div class="arrows" :class="_direction"></div>
     </div>
   </div>
 </template>
 
 <script>
+import constant from "@/constant.ts";
+
 export default {
-  props: ['msg', 'direction'],
+  props: ["msg", "direction"],
+  data() {
+    return {
+      constant: constant,
+    };
+  },
   computed: {
     _direction() {
-      return this.direction == 2 ? 'left' : 'right'
-    }
-  }
-}
+      return this.direction != constant.MSG_FROM_SELF ? "left" : "right";
+    },
+  },
+};
 </script>
 
 <style scoped lang="scss">

@@ -22,11 +22,13 @@
   </div>
 </template>
 
-<script>
+<script lang="ts">
 import dayjs from 'dayjs'
 import constant from '../../constant'
 import { mapGetters, mapMutations } from 'vuex'
-export default {
+import Vue from 'vue'
+export default Vue.extend({
+  
   props: ['event'],
   data() {
     return {
@@ -50,7 +52,7 @@ export default {
     },
     async submit() {
       try {
-        await this.$refs.form.validate()
+        await (this.$refs.form as any).validate()
         if (this.msg.type == '语音') {
           this.pushMessage({
             chat_id: this.nowChat.id,
@@ -79,7 +81,7 @@ export default {
   created() {
     this.event.on('open', this.open)
   }
-}
+})
 </script>
 
 <style scoped>

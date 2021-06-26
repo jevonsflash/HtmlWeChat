@@ -58,12 +58,12 @@ const state = store.get('data', def)
 
 const getChat: Function = (state, id) => {
   var currentChat = state.chats.find((it) => it.id == id);
-  return currentChat;
+  return currentChat != undefined ? currentChat : null;
 }
 
 const getChatByName: Function = (state, name) => {
-  var currentChat = state.chats.find((it) => it.name == name);
-  return currentChat;
+  var currentChat = state.chats.find((it) => it.user == name);
+  return currentChat != undefined ? currentChat : null;
 }
 
 const getChatConfStore: Function = (state, id) => {
@@ -102,7 +102,7 @@ const mutations = {
     let currentChatPayload = currentChatstore.get('data', null)
     if (currentChatPayload == null) {
 
-      let a = {
+      currentChatPayload = {
         id: currentChat.id,
         user: currentChat.user,
         desc: currentChat.desc,
@@ -114,7 +114,7 @@ const mutations = {
       }
       currentChat.msgs.push(defaultMsg)
 
-      currentChatstore.set("data", a)
+      currentChatstore.set("data", currentChatPayload)
     }
     state._nowChat = currentChatPayload;
   },
@@ -125,7 +125,7 @@ const mutations = {
     let currentChatPayload = currentChatstore.get('data', null)
     if (currentChatPayload == null) {
 
-      let a = {
+      currentChatPayload = {
         id: currentChat.id,
         user: currentChat.user,
         desc: currentChat.desc,
@@ -136,7 +136,6 @@ const mutations = {
         msgs: [defaultMsg]
       }
       currentChat.msgs.push(defaultMsg)
-      currentChatstore.set("data", a)
     }
     currentChatPayload.msgs.push(msg);
     currentChatstore.set("data", currentChatPayload)
@@ -155,16 +154,22 @@ const mutations = {
     state.nowUser = nowUser
   },
   pushChat: (state, chat) => {
-    let currentChatstore = getChatConfStoreByName(state, chat.user);
-    if (currentChatstore != null) {
-      let currentChatPayload = currentChatstore.get('data', null)
-      if (currentChatPayload != null) {
-        chat.msgs = currentChatPayload.msgs;
-        currentChatPayload.id = chat.id
-        currentChatstore.set("data", currentChatPayload)
-      }
+    let currentChat = getChatByName(state, chat.user);
+    if (currentChat != null) {
+      // do nothing
     }
-    state.chats.push(chat)
+    else {
+      let currentChatstore = getChatConfStoreByName(state, chat.user);
+      if (currentChatstore != null) {
+        let currentChatPayload = currentChatstore.get('data', null)
+        if (currentChatPayload != null) {
+          chat.msgs = currentChatPayload.msgs;
+          currentChatPayload.id = chat.id
+          currentChatstore.set("data", currentChatPayload)
+        }
+      }
+      state.chats.push(chat)
+    }
   },
   delChat: (state, id) => {
     let chat_index = state.chats.findIndex((chat) => {
@@ -179,6 +184,11 @@ const mutations = {
         fs.rm(file);
       }
       state.chats.splice(chat_index, 1)
+
+      if (chat_index == state._nowChat.id) {
+        state._nowChat = null;
+
+      }
     }
   },
   close: (state) => {

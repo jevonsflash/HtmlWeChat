@@ -24,7 +24,7 @@ export default {
   },
   computed: {
     _direction() {
-      return this.direction == 2 ? 'left' : 'right'
+      return this.direction != constant.MSG_FROM_SELF ? 'left' : 'right'
     }
   },
   mounted() {

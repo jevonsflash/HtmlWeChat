@@ -71,37 +71,49 @@ export default Vue.extend({
   },
   props: ["msg"],
   computed: {
-    getAvatarUrl() {
+    ...mapGetters(["chats"]),
+  },
+
+  watch: {
+    msg: function (value) {
       let result =
-        this.msg.sex == "男"
+        value.sex == "男"
           ? require("@/assets/male.png")
           : require("@/assets/female.png");
-
-      return result;
+      this.getAvatarUrl = result;
     },
   },
 
   data() {
     return {
       size: 60,
+      getAvatarUrl: undefined,
     };
   },
   methods: {
-    ...mapMutations(["pushChat"]),
+    ...mapMutations(["pushChat", "changeChat"]),
 
     gotoChat() {
-      GlobalEvent.emit("switch-pannel","chat");
-      this.pushChat({
-        id: this.msg.id,
-        user: this.msg.name,
-        avatar: this.msg.avatar,
+      var currentChat = this.chats.find((it) => it.user == this.msg.name);
+      if (currentChat == null) {
+        let newChat = {
+          id: this.chats.length,
+          user: this.msg.name,
+          avatar: this.msg.avatar,
 
-        desc: this.msg.desc,
-        region: this.msg.region,
-        wechatId: this.msg.wechatId,
-        sex: this.msg.sex,
-        msgs: [],
-      });
+          desc: this.msg.desc,
+          region: this.msg.region,
+          wechatId: this.msg.wechatId,
+          sex: this.msg.sex,
+          msgs: [],
+        };
+        this.pushChat(newChat);
+        this.changeChat(newChat.id);
+      } else {
+        this.changeChat(currentChat.id);
+      }
+
+      GlobalEvent.emit("switch-pannel", "chat");
     },
   },
 });

@@ -20,7 +20,7 @@
 </template>
 
 <script>
-import constant from '../../constant'
+import constant from '@/constant.ts'
 export default {
   props: ['data', 'direction'],
   data() {
@@ -30,7 +30,7 @@ export default {
   },
   computed: {
     _direction() {
-      return this.direction == 2 ? 'left' : 'right'
+      return this.direction != constant.MSG_FROM_SELF ? 'left' : 'right'
     }
   },
   created() {
