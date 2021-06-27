@@ -1,0 +1,38 @@
+{
+	"data": {
+		"user": "何伟",
+		"desc": "小微金融服务集团（筹）行业产品部研究员",
+		"region": "广东 广州",
+		"wechatId": "wxid-0123546516",
+		"sex": "男",
+		"avatar": "imgs/4--defaultAvatars.png",
+		"msgs": [{
+				"id": 0,
+				"type": 1,
+				"from": 2,
+				"data": "不知道",
+				"time": "08:18"
+			},
+			{
+				"id": 1,
+				"type": 1,
+				"from": 2,
+				"data": "现在疫苗都很紧张",
+				"time": "09:28"
+			},
+			{
+				"id": 2,
+				"type": 1,
+				"from": 2,
+				"data": "我已经打过第二剂了",
+				"time": "10:18"
+			},
+			{
+				"id": 3,
+				"type": 1,
+				"from": 2,
+				"data": "晚安",
+				"time": "21:18"
+			}]
+	}
+}

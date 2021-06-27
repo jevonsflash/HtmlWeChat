@@ -1,0 +1,31 @@
+{
+	"data": {
+		"user": "陈春",
+		"desc": "花名苗人凤",
+		"region": "广东 广州",
+		"wechatId": "wxid-0123546516",
+		"sex": "男",
+		"avatar": "imgs/7--defaultAvatars.png",
+		"msgs": [
+		{
+				"id": 0,
+				"from": 3,
+				"data": "你已加入群聊"
+			},
+			{
+				"id": 1,
+				"type": 1,
+				"from": 2,
+				"data": "大家好",
+				"time": "23:08"
+			},
+			{
+				"id": 2,
+				"type": 1,
+				"from": 2,
+				"data": "有谁知道附近哪里可以打疫苗吗？",
+				"time": "23:08"
+			}
+		]
+	}
+}

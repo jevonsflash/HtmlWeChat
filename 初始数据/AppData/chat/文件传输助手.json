@@ -1,0 +1,18 @@
+{
+	"data": {
+		"id": 1,
+		"user": "文件传输助手",
+		"desc": "这是文件传输助手",
+		"region": "广东 广州",
+		"wechatId": "wxid-0123546517",
+		"sex": "男",
+		"avatar": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACgAAAAoCAMAAAC7IEhfAAAABGdBTUEAALGPC/xhBQAAACBjSFJNAAB6JQAAgIMAAPn/AACA6QAAdTAAAOpgAAA6mAAAF2+SX8VGAAAAOVBMVEWx0rez07e007c/qVYrokX7/fv////S69e2379euXJ8xYwypUv5/Pnz+vXH5s6Bx5DA48jt9+9DrFqrnkcrAAAAA3RSTlMAAAD6dsTeAAAAAWJLR0QGYWa4fQAAAAlwSFlzAAALEwAACxMBAJqcGAAAAAd0SU1FB+MLDAg3EZWmnFsAAABjSURBVDjL7dW7DoAgEERRdEd0fIL//7E2YmGzU0lMuB3JSZaQACEYhKzTHGABYg1WhEO8Gx0YnyYVlqjC+Xu4rCIENheWxe5BkiRwiKOTuMdc7xwdmPK7s93CH0D5sRe/j/4CrLscXZBDuiUAAAAldEVYdGRhdGU6Y3JlYXRlADIwMTktMTEtMTJUMDg6NTU6MDYrMDA6MDDIPMlgAAAAJXRFWHRkYXRlOm1vZGlmeQAyMDE5LTExLTEyVDA4OjU1OjA2KzAwOjAwuWFx3AAAAABJRU5ErkJggg==",
+		"msgs": [
+			{
+				"id": 0,
+				"from": 3,
+				"data": "你们已成为好友"
+			}
+		]
+	}
+}
