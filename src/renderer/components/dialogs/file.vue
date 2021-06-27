@@ -90,7 +90,7 @@ export default {
             name: this.msg.name,
             size: this.msg.size
           },
-          time: dayjs().format('HH:mm')
+          time: dayjs().format( )
         })
       } catch (err) {}
     },

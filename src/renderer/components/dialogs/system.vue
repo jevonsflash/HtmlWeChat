@@ -43,7 +43,7 @@ export default {
           id: this.nowChat.msgs.length,
           from: constant.MSG_FROM_SYSTEM,
           data: this.msg.content,
-          time: dayjs().format('HH:mm')
+          time: dayjs().format( )
         })
       } catch (err) {}
     },

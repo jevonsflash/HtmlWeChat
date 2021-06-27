@@ -71,7 +71,7 @@ export default Vue.extend({
               type: constant.MSG_TYPE_TEXT,
               from: constant.MSG_FROM_OPPOSITE,
               data: '你好,你的头像是'+this.msg.avatar,
-              time: dayjs().format('HH:mm')
+              time: dayjs().format( )
             }
           ],
           last_msg: {
@@ -79,7 +79,7 @@ export default Vue.extend({
             type: constant.MSG_TYPE_TEXT,
             from: constant.MSG_FROM_OPPOSITE,
             data: '你好',
-            time: dayjs().format('HH:mm')
+            time: dayjs().format( )
           }
         })
       } catch (err) {}

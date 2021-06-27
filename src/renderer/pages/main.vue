@@ -55,11 +55,20 @@
         <setting v-if="currentPannel == 'setting'"></setting>
       </el-main>
     </el-container>
-      <div class="top-tip">
-    <span>当前版本仅供试用</span>
-  </div>
-  </div>
+    <el-dialog class="zero-padding"
+      title="微信文件"
+      custom-class="dialog-frame"
+      width="750px"
+      :visible="visible.file"
+      @close="closeDialog"
+    >
+      <file-manager></file-manager>
+    </el-dialog>
 
+    <div class="top-tip">
+      <span>当前版本仅供试用</span>
+    </div>
+  </div>
 </template>
 
 <script lang='ts'>
@@ -71,6 +80,7 @@ import Favourite from "@/components/favourite/index.vue";
 import Miniprograme from "@/components/miniprograme/index.vue";
 import Phone from "@/components/phone/index.vue";
 import Menu from "@/components/menu/index.vue";
+import FileManager from "@/components/fileManager/index.vue";
 import Vue from "vue";
 const ipcRenderer = require("electron").ipcRenderer;
 
@@ -84,6 +94,7 @@ export default Vue.extend({
     Miniprograme,
     Menu,
     Phone,
+    FileManager,
   },
 
   data() {
@@ -92,16 +103,20 @@ export default Vue.extend({
         miniprograme: false,
         menu: false,
         phone: false,
+        file: false,
       },
       currentPannel: "",
     };
   },
+
   created() {
     this.currentPannel = "chat";
   },
   methods: {
+    closeDialog() {
+      this.visible.file = false;
+    },
     onGoto(page) {
-
       if (page == "miniprograme") {
         this.visible.miniprograme = !this.visible.miniprograme;
         this.visible.menu = false;
@@ -115,6 +130,8 @@ export default Vue.extend({
         this.visible.phone = !this.visible.phone;
         this.visible.miniprograme = false;
         this.visible.menu = false;
+      } else if (page == "file") {
+        this.visible.file = !this.visible.file;
       }
     },
 
@@ -125,14 +142,15 @@ export default Vue.extend({
 });
 </script>
 
+
 <style lang="scss" scoped>
-.top-tip{
-    display: block;
-    position: absolute;
-    top: 0;
-    left: 50%;
-    background-color: red;
-    color: white;
+.top-tip {
+  display: block;
+  position: absolute;
+  top: 0;
+  left: 50%;
+  background-color: red;
+  color: white;
 }
 #main {
   width: 100%;
@@ -175,7 +193,16 @@ export default Vue.extend({
 }
 </style>
 <style lang="scss">
+.el-scrollbar__wrap {
+  overflow-x: hidden !important;
+}
 .popover-frame {
   padding: 0 !important;
+}
+
+.zero-padding {
+  .el-dialog__body {
+    padding: 0 !important;
+  }
 }
 </style>

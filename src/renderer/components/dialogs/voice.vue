@@ -44,7 +44,7 @@ export default {
           type: constant.MSG_TYPE_VOICE,
           from: this.nowUser,
           data: this.msg.len,
-          time: dayjs().format('HH:mm')
+          time: dayjs().format( )
         })
       } catch (err) {}
     },

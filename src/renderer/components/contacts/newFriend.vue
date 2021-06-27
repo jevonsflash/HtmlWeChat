@@ -1,60 +1,13 @@
 <template>
-  <div id="detail" v-if="msg!=null">
+  <div id="detail" v-if="msg != null">
     <contacts-header class="header" style="-webkit-app-region: drag">
     </contacts-header>
     <div class="main-frame">
       <span>
-        <el-row>
-          <el-col :span="20">
-            <el-row>
-              <el-col :span="24">
-                <el-container direction="horizontal">
-                  <span class="header-title">{{ msg.name }}</span>
-
-                  <el-avatar :size="20" :src="getAvatarUrl" /></el-container
-              ></el-col>
-            </el-row>
-            <el-row>
-              <el-col :span="24">
-                <span class="header-desc" style="text-align: left">{{
-                  msg.desc
-                }}</span>
-              </el-col>
-            </el-row>
-          </el-col>
-          <el-col :span="4">
-            <el-avatar
-              class="avatar"
-              shape="square"
-              :size="size"
-              :src="msg.avatar"
-            ></el-avatar>
-          </el-col>
-        </el-row>
-      </span>
-      <el-divider></el-divider>
-      <span>
-      <div class="weui-form-preview__bd">
-        <div class="weui-form-preview__item">
-          <label class="weui-form-preview__label">备注</label>
-          <span class="weui-form-preview__value">{{ msg.remark }}</span>
-        </div>
-        <div class="weui-form-preview__item">
-          <label class="weui-form-preview__label">地区</label>
-          <span class="weui-form-preview__value">{{ msg.region }}</span>
-        </div>
-        <div class="weui-form-preview__item">
-          <label class="weui-form-preview__label">微信号</label>
-          <span class="weui-form-preview__value">{{ msg.wechatId }}</span>
-        </div>
-      </div>
-      </span>
-      <el-divider></el-divider>
-
-      <span>
-        <a class="weui-btn weui-btn_primary">发消息</a>
+        <a class="weui-btn weui-btn_primary" @click="addContact">添加联系人</a>
       </span>
     </div>
+    <dialog-add-contact :event="add_contact_event"></dialog-add-contact>
   </div>
 </template>
 <script lang='ts'>
@@ -62,25 +15,27 @@ import ContactsHeader from "@/components/contacts/contacts_header.vue";
 import EventEmitter from "eventemitter3";
 import { mapGetters, mapMutations } from "vuex";
 import Vue from "vue";
+import DialogAddContact from "@/components/dialogs/add_contact.vue";
 
 export default Vue.extend({
   components: {
     ContactsHeader,
+    DialogAddContact,
   },
   props: ["msg"],
-  computed: {
-    getAvatarUrl() {
-      let result =
-        this.msg.sex == "男"
-          ? require("@/assets/male.png")
-          : require("@/assets/female.png");
-
-      return result;
-    },
+  created() {
+    this.add_contact_event = new EventEmitter();
   },
 
+  methods: {
+    addContact() {
+      this.add_contact_event.emit("open");
+    },
+  },
   data() {
     return {
+      add_contact_event: null,
+
       size: 60,
     };
   },
@@ -95,15 +50,13 @@ export default Vue.extend({
   display: flex;
   flex-direction: column;
   .header-title {
-    
-      text-align: left;
-      font-size: 20px;
-    
+    text-align: left;
+    font-size: 20px;
   }
-  .header-desc{
-       text-align: left;
-      font-size: 14px;
-          color: rgba(0,0,0,0.5);
+  .header-desc {
+    text-align: left;
+    font-size: 14px;
+    color: rgba(0, 0, 0, 0.5);
   }
   .avatar {
     float: right;

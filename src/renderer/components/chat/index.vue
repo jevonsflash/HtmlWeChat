@@ -5,8 +5,14 @@
         <list></list>
       </el-aside>
       <el-main style="padding: 0">
-        <group-chat :nowChat="nowChat" v-if="isArray(nowChat)"></group-chat>
-        <chat :nowChats="nowChat" v-else></chat>
+        <group-chat
+          :nowChats="nowChat"
+          v-if="nowChat != null && isGroup(nowChat)"
+        ></group-chat>
+        <chat
+          :nowChat="nowChat"
+          v-else-if="nowChat != null && !isGroup(nowChat)"
+        ></chat>
       </el-main>
     </el-container>
   </div>
@@ -22,15 +28,17 @@ export default Vue.extend({
   computed: {
     ...mapGetters(["nowChat"]),
   },
-  methods:{
-    isArray(obj) {
-      var result = obj instanceof Array;
+
+  methods: {
+    isGroup(obj) {
+      var result = obj.type == "groupChat";
       return result;
     },
   },
   components: {
     List,
-    Chat,GroupChat
+    Chat,
+    GroupChat,
   },
 });
 </script>

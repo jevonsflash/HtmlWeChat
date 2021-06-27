@@ -20,15 +20,12 @@
           <svg-icon name="close" @click="cross"></svg-icon>
         </div>
       </div>
-      <div class="more">
-        <i class="el-icon-more" @click="showMore = !showMore" />
-      </div>
+      
     </div>
   </div>
 </template>
 
 <script lang='ts'>
-import EventEmitter from "eventemitter3";
 import constant from "@/constant";
 import HeaderVue from "@/components/header";
 const ipcRenderer = require("electron").ipcRenderer;

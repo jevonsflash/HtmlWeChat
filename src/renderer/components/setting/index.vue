@@ -27,13 +27,6 @@
         <el-tab-pane label="修改双方信息" @click.native="actionHandler('set_user')"
           ><dialog-change-info></dialog-change-info></el-tab-pane
         >
-
-        <el-tab-pane label="切换为自己" @click.native="actionHandler('change_user_self')"
-          ></el-tab-pane
-        >
-        <el-tab-pane label="切换为对方" @click.native="actionHandler('change_user_opposite')"
-          ></el-tab-pane
-        >
       </el-tabs>
   
   </div>

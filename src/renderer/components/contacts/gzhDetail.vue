@@ -1,86 +1,69 @@
 <template>
-  <div id="detail" v-if="msg!=null">
+  <div id="detail" v-if="msg != null">
     <contacts-header class="header" style="-webkit-app-region: drag">
     </contacts-header>
     <div class="main-frame">
-      <span>
-        <el-row>
-          <el-col :span="20">
+      <div class="grid">
+        <div v-for="item of miniprograms" :key="item.title">
+          <div class="block" slot="reference">
             <el-row>
-              <el-col :span="24">
-                <el-container direction="horizontal">
-                  <span class="header-title">{{ msg.name }}</span>
-
-                  <el-avatar :size="20" :src="getAvatarUrl" /></el-container
+              <el-col :span="24" style="text-align: center"
+                ><el-avatar
+                  class="miniprograme-img"
+                  :src="item.url"
+                  shape="circle"
+                  :size="50"
+                ></el-avatar
               ></el-col>
             </el-row>
             <el-row>
-              <el-col :span="24">
-                <span class="header-desc" style="text-align: left">{{
-                  msg.desc
-                }}</span>
-              </el-col>
+              <el-col :span="24" class="miniprograme-title">
+                <span>{{ item.title }}</span></el-col
+              >
             </el-row>
-          </el-col>
-          <el-col :span="4">
-            <el-avatar
-              class="avatar"
-              shape="square"
-              :size="size"
-              :src="msg.avatar"
-            ></el-avatar>
-          </el-col>
-        </el-row>
-      </span>
-      <el-divider></el-divider>
-      <span>
-      <div class="weui-form-preview__bd">
-        <div class="weui-form-preview__item">
-          <label class="weui-form-preview__label">备注</label>
-          <span class="weui-form-preview__value">{{ msg.remark }}</span>
-        </div>
-        <div class="weui-form-preview__item">
-          <label class="weui-form-preview__label">地区</label>
-          <span class="weui-form-preview__value">{{ msg.region }}</span>
-        </div>
-        <div class="weui-form-preview__item">
-          <label class="weui-form-preview__label">微信号</label>
-          <span class="weui-form-preview__value">{{ msg.wechatId }}</span>
+
+            <span class="title">{{ item.name }}</span>
+          </div>
         </div>
       </div>
-      </span>
-      <el-divider></el-divider>
-
-      <span>
-        <a class="weui-btn weui-btn_primary">发消息</a>
-      </span>
     </div>
   </div>
 </template>
 <script lang='ts'>
 import ContactsHeader from "@/components/contacts/contacts_header.vue";
-import EventEmitter from "eventemitter3";
-import { mapGetters, mapMutations } from "vuex";
+import ContactDetail from "@/components/dialogs/contact_detail.vue";
 import Vue from "vue";
+var Enumerable = require("linq");
 
 export default Vue.extend({
   components: {
     ContactsHeader,
+    ContactDetail,
   },
   props: ["msg"],
-  computed: {
-    getAvatarUrl() {
-      let result =
-        this.msg.sex == "男"
-          ? require("@/assets/male.png")
-          : require("@/assets/female.png");
-
+  created() {
+    const req = require.context("@/assets/miniprograme", false, /\.png$/);
+    const re = /\.\/(.*)\.png/;
+    const matcher = (str: string) => {
+      let match = str.match(re);
+      if (match !== null) return match[1];
+      return "";
+    };
+    const requireAll = (requireContext: any) => {
+      let result = Enumerable.from(requireContext.keys())
+        .select((c) => {
+          return { url: req(c), title: matcher(c) };
+        })
+        .toArray();
       return result;
-    },
+    };
+
+    this.miniprograms = requireAll(req);
   },
 
   data() {
     return {
+      miniprograms: {},
       size: 60,
     };
   },
@@ -94,24 +77,45 @@ export default Vue.extend({
   background-color: #f5f5f5;
   display: flex;
   flex-direction: column;
-  .header-title {
-    
-      text-align: left;
-      font-size: 20px;
-    
-  }
-  .header-desc{
-       text-align: left;
+
+  .grid {
+    position: relative;
+    display: grid;
+    width: 100%;
+    grid-template-columns: repeat(auto-fill, 80px);
+
+    .title {
+      margin-top: 13px;
+      margin-bottom: 13px;
       font-size: 14px;
-          color: rgba(0,0,0,0.5);
+      color: #8492a6;
+      text-align: center;
+    }
+    .block {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      flex-grow: 0;
+    }
+  }
+
+  .header-title {
+    text-align: left;
+    font-size: 20px;
+  }
+  .header-desc {
+    text-align: left;
+    font-size: 14px;
+    color: rgba(0, 0, 0, 0.5);
   }
   .avatar {
     float: right;
   }
   .main-frame {
-    width: 350px;
-    margin: 30px auto 0 auto;
+    padding: 15px 70px;
     background-color: #f5f5f5;
+    height: 100%;
+    overflow: hidden;
   }
 
   .header {
@@ -121,6 +125,12 @@ export default Vue.extend({
     text-align: left;
     font-size: 20px;
     font-weight: 400;
+  }
+
+  .miniprograme-title {
+    text-align: center;
+    font-size: 12px;
+    margin-top: 10px;
   }
 }
 </style>

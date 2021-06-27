@@ -56,7 +56,7 @@ export default {
     // 确认收钱
     affirmTransfer() {
       this.step = 2
-      let receive_time = dayjs().format('YYYY-MM-DD HH:mm:ss')
+      let receive_time = dayjs().format()
       this.transfer.now.data.receive_time = receive_time
       let from =
         this.transfer.now.from == constant.MSG_FROM_SELF
@@ -71,7 +71,7 @@ export default {
           publish_time: this.transfer.now.data.publish_time,
           receive_time: receive_time
         },
-        time: dayjs().format('HH:mm')
+        time: dayjs().format( )
       }
       // 传递回去
       ipcRenderer.send('transfer_pub_msg', JSON.stringify(msg))

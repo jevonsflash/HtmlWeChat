@@ -1,6 +1,6 @@
 <template>
   <div id="dialog_add_chat">
-  <el-dialog title="添加聊天" :visible="visible" @close="rowDialogClose">
+  <el-dialog title="添加联系人" :visible="visible" @close="rowDialogClose">
       <el-form ref="form" :rules="rules" :model="msg" style="width:100%">
        <el-form-item label="昵称">
         <el-input v-model="msg.name"></el-input>

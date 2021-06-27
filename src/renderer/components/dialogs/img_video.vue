@@ -72,7 +72,7 @@ export default {
             type: constant.MSG_TYPE_IMG,
             from: this.nowUser,
             data: this.msg.url,
-            time: dayjs().format('HH:mm')
+            time: dayjs().format( )
           })
         } else if (this.msg.type == '视频') {
           this.pushMessage({
@@ -84,7 +84,7 @@ export default {
               img: this.msg.url,
               len: this.msg.len
             },
-            time: dayjs().format('HH:mm')
+            time: dayjs().format( )
           })
         }
       } catch (err) {}

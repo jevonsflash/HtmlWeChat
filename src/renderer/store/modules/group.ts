@@ -12,11 +12,11 @@ const Conf = require('conf');
 const def = {
   group: [
     {
-      id: "测试群",
+      id: "群聊1",
       name: "测试群",
 
-      notice: "测试群",
-      myName: "测试群",
+      notice: "测试群公告",
+      myName: "",
       remarkName: "群聊备注",
       member: [{
         name: "小珂",
@@ -85,11 +85,11 @@ const def = {
 
     },
     {
-      id: "测试群2",
+      id: "群聊2",
       name: "测试群2",
 
-      notice: "测试群2",
-      myName: "测试群2",
+      notice: "测试群2公告",
+      myName: "",
       member: [{
         name: "小珂",
         desc: "这是小柯的空间",
@@ -140,6 +140,8 @@ const mutations = {
       return group.id == data.id
     })
     state.group[group_index].member.push(data.member)
+    store.set("data", state)
+
   },
 
   delGroupMember: (state,  data:{id:string, name: string}) => {
@@ -151,17 +153,23 @@ const mutations = {
       return member.name == data.name
     })
     state.group[group_index].member.splice(member_index, 1)
+    store.set("data", state)
+
   },
 
   pushGroup: (state, group: GroupInfo) => {
     group.id = state.group.lenth;
     state.group.push(group)
+    store.set("data", state)
+
   },
   delGroup: (state, id) => {
     let group_index = state.group.findIndex((group) => {
       return group.id == id
     })
     state.group.splice(group_index, 1)
+    store.set("data", state)
+
   },
   close: (state) => {
     store.set("data", state)

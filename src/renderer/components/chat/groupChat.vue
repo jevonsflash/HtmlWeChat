@@ -2,6 +2,7 @@
   <el-container id="chat">
     <el-main class="frame">
       <chat-header
+        :title="nowChats.user"
         ref="chatHeader"
         class="header"
         style="-webkit-app-region: drag"
@@ -9,7 +10,7 @@
       >
       </chat-header>
 
-      <div class="body" v-if="nowChats!=null">
+      <div class="body" v-if="nowChats != null">
         <div class="window" ref="chatWindow">
           <div
             class="message"
@@ -291,12 +292,13 @@ export default Vue.extend({
     nowChats: function (value) {
       let joinIcon = require("@/assets/join.png");
       this.avatars = [];
+      this.avatars.push({ url: joinIcon, title: "添加" });
 
       var nowChat = [];
 
-      value.forEach((item) => {
+      value.chats.forEach((item) => {
         var currentModel = [];
-        item.msgs.array.forEach((msg) => {
+        item.msgs.forEach((msg) => {
           let currentMsgModel = {
             user: item.user,
             desc: item.desc,
@@ -308,12 +310,17 @@ export default Vue.extend({
           };
           currentModel.push(currentMsgModel);
         });
-        nowChat.push(currentModel);
+        if (currentModel.length > 0) {
+          nowChat = nowChat.concat(currentModel);
+        }
 
-        this.avatars.push({ url: joinIcon, title: "添加" });
         this.avatars.push({ url: item.avatar, title: item.user });
       });
-
+      nowChat.sort(function (a, b) {
+        let date1 = dayjs(a.msg.time);
+        let date2 = dayjs(b.msg.time);
+        return date1 < date2 ? 1 : -1;
+      });
       this.nowChat = nowChat;
     },
   },
@@ -387,7 +394,7 @@ export default Vue.extend({
         type: constant.MSG_TYPE_TEXT,
         from: this.nowUser,
         data: this.message,
-        time: dayjs().format("HH:mm"),
+        time: dayjs().format( ),
       });
       this.message = "";
     },

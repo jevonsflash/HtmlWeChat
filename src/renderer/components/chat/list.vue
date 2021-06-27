@@ -53,7 +53,7 @@
         </el-col> </el-row
     ></el-scrollbar>
 
-    <dialog-add-chat :event="add_chat_event"></dialog-add-chat>
+    <dialog-add-group-chat :event="add_chat_event"></dialog-add-group-chat>
   </div>
 </template>
 
@@ -63,13 +63,13 @@ import EventEmitter from "eventemitter3";
 import dayjs from "dayjs";
 import constant from "@/constant.ts";
 import { mapGetters, mapMutations } from "vuex";
-import DialogAddChat from "@/components/dialogs/add_chat.vue";
+import DialogAddGroupChat from "@/components/dialogs/add_group_contact.vue";
 import contextMenu from "@/components/contextMenu/index.vue";
 import Vue from "vue";
 
 export default Vue.extend({
   components: {
-    DialogAddChat,
+    DialogAddGroupChat,
     contextMenu,
   },
   computed: {
@@ -162,7 +162,7 @@ export default Vue.extend({
       return {
         type: constant.MSG_TYPE_TEXT,
         data: "暂无消息",
-        time: dayjs().format("HH:mm"),
+        time: dayjs().format( ),
       };
     },
     msgContentText(last_msg) {

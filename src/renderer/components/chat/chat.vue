@@ -2,6 +2,7 @@
   <el-container id="chat">
     <el-main class="frame">
       <chat-header
+        :title="getNowChat().user"
         ref="chatHeader"
         class="header"
         style="-webkit-app-region: drag"
@@ -9,7 +10,7 @@
       >
       </chat-header>
 
-      <div class="body" v-if="nowChat!=null">
+      <div class="body" v-if="nowChat != null">
         <div class="window" ref="chatWindow">
           <div
             class="message"
@@ -90,10 +91,10 @@
                 :data="msg.data"
               ></message-call-video>
               <el-popover placement="bottom" width="300" trigger="click">
-                <contact-detail :msg="nowChat"></contact-detail>
+                <contact-detail :msg="self"></contact-detail>
                 <img
                   slot="reference"
-                  @click="showDetail(nowChat)"
+                  @click="showDetail(self)"
                   v-if="msg.from == constant.MSG_FROM_SELF"
                   :src="self.avatar"
                   alt=""
@@ -174,28 +175,26 @@
         <el-row>
           <el-col :span="24">
             <div class="weui-grids">
-              <div
-                class="weui-grid"
-                v-for="item of avatars"
-                :key="item.title"
-                @click="onSelectedAvatar(item.url)"
-              >
-                <div class="block">
-                  <el-row>
-                    <el-col :span="24">
-                      <el-avatar
-                        :src="item.url"
-                        shape="square"
-                        :size="35"
-                      ></el-avatar
-                    ></el-col>
-                  </el-row>
-                  <el-row>
-                    <el-col :span="24">
-                      <span class="title">{{ item.title }}</span></el-col
-                    >
-                  </el-row>
-                </div>
+              <div class="weui-grid" v-for="item of avatars" :key="item.title">
+                <el-popover placement="bottom" width="300" trigger="click">
+                  <contact-detail :msg="item"></contact-detail>
+                  <div class="block" slot="reference">
+                    <el-row>
+                      <el-col :span="24">
+                        <el-avatar
+                          :src="item.url"
+                          shape="square"
+                          :size="35"
+                        ></el-avatar>
+                      </el-col>
+                    </el-row>
+                    <el-row>
+                      <el-col :span="24">
+                        <span class="title">{{ item.title }}</span></el-col
+                      >
+                    </el-row>
+                  </div>
+                </el-popover>
               </div>
             </div></el-col
           >
@@ -284,10 +283,14 @@ export default Vue.extend({
 
   watch: {
     nowChat: function (value) {
-      this.avatars=[];
+      this.avatars = [];
       let joinIcon = require("@/assets/join.png");
-      this.avatars.push({ url: joinIcon, title: "添加" });
-      this.avatars.push({ url: value.avatar, title: value.user });
+      this.avatars.push({ url: joinIcon, title: "添加", entity: null });
+      this.avatars.push({
+        url: value.avatar,
+        title: value.user,
+        entity: value,
+      });
     },
   },
   data() {
@@ -358,7 +361,7 @@ export default Vue.extend({
         type: constant.MSG_TYPE_TEXT,
         from: this.nowUser,
         data: this.message,
-        time: dayjs().format("HH:mm"),
+        time: dayjs().format( ),
       });
       this.message = "";
     },

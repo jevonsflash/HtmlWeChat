@@ -51,9 +51,9 @@ export default {
             num: this.msg.num,
             msg: this.msg.msg || '',
             type: constant.TRANSFER_PUBLISH,
-            publish_time: dayjs().format('YYYY-MM-DD HH:mm:ss')
+            publish_time: dayjs().format()
           },
-          time: dayjs().format('HH:mm')
+          time: dayjs().format( )
         })
       } catch (err) {}
     },

@@ -6,31 +6,41 @@
         <span>搜索</span>
       </div>
     </header>
-    <overlay-scrollbars :options="osComponentOptions" class="list-container">
-      <el-row>
-        <el-col
-          :span="24"
-          v-for="(favourite, index) in favourites"
-          :key="index"
-        >
-          <div
-            @click="changeFavourite(favourite)"
-            @contextmenu.prevent="onContextMenu"
-            :class="{
-              active: false,
-              item: true,
-            }"
+    <el-scrollbar class="list-container" style="margin-top: 20px">
+      <span>
+        <el-row>
+          <el-col :span="24">
+            <a href="#form_checkbox" class="weui-btn weui-btn_default"
+              >添加笔记 <i class="el-icon-edit"></i>
+            </a> </el-col></el-row
+      ></span>
+      <el-divider></el-divider>
+      <span>
+        <el-row>
+          <el-col
+            :span="24"
+            v-for="(favourite, index) in favourites"
+            :key="index"
           >
-            <img :src="favourite.img" />
-            <div class="meta">
-              <div class="top">
-                <span class="name">{{ favourite.name }}</span>
+            <div
+              @click="changeFavourite(favourite)"
+              @contextmenu.prevent="onContextMenu"
+              :class="{
+                active: false,
+                item: true,
+              }"
+            >
+              <i :class="favourite.img"></i>
+              <div class="meta">
+                <div class="top">
+                  <span class="name">{{ favourite.name }}</span>
+                </div>
               </div>
-            </div>
-          </div></el-col
-        >
-      </el-row>
-    </overlay-scrollbars>
+            </div></el-col
+          >
+        </el-row></span
+      >
+    </el-scrollbar>
   </div>
 </template>
 
@@ -51,37 +61,30 @@ export default Vue.extend({
     return {
       visible: false,
       contextShow: false,
-      osComponentOptions: {
-        resize: "none",
-        paddingAbsolute: true,
-        scrollbars: {
-          autoHide: "never",
-          clickScrolling: true,
-        },
-      },
+
       favourites: [
         {
-          img: "",
+          img: "el-icon-menu",
           name: "全部收藏",
         },
         {
-          img: "",
+          img: "el-icon-link",
           name: "链接",
         },
         {
-          img: "",
+          img: "el-icon-picture-outline",
           name: "相册",
         },
         {
-          img: "",
+          img: "el-icon-notebook-2",
           name: "笔记",
         },
         {
-          img: "",
+          img: "el-icon-tickets",
           name: "文件",
         },
         {
-          img: "",
+          img: "el-icon-headset",
           name: "音乐",
         },
       ],
@@ -90,7 +93,7 @@ export default Vue.extend({
 
   methods: {
     changeFavourite(msg) {
-      this.$emit("onChangeFavourite", msg);
+      this.$emit("changeFavourite", msg);
     },
 
     onContextMenu({ clientX, clientY }) {
@@ -159,7 +162,7 @@ export default Vue.extend({
     padding: 0px;
     margin: 0px;
     .item {
-      padding: 13px;
+      padding: 10px;
       display: flex;
       align-items: center;
       img {
@@ -174,6 +177,7 @@ export default Vue.extend({
         flex-direction: column;
         justify-content: space-between;
         .top {
+          margin-left: 15px;
           width: 100%;
           display: flex;
           justify-content: space-between;

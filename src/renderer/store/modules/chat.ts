@@ -13,10 +13,8 @@ const Conf = require('conf');
 const fs = require('fs')
 const defaultMsg = {
   id: 0,
-  type: constant.MSG_TYPE_TEXT,
-  from: constant.MSG_FROM_OPPOSITE,
-  data: "微信，是一个生活方式",
-  time: dayjs().format("HH:mm"),
+  from: constant.MSG_FROM_SYSTEM,
+  data: '你们已成为好友'
 }
 const def = {
 
@@ -92,7 +90,7 @@ const getGroupChatConfStore: Function = (state, id) => {
         configName: item
       };
       let currentChatstore = new Conf(currentChatConfigOpts);
-      currentChatstores[item]=currentChatstore;
+      currentChatstores[item] = currentChatstore;
     });
 
     return currentChatstores;
@@ -113,7 +111,7 @@ const getGroupChatConfStoreByName: Function = (state, name) => {
         configName: item
       };
       let currentChatstore = new Conf(currentChatConfigOpts);
-      currentChatstores[item]=currentChatstore;
+      currentChatstores[item] = currentChatstore;
     });
 
     return currentChatstores;
@@ -143,29 +141,31 @@ const mutations = {
     if (currentChat.wechatId instanceof Array) {
       let currentChatstores = getGroupChatConfStore(state, id);
       var currentChatPayloads = []
+
+      var opts = {
+        cwd: defaultCwd,
+        configName: 'group_config'
+
+      };
+      var group_store = new Conf(opts);
+      var group_state = group_store.get('data', null)
+      if (group_state == null) {
+        return
+      }
+      var group_index = group_state.group.findIndex((group) => {
+        return group.name == currentChat.user
+      })
+      var currentGroup = group_state.group[group_index]
       for (var key in currentChatstores) {
         var currentChatstore = currentChatstores[key];
-         
+
         let currentChatPayload = currentChatstore.get('data', null)
         if (currentChatPayload != null) {
         }
         else {
-          var opts = {
-            cwd: defaultCwd,
-            configName: 'group_config'
-          
-          };
-          let group_store = new Conf(opts);
-          let group_state = group_store.get('data', def)
-          
-          let group_index = group_state.group.findIndex((group) => {
-            return group.name == currentChat.user
-          })
-          let currentGroup=  group_state.group[group_index]
-
           let currentMember = currentGroup.member.find((member) => {
             return member.name == key
-          })          
+          })
           currentChatPayload = {
             id: currentMember.id,
             user: currentMember.name,
@@ -181,7 +181,16 @@ const mutations = {
         currentChatPayloads.push(currentChatPayload)
 
       }
-      state._nowChat = currentChatPayloads;
+      var newModel={}
+      newModel['id'] = currentGroup.id;
+      newModel['user'] = currentGroup.name;
+      newModel['notice'] = currentGroup.notice;
+      newModel['myName'] = currentGroup.myName;
+      newModel['remarkName'] = currentGroup.remarkName;
+      newModel['type'] = "groupChat";
+
+      newModel['chats'] = currentChatPayloads;
+      state._nowChat=newModel;
 
     }
     else {
@@ -203,6 +212,7 @@ const mutations = {
 
         currentChatstore.set("data", currentChatPayload)
       }
+      currentChatPayload['type'] = "chat";
       state._nowChat = currentChatPayload;
     }
 
@@ -265,6 +275,8 @@ const mutations = {
         }
       }
       state.chats.push(chat)
+      store.set("data", state)
+
     }
   },
   delChat: (state, id) => {
@@ -285,6 +297,7 @@ const mutations = {
         state._nowChat = null;
 
       }
+      store.set("data", state)
     }
   },
   close: (state) => {

@@ -21,6 +21,15 @@
         <el-row>
           <el-col :span="24">
             <img
+              src="@/assets/nav/file_deactive.png"
+              @click="goTo('file')"
+              width="20"
+              height="20"
+          /></el-col>
+        </el-row>
+        <el-row>
+          <el-col :span="24">
+            <img
               src="@/assets/nav/look.png"
               @click="goTo('look')"
               width="20"
@@ -97,12 +106,12 @@ export default Vue.extend({
           name: "app",
           pannel: "app",
         },
-        {
-          url: require("@/assets/nav/file_deactive.png"),
-          url2: require("@/assets/nav/file_active.png"),
-          name: "file",
-          pannel: "file",
-        },
+        // {
+        //   url: require("@/assets/nav/file_deactive.png"),
+        //   url2: require("@/assets/nav/file_active.png"),
+        //   name: "file",
+        //   pannel: "file",
+        // },
       ],
       settingButtons: [
         {
@@ -164,6 +173,7 @@ export default Vue.extend({
 </script>
 
 <style scoped lang="scss">
+
 #nav {
   width: 100%;
   height: 100%;

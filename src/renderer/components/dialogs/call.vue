@@ -60,7 +60,7 @@ export default Vue.extend({
             type: constant.MSG_TYPE_VOICE_CALL,
             from: this.nowUser,
             data: { len: this.msg.len },
-            time: dayjs().format('HH:mm')
+            time: dayjs().format( )
           })
         } else {
           this.pushMessage({
@@ -69,7 +69,7 @@ export default Vue.extend({
             type: constant.MSG_TYPE_VIDEO_CALL,
             from: this.nowUser,
             data: { len: this.msg.len },
-            time: dayjs().format('HH:mm')
+            time: dayjs().format( )
           })
         }
       } catch (err) {}

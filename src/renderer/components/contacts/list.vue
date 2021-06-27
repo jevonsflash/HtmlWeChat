@@ -141,7 +141,8 @@
         </el-col>
       </el-row>
     </el-scrollbar>
-    <dialog-add-contact :event="add_contact_event"></dialog-add-contact>
+    <!-- <dialog-add-contact :event="add_contact_event"></dialog-add-contact> -->
+    <dialog-add-group-contact :event="add_contact_event"></dialog-add-group-contact>
     <dialog-change-info
       :event="edit_contact_event"
       :name="nowContact.name"
@@ -154,6 +155,7 @@
 import EventEmitter from "eventemitter3";
 import dayjs from "dayjs";
 import DialogAddContact from "@/components/dialogs/add_contact.vue";
+import DialogAddGroupContact from "@/components/dialogs/add_group_contact.vue";
 import contextMenu from "@/components/contextMenu/index.vue";
 import { mapGetters, mapMutations } from "vuex";
 import DialogChangeInfo from "@/components/dialogs/change_info.vue";
@@ -165,7 +167,7 @@ export default Vue.extend({
   components: {
     DialogAddContact,
     contextMenu,
-    DialogChangeInfo,
+    DialogChangeInfo,DialogAddGroupContact
   },
   computed: {
     ...mapGetters(["contacts"]),
