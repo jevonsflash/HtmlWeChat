@@ -9,7 +9,7 @@
       >
       </chat-header>
 
-      <div class="body">
+      <div class="body" v-if="nowChat!=null">
         <div class="window" ref="chatWindow">
           <div
             class="message"
@@ -20,11 +20,16 @@
               <span>{{ msg.data }}</span>
             </div>
             <div v-else :class="getClass(msg.from)">
-              <img
-                v-if="msg.from == constant.MSG_FROM_OPPOSITE"
-                :src="nowChat.avatar"
-                alt=""
-              />
+              <el-popover placement="bottom" width="300" trigger="click">
+                <contact-detail :msg="nowChat"></contact-detail>
+                <img
+                  slot="reference"
+                  @click="showDetail(nowChat)"
+                  v-if="msg.from != constant.MSG_FROM_SELF"
+                  :src="nowChat.avatar"
+                  alt=""
+                />
+              </el-popover>
 
               <!-- 文字消息 -->
               <message-text
@@ -34,78 +39,66 @@
               ></message-text>
 
               <!-- 图片消息 -->
-              <message-img-l
-                v-if="
-                  msg.type == constant.MSG_TYPE_IMG &&
-                  msg.from == constant.MSG_FROM_OPPOSITE
-                "
-                :src="msg.data"
-              ></message-img-l>
-              <message-img-r
-                v-if="
-                  msg.type == constant.MSG_TYPE_IMG &&
-                  msg.from == constant.MSG_FROM_SELF
-                "
-                :src="msg.data"
-              ></message-img-r>
-
+              <div v-else-if="msg.type == constant.MSG_TYPE_IMG">
+                <message-img-l
+                  v-if="msg.from != constant.MSG_FROM_SELF"
+                  :src="msg.data"
+                ></message-img-l>
+                <message-img-r v-else :src="msg.data"></message-img-r>
+              </div>
               <!-- 视频消息 -->
-              <message-video-l
-                v-if="
-                  msg.type == constant.MSG_TYPE_VIDEO &&
-                  msg.from == constant.MSG_FROM_OPPOSITE
-                "
-                :data="msg.data"
-              ></message-video-l>
-              <message-video-r
-                v-if="
-                  msg.type == constant.MSG_TYPE_VIDEO &&
-                  msg.from == constant.MSG_FROM_SELF
-                "
-                :data="msg.data"
-              ></message-video-r>
-
+              <div v-else-if="msg.type == constant.MSG_TYPE_VIDEO">
+                <message-video-l
+                  v-if="msg.from != constant.MSG_FROM_SELF"
+                  :data="msg.data"
+                ></message-video-l>
+                <message-video-r v-else :data="msg.data"></message-video-r>
+              </div>
               <!-- 转账消息 -->
               <message-transfer
                 @click.native="openTransferWindow(msg)"
-                v-if="msg.type == constant.MSG_TYPE_TRANSFER"
+                v-else-if="msg.type == constant.MSG_TYPE_TRANSFER"
                 :direction="msg.from"
                 :data="msg.data"
               ></message-transfer>
 
               <!-- 语言消息 -->
               <message-voice
-                v-if="msg.type == constant.MSG_TYPE_VOICE"
+                v-else-if="msg.type == constant.MSG_TYPE_VOICE"
                 :direction="msg.from"
                 :data="msg.data"
               ></message-voice>
 
               <!-- 文件消息 -->
               <message-file
-                v-if="msg.type == constant.MSG_TYPE_FILE"
+                v-else-if="msg.type == constant.MSG_TYPE_FILE"
                 :direction="msg.from"
                 :data="msg.data"
               ></message-file>
 
               <!-- 语音通话消息 -->
               <message-call-voice
-                v-if="msg.type == constant.MSG_TYPE_VOICE_CALL"
+                v-else-if="msg.type == constant.MSG_TYPE_VOICE_CALL"
                 :direction="msg.from"
                 :data="msg.data"
               ></message-call-voice>
 
               <!-- 视频通话消息 -->
               <message-call-video
-                v-if="msg.type == constant.MSG_TYPE_VIDEO_CALL"
+                v-else-if="msg.type == constant.MSG_TYPE_VIDEO_CALL"
                 :direction="msg.from"
                 :data="msg.data"
               ></message-call-video>
-
-              <img
-                v-if="msg.from == constant.MSG_FROM_SELF"
-                :src="self.avatar"
-                alt=""
-              />
+              <el-popover placement="bottom" width="300" trigger="click">
+                <contact-detail :msg="nowChat"></contact-detail>
+                <img
+                  slot="reference"
+                  @click="showDetail(nowChat)"
+                  v-if="msg.from == constant.MSG_FROM_SELF"
+                  :src="self.avatar"
+                  alt=""
+                />
+              </el-popover>
             </div>
           </div>
         </div>
@@ -249,6 +242,7 @@ const ipcRenderer = require("electron").ipcRenderer;
 import { Message } from "element-ui";
 import dayjs from "dayjs";
 import { mapGetters, mapMutations } from "vuex";
+import ContactDetail from "@/components/dialogs/contact_detail.vue";
 
 import constant from "@/constant.ts";
 import ChatHeader from "@/components/chat/chat_header.vue";
@@ -280,11 +274,21 @@ export default Vue.extend({
     MessageFile,
     MessageCallVoice,
     MessageCallVideo,
+    ContactDetail,
   },
 
-  props:["nowChat"],
+  props: ["nowChat"],
   computed: {
     ...mapGetters(["self", "nowUser"]),
+  },
+
+  watch: {
+    nowChat: function (value) {
+      this.avatars=[];
+      let joinIcon = require("@/assets/join.png");
+      this.avatars.push({ url: joinIcon, title: "添加" });
+      this.avatars.push({ url: value.avatar, title: value.user });
+    },
   },
   data() {
     return {
@@ -309,14 +313,11 @@ export default Vue.extend({
   created() {
     this.event_expression = new EventEmitter();
     this.chat_manage_event = new EventEmitter();
-    let joinIcon = require("@/assets/join.png");
-    this.avatars.push({ url: joinIcon, title: "添加" });
-    this.avatars.push({ url: this.nowChat.avatar, title: this.nowChat.user });
 
     window.addEventListener("keydown", (e) => {
-      if ( e.keyCode == 120) {
+      if (e.keyCode == 120) {
         this.changeUser(constant.MSG_FROM_SELF);
-      } else if ( e.keyCode == 121) {
+      } else if (e.keyCode == 121) {
         this.changeUser(constant.MSG_FROM_OPPOSITE);
       }
     });
@@ -325,7 +326,7 @@ export default Vue.extend({
   },
   methods: {
     ...mapMutations(["pushMessage", "changeNowUser"]),
-
+    showDetail(msg) {},
     onBlur() {
       this.onShowMore(false);
       (this.$refs.chatHeader as any).setShowMore(false);

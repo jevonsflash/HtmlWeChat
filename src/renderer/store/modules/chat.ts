@@ -81,42 +81,131 @@ const getChatConfStore: Function = (state, id) => {
 }
 
 
-const getChatConfStoreByName: Function = (state, name) => {
-  var currentChat = getChatByName(state, name);
-  if (currentChat != null) {
-    var currentChatConfigOpts = {
-      cwd: path.join(defaultCwd, "chat"),
-      configName: currentChat.user
 
-    };
-    let currentChatstore = new Conf(currentChatConfigOpts);
-    return currentChatstore;
+const getGroupChatConfStore: Function = (state, id) => {
+  var currentChat = getChat(state, id);
+  if (currentChat != null) {
+    let currentChatstores = {};
+    currentChat.wechatId.forEach(item => {
+      var currentChatConfigOpts = {
+        cwd: path.join(defaultCwd, "chat", currentChat.user),
+        configName: item
+      };
+      let currentChatstore = new Conf(currentChatConfigOpts);
+      currentChatstores[item]=currentChatstore;
+    });
+
+    return currentChatstores;
+
   }
   else { return null; }
 }
 
+
+const getGroupChatConfStoreByName: Function = (state, name) => {
+  var currentChat = getChatByName(state, name);
+  if (currentChat != null) {
+
+    let currentChatstores = {};
+    currentChat.wechatId.forEach(item => {
+      var currentChatConfigOpts = {
+        cwd: path.join(defaultCwd, "chat", currentChat.user),
+        configName: item
+      };
+      let currentChatstore = new Conf(currentChatConfigOpts);
+      currentChatstores[item]=currentChatstore;
+    });
+
+    return currentChatstores;
+
+
+  } else { return null; }
+}
+
+const getChatConfStoreByName: Function = (state, name) => {
+  var currentChat = getChatByName(state, name);
+  if (currentChat != null) {
+
+    var currentChatConfigOpts = {
+      cwd: path.join(defaultCwd, "chat"),
+      configName: currentChat.user
+    };
+    let currentChatstore = new Conf(currentChatConfigOpts);
+    return currentChatstore;
+
+  } else { return null; }
+}
+
+
 const mutations = {
   changeChat: (state, id) => {
     let currentChat = getChat(state, id);
-    let currentChatstore = getChatConfStore(state, id);
-    let currentChatPayload = currentChatstore.get('data', null)
-    if (currentChatPayload == null) {
+    if (currentChat.wechatId instanceof Array) {
+      let currentChatstores = getGroupChatConfStore(state, id);
+      var currentChatPayloads = []
+      for (var key in currentChatstores) {
+        var currentChatstore = currentChatstores[key];
+         
+        let currentChatPayload = currentChatstore.get('data', null)
+        if (currentChatPayload != null) {
+        }
+        else {
+          var opts = {
+            cwd: defaultCwd,
+            configName: 'group_config'
+          
+          };
+          let group_store = new Conf(opts);
+          let group_state = group_store.get('data', def)
+          
+          let group_index = group_state.group.findIndex((group) => {
+            return group.name == currentChat.user
+          })
+          let currentGroup=  group_state.group[group_index]
 
-      currentChatPayload = {
-        id: currentChat.id,
-        user: currentChat.user,
-        desc: currentChat.desc,
-        region: currentChat.region,
-        wechatId: currentChat.wechatId,
-        sex: currentChat.sex,
-        avatar: currentChat.avatar,
-        msgs: [defaultMsg]
+          let currentMember = currentGroup.member.find((member) => {
+            return member.name == key
+          })          
+          currentChatPayload = {
+            id: currentMember.id,
+            user: currentMember.name,
+            desc: currentMember.desc,
+            region: currentMember.region,
+            wechatId: currentMember.wechatId,
+            sex: currentMember.sex,
+            avatar: currentMember.avatar,
+            msgs: []
+          }
+          currentChatstore.set("data", currentChatPayload)
+        }
+        currentChatPayloads.push(currentChatPayload)
+
       }
-      currentChat.msgs.push(defaultMsg)
+      state._nowChat = currentChatPayloads;
 
-      currentChatstore.set("data", currentChatPayload)
     }
-    state._nowChat = currentChatPayload;
+    else {
+      let currentChatstore = getChatConfStore(state, id);
+      let currentChatPayload = currentChatstore.get('data', null)
+      if (currentChatPayload == null) {
+
+        currentChatPayload = {
+          id: currentChat.id,
+          user: currentChat.user,
+          desc: currentChat.desc,
+          region: currentChat.region,
+          wechatId: currentChat.wechatId,
+          sex: currentChat.sex,
+          avatar: currentChat.avatar,
+          msgs: [defaultMsg]
+        }
+        currentChat.msgs.push(defaultMsg)
+
+        currentChatstore.set("data", currentChatPayload)
+      }
+      state._nowChat = currentChatPayload;
+    }
+
   },
 
   pushMessage: (state, msg) => {
@@ -137,12 +226,19 @@ const mutations = {
       }
       currentChat.msgs.push(defaultMsg)
     }
-    currentChatPayload.msgs.push(msg);
+    let newMsg = {
+      id: msg.id,
+      type: msg.type,
+      from: msg.from,
+      data: msg.data,
+      time: msg.time,
+    }
+    currentChatPayload.msgs.push(newMsg);
     currentChatstore.set("data", currentChatPayload)
     currentChat.msgs = [];
-    currentChat.msgs.push(msg)
+    currentChat.msgs.push(newMsg)
     if (state._nowChat.id == msg.chat_id) {
-      state._nowChat.msgs.push(msg);
+      state._nowChat.msgs.push(newMsg);
 
     }
     GlobalEvent.emit("pubmsg")

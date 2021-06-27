@@ -5,7 +5,8 @@
         <list></list>
       </el-aside>
       <el-main style="padding: 0">
-        <chat :nowChat="nowChat"></chat>
+        <group-chat :nowChat="nowChat" v-if="isArray(nowChat)"></group-chat>
+        <chat :nowChats="nowChat" v-else></chat>
       </el-main>
     </el-container>
   </div>
@@ -15,14 +16,21 @@
 import Vue from "vue";
 import List from "./list.vue";
 import Chat from "./chat.vue";
+import GroupChat from "./groupChat.vue";
 import { mapGetters } from "vuex";
 export default Vue.extend({
   computed: {
     ...mapGetters(["nowChat"]),
   },
+  methods:{
+    isArray(obj) {
+      var result = obj instanceof Array;
+      return result;
+    },
+  },
   components: {
     List,
-    Chat,
+    Chat,GroupChat
   },
 });
 </script>

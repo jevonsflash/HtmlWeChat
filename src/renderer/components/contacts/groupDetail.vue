@@ -69,7 +69,7 @@ export default Vue.extend({
           avatar:  Enumerable.from(this.msg.member as Array<UserInfo>).select(c=>c.avatar).toArray(),
           desc: "",
           region: "",
-          wechatId: this.msg.id,
+          wechatId: Enumerable.from(this.msg.member as Array<UserInfo>).select(c=>c.name).toArray(),
           sex: "",
           msgs: [],
         };
