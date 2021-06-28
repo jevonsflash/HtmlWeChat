@@ -15,6 +15,7 @@ import '@/icons/components'
 
 import 'element-ui/lib/theme-chalk/index.css'
 import ElementUI from 'element-ui'
+import moment from 'vue-moment'
 
 
 if (!process.env.IS_WEB) Vue.use(require('vue-electron'))
@@ -37,6 +38,7 @@ for (let i = 1; i <= 249; i++) {
 }
 
 Vue.prototype.$globalEvent = GlobalEvent
+Vue.use(moment)
 
 
 Vue.use(SvgIcon, {

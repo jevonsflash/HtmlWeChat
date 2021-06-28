@@ -33,7 +33,7 @@
             <div class="meta">
               <div class="top">
                 <span class="name">{{ chat.user }}</span>
-                <span class="time">{{ getLastMsg(chat).time }}</span>
+                <span class="time">{{ getLastMsg(chat).time | moment("HH:mm") }}</span>
               </div>
               <div class="last_msg">{{ msgContentText(getLastMsg(chat)) }}</div>
             </div>
