@@ -56,7 +56,6 @@ export default Vue.extend({
         if (this.msg.type == '语音') {
           this.pushMessage({
             chat_id: this.nowChat.id,
-            id: this.nowChat.msgs.length,
             type: constant.MSG_TYPE_VOICE_CALL,
             from: this.nowUser,
             data: { len: this.msg.len },
@@ -65,7 +64,6 @@ export default Vue.extend({
         } else {
           this.pushMessage({
             chat_id: this.nowChat.id,
-            id: this.nowChat.msgs.length,
             type: constant.MSG_TYPE_VIDEO_CALL,
             from: this.nowUser,
             data: { len: this.msg.len },

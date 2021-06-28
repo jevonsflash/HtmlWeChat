@@ -68,7 +68,6 @@ export default {
         if (this.msg.type == '图片') {
           this.pushMessage({
             chat_id: this.nowChat.id,
-            id: this.nowChat.msgs.length,
             type: constant.MSG_TYPE_IMG,
             from: this.nowUser,
             data: this.msg.url,
@@ -77,7 +76,6 @@ export default {
         } else if (this.msg.type == '视频') {
           this.pushMessage({
             chat_id: this.nowChat.id,
-            id: this.nowChat.msgs.length,
             type: constant.MSG_TYPE_VIDEO,
             from: this.nowUser,
             data: {

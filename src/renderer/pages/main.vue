@@ -50,9 +50,9 @@
       </el-aside>
       <el-main class="main-frame">
         <chat v-if="currentPannel == 'chat'"></chat>
-        <contacts v-if="currentPannel == 'contacts'"></contacts>
-        <favourite v-if="currentPannel == 'app'"></favourite>
-        <setting v-if="currentPannel == 'setting'"></setting>
+        <contacts v-else-if="currentPannel == 'contacts'"></contacts>
+        <favourite v-else-if="currentPannel == 'app'"></favourite>
+        <setting v-else-if="currentPannel == 'setting'"></setting>
       </el-main>
     </el-container>
     <el-dialog class="zero-padding"
@@ -65,9 +65,9 @@
       <file-manager></file-manager>
     </el-dialog>
 
-    <div class="top-tip">
+    <!-- <div class="top-tip">
       <span>当前版本仅供试用</span>
-    </div>
+    </div> -->
   </div>
 </template>
 

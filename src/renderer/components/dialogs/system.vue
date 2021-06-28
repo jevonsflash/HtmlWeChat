@@ -40,7 +40,6 @@ export default {
         await this.$refs.form.validate()
         this.pushMessage({
           chat_id: this.nowChat.id,
-          id: this.nowChat.msgs.length,
           from: constant.MSG_FROM_SYSTEM,
           data: this.msg.content,
           time: dayjs().format( )

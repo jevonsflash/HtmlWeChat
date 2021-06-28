@@ -10,7 +10,7 @@
       >
       </chat-header>
 
-      <div class="body" v-if="nowChats != null">
+      <div class="body">
         <div class="window" ref="chatWindow">
           <div
             class="message"
@@ -167,10 +167,14 @@
           </div>
         </div>
         <div>
-          <textarea rows="3" v-model="message" @keyup.enter="submit"></textarea>
+          <textarea
+            rows="3"
+            v-model="message"
+            @keyup.enter="submit()"
+          ></textarea>
         </div>
         <div class="sent_warp">
-          <button @click="submit">发送(S)</button>
+          <button @click="submit()">发送(S)</button>
         </div>
       </footer>
 
@@ -290,38 +294,43 @@ export default Vue.extend({
   },
   watch: {
     nowChats: function (value) {
-      let joinIcon = require("@/assets/join.png");
-      this.avatars = [];
-      this.avatars.push({ url: joinIcon, title: "添加" });
+      if (value.type == "chat") {
+        return;
+      }
+      this.$nextTick(() => {
+        let joinIcon = require("@/assets/join.png");
+        this.avatars = [];
+        this.avatars.push({ url: joinIcon, title: "添加" });
 
-      var nowChat = [];
+        var nowChat = [];
 
-      value.chats.forEach((item) => {
-        var currentModel = [];
-        item.msgs.forEach((msg) => {
-          let currentMsgModel = {
-            user: item.user,
-            desc: item.desc,
-            region: item.region,
-            wechatId: item.wechatId,
-            sex: item.sex,
-            avatar: item.avatar,
-            msg: msg,
-          };
-          currentModel.push(currentMsgModel);
+        value.chats.forEach((item) => {
+          var currentModel = [];
+          item.msgs.forEach((msg) => {
+            let currentMsgModel = {
+              user: item.user,
+              desc: item.desc,
+              region: item.region,
+              wechatId: item.wechatId,
+              sex: item.sex,
+              avatar: item.avatar,
+              msg: msg,
+            };
+            currentModel.push(currentMsgModel);
+          });
+          if (currentModel.length > 0) {
+            nowChat = nowChat.concat(currentModel);
+          }
+
+          this.avatars.push({ url: item.avatar, title: item.user });
         });
-        if (currentModel.length > 0) {
-          nowChat = nowChat.concat(currentModel);
-        }
-
-        this.avatars.push({ url: item.avatar, title: item.user });
+        nowChat.sort(function (a, b) {
+          let date1 = dayjs(a.msg.time);
+          let date2 = dayjs(b.msg.time);
+          return date1 > date2 ? 1 : -1;
+        });
+        this.nowChat = nowChat;
       });
-      nowChat.sort(function (a, b) {
-        let date1 = dayjs(a.msg.time);
-        let date2 = dayjs(b.msg.time);
-        return date1 < date2 ? 1 : -1;
-      });
-      this.nowChat = nowChat;
     },
   },
 
@@ -345,18 +354,16 @@ export default Vue.extend({
       exp4: require("@/assets/expressionMenu/p2.png"),
     };
   },
-
+  destroyed() {
+    // 在组件生命周期结束的时候销毁。
+    window.removeEventListener("keydown", this.receiveMessage, false);
+    this.$globalEvent.removeAllListeners("pubmsg");
+  },
   created() {
     this.event_expression = new EventEmitter();
     this.chat_manage_event = new EventEmitter();
-
-    window.addEventListener("keydown", (e) => {
-      if (e.keyCode == 120) {
-        this.changeUser(constant.MSG_FROM_SELF);
-      } else if (e.keyCode == 121) {
-        this.changeUser(constant.MSG_FROM_OPPOSITE);
-      }
-    });
+    this.changeUser(constant.MSG_FROM_SELF);
+    window.addEventListener("keydown", (e) => {});
 
     this.$globalEvent.on("pubmsg", this.onPubmsgListener);
   },
@@ -385,16 +392,15 @@ export default Vue.extend({
     getNowChat() {
       return this.nowChat;
     },
-    submit() {
+    submit(user = null) {
       if (!this.message) return;
       this.message = this.messageTransferHTML(this.message);
       this.pushMessage({
-        chat_id: this.nowChat.id,
-        id: this.nowChat.msgs.length,
+        chat_id: this.nowChats.id,
         type: constant.MSG_TYPE_TEXT,
-        from: this.nowUser,
+        from: user == null ? this.nowUser : user,
         data: this.message,
-        time: dayjs().format( ),
+        time: dayjs().format(),
       });
       this.message = "";
     },
@@ -416,18 +422,19 @@ export default Vue.extend({
       console.log(this.transfer.now);
     },
     changeUser(user) {
-      this.changeNowUser(user);
-      if (user == constant.MSG_FROM_SELF) {
+      if (
+        this.nowUser != constant.MSG_FROM_SELF &&
+        user == constant.MSG_FROM_SELF
+      ) {
+        this.changeNowUser(user);
         Message.success(`已切换为自己`);
-      } else {
-        Message.success(`已切换为对方`);
       }
     },
     openTransferWindow(msg) {
       ipcRenderer.removeAllListeners("transfer_on_msg");
       ipcRenderer.once("transfer_on_msg", (event, _msg) => {
         _msg = JSON.parse(_msg);
-        _msg.chat_id = this.nowChat.id;
+        _msg.chat_id = this.nowChats.id;
         _msg.id = this.nowChat.msgs.length;
         this.pushMessage(_msg);
         msg.data.receive_time = _msg.data.receive_time;

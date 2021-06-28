@@ -44,7 +44,6 @@ export default {
         await this.$refs.form.validate()
         this.pushMessage({
           chat_id: this.nowChat.id,
-          id: this.nowChat.msgs.length,
           type: constant.MSG_TYPE_TRANSFER,
           from: this.nowUser,
           data: {

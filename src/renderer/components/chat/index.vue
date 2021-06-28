@@ -7,11 +7,11 @@
       <el-main style="padding: 0">
         <group-chat
           :nowChats="nowChat"
-          v-if="nowChat != null && isGroup(nowChat)"
+          v-show="nowChat != null && isGroup(nowChat)"
         ></group-chat>
         <chat
           :nowChat="nowChat"
-          v-else-if="nowChat != null && !isGroup(nowChat)"
+           v-show="nowChat != null && !isGroup(nowChat)"
         ></chat>
       </el-main>
     </el-container>

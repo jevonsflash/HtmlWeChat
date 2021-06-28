@@ -11,10 +11,20 @@ const path = require('path');
 
 const Conf = require('conf');
 const fs = require('fs')
+const groupChatSelfConfigName = "__self"
+const selfId = -100
 const defaultMsg = {
   id: 0,
   from: constant.MSG_FROM_SYSTEM,
-  data: '你们已成为好友'
+  data: '你们已成为好友',
+  time: "0001-01-01T00:00:00+08:00"
+}
+
+const defaultGroupMsg = {
+  id: 0,
+  from: constant.MSG_FROM_SYSTEM,
+  data: '你已加入群聊',
+  time: "0001-01-01T00:00:00+08:00"
 }
 const def = {
 
@@ -84,6 +94,7 @@ const getGroupChatConfStore: Function = (state, id) => {
   var currentChat = getChat(state, id);
   if (currentChat != null) {
     let currentChatstores = {};
+    currentChat.wechatId.push(groupChatSelfConfigName)
     currentChat.wechatId.forEach(item => {
       var currentChatConfigOpts = {
         cwd: path.join(defaultCwd, "chat", currentChat.user),
@@ -163,26 +174,56 @@ const mutations = {
         if (currentChatPayload != null) {
         }
         else {
-          let currentMember = currentGroup.member.find((member) => {
+
+          var currentMember = currentGroup.member.find((member) => {
             return member.name == key
           })
-          currentChatPayload = {
-            id: currentMember.id,
-            user: currentMember.name,
-            desc: currentMember.desc,
-            region: currentMember.region,
-            wechatId: currentMember.wechatId,
-            sex: currentMember.sex,
-            avatar: currentMember.avatar,
-            msgs: []
+          if (currentMember != null) {
+            currentChatPayload = {
+              id: currentMember.id,
+              user: currentMember.name,
+              desc: currentMember.desc,
+              region: currentMember.region,
+              wechatId: currentMember.wechatId,
+              sex: currentMember.sex,
+              avatar: currentMember.avatar,
+              msgs: []
+            }
+          }
+          else {
+            if (key == groupChatSelfConfigName) {
+              var opts = {
+                cwd: defaultCwd,
+                configName: 'self_config'
+
+              };
+
+              var selfState = new Conf(opts).get('data', def);
+              if (selfState != null) {
+                let currentMemberAsSelf = selfState.self;
+                currentChatPayload = {
+                  id: selfId,
+                  user: currentMemberAsSelf.name,
+                  desc: currentMemberAsSelf.desc,
+                  region: currentMemberAsSelf.region,
+                  wechatId: currentMemberAsSelf.wechatId,
+                  sex: currentMemberAsSelf.sex,
+                  avatar: currentMemberAsSelf.avatar,
+                  msgs: []
+                }
+              }
+              else {
+                continue;
+              }
+            }
           }
           currentChatstore.set("data", currentChatPayload)
         }
-        currentChatPayloads.push(currentChatPayload)
-
+        Vue.set(currentChatPayloads, currentChatPayloads.length, currentChatPayload)
       }
-      var newModel={}
-      newModel['id'] = currentGroup.id;
+      var newModel = {}
+      newModel['id'] = currentChat.id;
+      newModel['wechatId'] = currentGroup.id;
       newModel['user'] = currentGroup.name;
       newModel['notice'] = currentGroup.notice;
       newModel['myName'] = currentGroup.myName;
@@ -190,7 +231,7 @@ const mutations = {
       newModel['type'] = "groupChat";
 
       newModel['chats'] = currentChatPayloads;
-      state._nowChat=newModel;
+      state._nowChat = newModel;
 
     }
     else {
@@ -220,38 +261,114 @@ const mutations = {
 
   pushMessage: (state, msg) => {
     let currentChat = getChat(state, msg.chat_id);
-    let currentChatstore = getChatConfStore(state, msg.chat_id);
-    let currentChatPayload = currentChatstore.get('data', null)
-    if (currentChatPayload == null) {
+    if (currentChat.wechatId instanceof Array) {
 
-      currentChatPayload = {
-        id: currentChat.id,
-        user: currentChat.user,
-        desc: currentChat.desc,
-        region: currentChat.region,
-        wechatId: currentChat.wechatId,
-        sex: currentChat.sex,
-        avatar: currentChat.avatar,
-        msgs: [defaultMsg]
+      var configFileName = msg.from != constant.MSG_FROM_SELF ? msg.from : groupChatSelfConfigName
+      var currentChatConfigOpts = {
+        cwd: path.join(defaultCwd, "chat", currentChat.user),
+        configName: configFileName
+      };
+      let currentChatstore = new Conf(currentChatConfigOpts);
+      let currentChatPayload = currentChatstore.get('data', null)
+      if (currentChatPayload == null) {
+        if (msg.from != constant.MSG_FROM_SELF) {
+          currentChatPayload = {
+            id: currentChat.id,
+            user: currentChat.user,
+            desc: currentChat.desc,
+            region: currentChat.region,
+            wechatId: currentChat.wechatId,
+            sex: currentChat.sex,
+            avatar: currentChat.avatar,
+            msgs: [defaultGroupMsg]
+          }
+          currentChat.msgs.push(defaultGroupMsg)
+        }
+        else {
+          currentChatPayload = {
+            id: currentChat.id,
+            user: currentChat.user,
+            desc: currentChat.desc,
+            region: currentChat.region,
+            wechatId: currentChat.wechatId,
+            sex: currentChat.sex,
+            avatar: currentChat.avatar,
+            msgs: []
+          }
+        }
+
       }
-      currentChat.msgs.push(defaultMsg)
-    }
-    let newMsg = {
-      id: msg.id,
-      type: msg.type,
-      from: msg.from,
-      data: msg.data,
-      time: msg.time,
-    }
-    currentChatPayload.msgs.push(newMsg);
-    currentChatstore.set("data", currentChatPayload)
-    currentChat.msgs = [];
-    currentChat.msgs.push(newMsg)
-    if (state._nowChat.id == msg.chat_id) {
-      state._nowChat.msgs.push(newMsg);
+
+      let fromStr = constant.MSG_FROM_SELF
+      if (msg.from != constant.MSG_FROM_SELF) {
+        fromStr = constant.MSG_FROM_OPPOSITE
+      }
+      let newId = currentChatPayload.msgs.length
+
+      var newMsg = {
+        id: newId,
+        type: msg.type,
+        from: fromStr,
+        data: msg.data,
+        time: msg.time,
+      }
+      currentChatPayload.msgs.push(newMsg);
+      currentChatstore.set("data", currentChatPayload)
+      currentChat.msgs = [];
+      currentChat.msgs.push(newMsg)
+
+      if (state._nowChat.id == msg.chat_id) {
+        let currentNowChat = null;
+        if (msg.from != constant.MSG_FROM_SELF) {
+
+          currentNowChat = state._nowChat.chats.find(c => c.user == msg.from)
+        }
+        else {
+          currentNowChat = state._nowChat.chats.find(c => c.id == selfId)
+
+        }
+        Vue.set(currentNowChat.msgs, currentNowChat.msgs.length, newMsg)
+
+      }
+
+      GlobalEvent.emit("pubmsg")
 
     }
-    GlobalEvent.emit("pubmsg")
+    else {
+
+      let currentChatstore = getChatConfStore(state, msg.chat_id);
+      let currentChatPayload = currentChatstore.get('data', null)
+      if (currentChatPayload == null) {
+
+        currentChatPayload = {
+          id: currentChat.id,
+          user: currentChat.user,
+          desc: currentChat.desc,
+          region: currentChat.region,
+          wechatId: currentChat.wechatId,
+          sex: currentChat.sex,
+          avatar: currentChat.avatar,
+          msgs: [defaultMsg]
+        }
+        currentChat.msgs.push(defaultMsg)
+      }
+      let newId = currentChatPayload.msgs.length
+      let newMsg = {
+        id: newId,
+        type: msg.type,
+        from: msg.from,
+        data: msg.data,
+        time: msg.time,
+      }
+      currentChatPayload.msgs.push(newMsg);
+      currentChatstore.set("data", currentChatPayload)
+      currentChat.msgs = [];
+      currentChat.msgs.push(newMsg)
+      if (state._nowChat.id == msg.chat_id) {
+        Vue.set(state._nowChat.msgs, state._nowChat.msgs.length, newMsg)
+      }
+      GlobalEvent.emit("pubmsg")
+    }
   },
 
 

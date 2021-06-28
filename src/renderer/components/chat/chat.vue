@@ -10,7 +10,7 @@
       >
       </chat-header>
 
-      <div class="body" v-if="nowChat != null">
+      <div class="body">
         <div class="window" ref="chatWindow">
           <div
             class="message"
@@ -283,13 +283,19 @@ export default Vue.extend({
 
   watch: {
     nowChat: function (value) {
-      this.avatars = [];
-      let joinIcon = require("@/assets/join.png");
-      this.avatars.push({ url: joinIcon, title: "添加", entity: null });
-      this.avatars.push({
-        url: value.avatar,
-        title: value.user,
-        entity: value,
+      if (value.type == "groupChat") {
+        return;
+      }
+
+      this.$nextTick(() => {
+        this.avatars = [];
+        let joinIcon = require("@/assets/join.png");
+        this.avatars.push({ url: joinIcon, title: "添加", entity: null });
+        this.avatars.push({
+          url: value.avatar,
+          title: value.user,
+          entity: value,
+        });
       });
     },
   },
@@ -312,24 +318,31 @@ export default Vue.extend({
       exp4: require("@/assets/expressionMenu/p2.png"),
     };
   },
-
+  destroyed() {
+    // 在组件生命周期结束的时候销毁。
+    window.removeEventListener("keydown", this.receiveMessage, false);
+    this.$globalEvent.removeAllListeners("pubmsg");
+  },
   created() {
     this.event_expression = new EventEmitter();
     this.chat_manage_event = new EventEmitter();
 
-    window.addEventListener("keydown", (e) => {
-      if (e.keyCode == 120) {
-        this.changeUser(constant.MSG_FROM_SELF);
-      } else if (e.keyCode == 121) {
-        this.changeUser(constant.MSG_FROM_OPPOSITE);
-      }
-    });
+    window.addEventListener("keydown", this.receiveMessage);
 
     this.$globalEvent.on("pubmsg", this.onPubmsgListener);
   },
   methods: {
     ...mapMutations(["pushMessage", "changeNowUser"]),
     showDetail(msg) {},
+
+    receiveMessage(e) {
+      if (e.keyCode == 120) {
+        this.changeUser(constant.MSG_FROM_SELF);
+      } else if (e.keyCode == 121) {
+        this.changeUser(constant.MSG_FROM_OPPOSITE);
+      }
+    },
+
     onBlur() {
       this.onShowMore(false);
       (this.$refs.chatHeader as any).setShowMore(false);
@@ -357,11 +370,10 @@ export default Vue.extend({
       this.message = this.messageTransferHTML(this.message);
       this.pushMessage({
         chat_id: this.nowChat.id,
-        id: this.nowChat.msgs.length,
         type: constant.MSG_TYPE_TEXT,
         from: this.nowUser,
         data: this.message,
-        time: dayjs().format( ),
+        time: dayjs().format(),
       });
       this.message = "";
     },
@@ -383,10 +395,17 @@ export default Vue.extend({
       console.log(this.transfer.now);
     },
     changeUser(user) {
-      this.changeNowUser(user);
-      if (user == constant.MSG_FROM_SELF) {
+      if (
+        this.nowUser != constant.MSG_FROM_SELF &&
+        user == constant.MSG_FROM_SELF
+      ) {
+        this.changeNowUser(user);
         Message.success(`已切换为自己`);
-      } else {
+      } else if (
+        this.nowUser != constant.MSG_FROM_OPPOSITE &&
+        user == constant.MSG_FROM_OPPOSITE
+      ) {
+        this.changeNowUser(user);
         Message.success(`已切换为对方`);
       }
     },
