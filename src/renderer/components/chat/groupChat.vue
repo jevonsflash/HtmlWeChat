@@ -174,7 +174,7 @@
         </div>
       </footer>
 
-      <dialog-chat-manage :event="chat_manage_event"></dialog-chat-manage
+      <chat-history :event="chat_manage_event"></chat-history
     ></el-main>
     <el-aside width="250" v-if="showMenu">
       <div class="menu-frame" ref="menu" :tabindex="1" @blur="onBlur">
@@ -263,13 +263,13 @@ import MessageVideoL from "@/components/messages/message_video_l.vue";
 import MessageFile from "@/components/messages/message_file.vue";
 import MessageCallVoice from "@/components/messages/message_call_voice.vue";
 import MessageCallVideo from "@/components/messages/message_call_video.vue";
-import DialogChatManage from "@/components/dialogs/chat_manage.vue";
+import ChatHistory from "@/components/chatHistory/index.vue";
 
 import Vue from "vue";
 
 export default Vue.extend({
   components: {
-    DialogChatManage,
+    ChatHistory,
     ChatHeader,
     MessageText,
     MessageImgR,
