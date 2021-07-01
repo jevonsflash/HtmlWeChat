@@ -20,7 +20,11 @@
             <div class="sys_msg" v-if="msg.from == constant.MSG_FROM_SYSTEM">
               <span>{{ msg.data }}</span>
             </div>
-            <div v-else :class="getClass(msg.from)">
+            <div
+              v-else
+              @contextmenu.prevent="onContextMenu"
+              :class="getClass(msg.from)"
+            >
               <el-popover placement="bottom" width="300" trigger="click">
                 <contact-detail :msg="nowChat"></contact-detail>
                 <img
@@ -100,6 +104,14 @@
                   alt=""
                 />
               </el-popover>
+
+              <context-menu
+                ref="chatContextMenu"
+                :context-menu-show.sync="contextShow"
+                :config="contextConfig"
+                @removeChat="removeChat"
+              >
+              </context-menu>
             </div>
           </div>
         </div>
@@ -117,8 +129,13 @@
               <span
                 @click="expressionVisible = !expressionVisible"
                 slot="reference"
-                ><svg-icon name="emoji"></svg-icon
-              ></span>
+              >
+                <img
+                  style="margin-top: 5px"
+                  class="tool-icon"
+                  :src="require('@/assets/chatTool/expression.png')"
+                />
+              </span>
 
               <div class="weui-tab">
                 <div class="weui-tab__panel">
@@ -149,15 +166,34 @@
               </div>
             </el-popover>
 
-            <span><svg-icon name="file"></svg-icon></span>
-            <span><svg-icon name="cut"></svg-icon></span>
-            <span
-              ><svg-icon name="message" @click="chatManage"></svg-icon
-            ></span>
+            <span>
+              <img
+                class="tool-icon"
+                :src="require('@/assets/chatTool/file.png')"
+            /></span>
+            <span>
+              <img
+                class="tool-icon"
+                :src="require('@/assets/chatTool/cut.png')"
+            /></span>
+            <span>
+              <img
+                @click="chatManage"
+                class="tool-icon"
+                :src="require('@/assets/chatTool/msg.png')"
+            /></span>
           </div>
           <div>
-            <span><svg-icon name="call"></svg-icon></span>
-            <span><svg-icon name="video"></svg-icon></span>
+            <span>
+              <img
+                class="tool-icon"
+                :src="require('@/assets/chatTool/phone.png')"
+            /></span>
+            <span>
+              <img
+                class="tool-icon"
+                :src="require('@/assets/chatTool/cam.png')"
+            /></span>
           </div>
         </div>
         <div>
@@ -256,6 +292,7 @@ import MessageFile from "@/components/messages/message_file.vue";
 import MessageCallVoice from "@/components/messages/message_call_voice.vue";
 import MessageCallVideo from "@/components/messages/message_call_video.vue";
 import ChatHistory from "@/components/chatHistory/index.vue";
+import contextMenu from "@/components/contextMenu/index.vue";
 
 import Vue from "vue";
 
@@ -274,6 +311,7 @@ export default Vue.extend({
     MessageCallVoice,
     MessageCallVideo,
     ContactDetail,
+    contextMenu,
   },
 
   props: ["nowChat"],
@@ -301,6 +339,8 @@ export default Vue.extend({
   },
   data() {
     return {
+      contextShow: false,
+
       showMenu: false,
       message: "",
       constant: constant,
@@ -316,6 +356,24 @@ export default Vue.extend({
       exp2: require("@/assets/expressionMenu/p3.png"),
       exp3: require("@/assets/expressionMenu/p1.png"),
       exp4: require("@/assets/expressionMenu/p2.png"),
+      contextConfig: {
+        // 右键点击距左位置
+        offsetLeft: 0,
+        // 右键点击距上位置
+        offsetTop: 0,
+        width: 148,
+        menuList: [
+          // 无需按键监听可以不传keyCode
+          { label: "复制", id: 1 },
+          { label: "引用", id: 2 },
+          { label: "转发", id: 3 },
+          {
+            label: "删除",
+            id: 4,
+            emitType: "removeChat",
+          },
+        ],
+      },
     };
   },
   destroyed() {
@@ -334,7 +392,18 @@ export default Vue.extend({
   methods: {
     ...mapMutations(["pushMessage", "changeNowUser"]),
     showDetail(msg) {},
-
+    removeChat() {
+      this.contextShow = false;
+    },
+    onContextMenu({ clientX, clientY }) {
+      Object.assign(this, {
+        contextConfig: {
+          offsetLeft: clientX,
+          offsetTop: clientY,
+        },
+        contextShow: true,
+      });
+    },
     receiveMessage(e) {
       if (e.keyCode == 120) {
         this.changeUser(constant.MSG_FROM_SELF);
@@ -491,7 +560,10 @@ export default Vue.extend({
 #chat {
   width: 100%;
   height: 100%;
-
+  .tool-icon {
+    height: 20px;
+    width: 20px;
+  }
   .frame {
     position: relative;
     padding: 0;

@@ -1,6 +1,7 @@
 <template>
   <div id="dialog_add_chat">
     <el-dialog
+      :modal="false"
       top="40px"
       :title="nowChat.user"
       :visible="visible"

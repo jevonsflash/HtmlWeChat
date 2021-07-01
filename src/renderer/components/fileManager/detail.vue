@@ -1,7 +1,6 @@
 <template>
   <div id="detail">
-   
-    <div class="weui-media-box weui-media-box_appmsg">
+    <!-- <div class="weui-media-box weui-media-box_appmsg">
       <div class="weui-media-box__hd">
         <img
           class="weui-media-box__thumb"
@@ -29,7 +28,7 @@
       </ul>
     </div>
 
-     <div class="weui-media-box weui-media-box_appmsg">
+    <div class="weui-media-box weui-media-box_appmsg">
       <div class="weui-media-box__hd">
         <img
           class="weui-media-box__thumb"
@@ -43,7 +42,7 @@
       </div>
     </div>
 
-     <div class="weui-media-box weui-media-box_appmsg">
+    <div class="weui-media-box weui-media-box_appmsg">
       <div class="weui-media-box__hd">
         <img
           class="weui-media-box__thumb"
@@ -68,17 +67,15 @@
           sina.com
         </li>
       </ul>
-    </div>
+    </div> -->
   </div>
 </template>
 <script lang='ts'>
-
 import EventEmitter from "eventemitter3";
 import { mapGetters, mapMutations } from "vuex";
 import Vue from "vue";
 
 export default Vue.extend({
-
   props: ["msg"],
 
   data() {
@@ -92,13 +89,12 @@ export default Vue.extend({
 #detail {
   position: relative;
   width: 100%;
-  height: 100%;
+  height: 480px;
   display: flex;
   flex-direction: column;
   .main-frame {
     width: 380px;
     margin: 0 auto;
-
   }
 
   .header {

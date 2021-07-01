@@ -123,8 +123,12 @@
               <span
                 @click="expressionVisible = !expressionVisible"
                 slot="reference"
-                ><svg-icon name="emoji"></svg-icon
-              ></span>
+              >
+                <img
+                  style="margin-top: 5px"
+                  class="tool-icon"
+                  :src="require('@/assets/chatTool/expression.png')"
+              /></span>
 
               <div class="weui-tab">
                 <div class="weui-tab__panel">
@@ -154,16 +158,34 @@
                 </div>
               </div>
             </el-popover>
-
-            <span><svg-icon name="file"></svg-icon></span>
-            <span><svg-icon name="cut"></svg-icon></span>
-            <span
-              ><svg-icon name="message" @click="chatManage"></svg-icon
-            ></span>
+            <span>
+              <img
+                class="tool-icon"
+                :src="require('@/assets/chatTool/file.png')"
+            /></span>
+            <span>
+              <img
+                class="tool-icon"
+                :src="require('@/assets/chatTool/cut.png')"
+            /></span>
+            <span>
+              <img
+                @click="chatManage"
+                class="tool-icon"
+                :src="require('@/assets/chatTool/msg.png')"
+            /></span>
           </div>
           <div>
-            <span><svg-icon name="call"></svg-icon></span>
-            <span><svg-icon name="video"></svg-icon></span>
+            <span>
+              <img
+                class="tool-icon"
+                :src="require('@/assets/chatTool/rec.png')"
+            /></span>
+            <span>
+              <img
+                class="tool-icon"
+                :src="require('@/assets/chatTool/phonecam.png')"
+            /></span>
           </div>
         </div>
         <div>
@@ -512,7 +534,10 @@ export default Vue.extend({
 #chat {
   width: 100%;
   height: 100%;
-
+  .tool-icon {
+    height: 20px;
+    width: 20px;
+  }
   .frame {
     position: relative;
     padding: 0;

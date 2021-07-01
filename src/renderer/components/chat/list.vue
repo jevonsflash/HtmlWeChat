@@ -6,7 +6,7 @@
         <span>搜索</span>
       </div>
       <div class="add">
-        <svg-icon name="user" @click="addChat"></svg-icon>
+        <i class="el-icon-plus" @click="addChat"></i>
       </div>
     </header>
 
