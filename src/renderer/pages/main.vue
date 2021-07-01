@@ -55,7 +55,9 @@
         <setting v-else-if="currentPannel == 'setting'"></setting>
       </el-main>
     </el-container>
-    <el-dialog class="zero-padding"
+    <el-dialog
+      class="zero-padding"
+      top="40px"
       title="微信文件"
       custom-class="dialog-frame"
       width="750px"
@@ -203,6 +205,16 @@ export default Vue.extend({
 .zero-padding {
   .el-dialog__body {
     padding: 0 !important;
+    background-color: #f5f5f5;
+  }
+  .el-dialog__header {
+    background-color: #f5f5f5;
+    padding: 10px 10px 5px;
+    .el-dialog__title {
+      line-height: 24px;
+      font-size: 14px;
+      color: #303133;
+    }
   }
 }
 </style>

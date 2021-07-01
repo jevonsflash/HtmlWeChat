@@ -406,7 +406,7 @@ const mutations = {
       let currentChatPayload = currentChatstore.get('data', null)
       if (currentChatPayload != null) {
         let file = path.join(defaultCwd, "chat", state.chats[chat_index].user + ".json");
-        fs.rm(file);
+        fs.unlinkSync(file);
       }
       state.chats.splice(chat_index, 1)
 
