@@ -1,35 +1,36 @@
 <template>
-  <div>
-    
+  <el-dialog
+    :modal="false"
+    title="发送文件"
+    :visible="visible"
+    @close="rowDialogClose"
+  >
+    <div style="height:350px">
       <el-tabs :tab-position="tabPosition">
-        <el-tab-pane label="发送文件" @click.native="actionHandler('file')"
-          >
+        <el-tab-pane label="发送文件" @click.native="actionHandler('file')">
           <dialog-file></dialog-file>
-          </el-tab-pane
-        >
-        <el-tab-pane label="发送语音" @click.native="actionHandler('voice')"
-          >
+        </el-tab-pane>
+        <el-tab-pane label="发送语音" @click.native="actionHandler('voice')">
           <dialog-voice></dialog-voice>
-          </el-tab-pane
-        >
+        </el-tab-pane>
         <el-tab-pane label="发送转账" @click.native="actionHandler('transter')"
-          ><dialog-transfer></dialog-transfer></el-tab-pane
+          ><dialog-transfer></dialog-transfer
+        ></el-tab-pane>
+        <el-tab-pane
+          label="发送图片和视频"
+          @click.native="actionHandler('img_video')"
+          ><dialog-img-video></dialog-img-video
+        ></el-tab-pane>
+      
+        <el-tab-pane
+          label="发送系统消息"
+          @click.native="actionHandler('system')"
         >
-        <el-tab-pane label="发送图片和视频" @click.native="actionHandler('img_video')"
-          ><dialog-img-video></dialog-img-video></el-tab-pane
-        >
-        <el-tab-pane label="发送视频或语音通话" @click.native="actionHandler('call')"
-          ><dialog-voice ></dialog-voice></el-tab-pane
-        >
-        <el-tab-pane label="发送系统消息" @click.native="actionHandler('system')"
-          > <dialog-system ></dialog-system></el-tab-pane
-        >
-        <el-tab-pane label="修改双方信息" @click.native="actionHandler('set_user')"
-          ><dialog-change-info></dialog-change-info></el-tab-pane
-        >
+          <dialog-system></dialog-system
+        ></el-tab-pane>
       </el-tabs>
-  
-  </div>
+    </div>
+  </el-dialog>
 </template>
 
 <script lang="ts">
@@ -53,17 +54,26 @@ export default Vue.extend({
     DialogChangeInfo,
     DialogCall,
   },
-   data() {
-      return {
-        tabPosition: 'left'
-      };
+  props: ["event"],
+
+  data() {
+    return {
+      tabPosition: "top",
+      visible: false,
+    };
+  },
+
+  created() {
+    this.event.on("open", this.open);
+  },
+  methods: {
+    actionHandler(action) {},
+    open() {
+      this.visible = true;
     },
-    methods:{
-            actionHandler(action) {
-
-    }
-    }
-
-    
+    rowDialogClose() {
+      this.visible = false;
+    },
+  },
 });
 </script>

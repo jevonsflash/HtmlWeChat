@@ -32,9 +32,7 @@ export default {
   },
   methods: {
     ...mapMutations(['pushMessage']),
-    rowDialogClose() {
-      this.visible = false
-    },
+   
     async submit() {
       try {
         await this.$refs.form.validate()
@@ -47,13 +45,9 @@ export default {
         })
       } catch (err) {}
     },
-    open() {
-      this.visible = true
-    }
+    
   },
-  created() {
-    this.event.on('open', this.open)
-  }
+ 
 }
 </script>
 

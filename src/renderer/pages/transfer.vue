@@ -18,11 +18,14 @@
   </div>
 </template>
 
-<script>
-import constant from "@/constant.ts";
+
+<script lang='ts'>
+import constant from "@/constant";
 import dayjs from 'dayjs'
 const ipcRenderer = require('electron').ipcRenderer
-export default {
+import Vue from 'vue'
+export default Vue.extend({
+  
   data() {
     return {
       step: 1,
@@ -77,7 +80,7 @@ export default {
       ipcRenderer.send('transfer_pub_msg', JSON.stringify(msg))
     }
   }
-}
+})
 </script>
 
 <style scoped lang="scss">

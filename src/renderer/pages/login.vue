@@ -58,7 +58,7 @@
 </template>
 
 <script lang='ts'>
-import constant from "@/constant.ts";
+import constant from "@/constant";
 import dayjs from "dayjs";
 import electron from "electron";
 import UserInfo from "@/model/UserInfo";

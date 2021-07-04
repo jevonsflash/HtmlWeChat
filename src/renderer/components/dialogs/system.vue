@@ -46,13 +46,9 @@ export default {
         })
       } catch (err) {}
     },
-    open() {
-      this.visible = true
-    }
+ 
   },
-  created() {
-    this.event.on('open', this.open)
-  }
+
 }
 </script>
 

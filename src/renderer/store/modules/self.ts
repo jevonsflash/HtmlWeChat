@@ -3,8 +3,7 @@ import electron from 'electron';
 const ipcRenderer = require("electron").ipcRenderer
 import { Message } from "element-ui"
 import Vue from "vue"
-import {GlobalEvent,defaultCwd} from '@/constant.ts'
-import constant from '@/constant.ts'
+import {GlobalEvent,defaultCwd} from '@/constant'
 import UserInfo from "@/model/userInfo";
 const Conf = require('conf');
 

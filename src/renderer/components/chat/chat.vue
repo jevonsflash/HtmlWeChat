@@ -169,6 +169,7 @@
             <span>
               <img
                 class="tool-icon"
+                @click="dashBoard"
                 :src="require('@/assets/chatTool/file.png')"
             /></span>
             <span>
@@ -187,6 +188,7 @@
             <span>
               <img
                 class="tool-icon"
+                @click="call"
                 :src="require('@/assets/chatTool/phone.png')"
             /></span>
             <span>
@@ -204,8 +206,11 @@
         </div>
       </footer>
 
-      <chat-history :event="chat_manage_event"></chat-history
-    ></el-main>
+      <setting :event="dashboard_event"></setting>
+
+      <chat-history :event="chat_manage_event"></chat-history>
+      <call :event="call_event"></call>
+    </el-main>
     <el-aside width="250" v-if="showMenu">
       <div class="menu-frame" ref="menu" :tabindex="1" @blur="onBlur">
         <el-row>
@@ -279,7 +284,7 @@ import dayjs from "dayjs";
 import { mapGetters, mapMutations } from "vuex";
 import ContactDetail from "@/components/dialogs/contact_detail.vue";
 
-import constant from "@/constant.ts";
+import constant from "@/constant";
 import ChatHeader from "@/components/chat/chat_header.vue";
 import MessageText from "@/components/messages/message_text.vue";
 import MessageImgR from "@/components/messages/message_img_r.vue";
@@ -292,13 +297,16 @@ import MessageFile from "@/components/messages/message_file.vue";
 import MessageCallVoice from "@/components/messages/message_call_voice.vue";
 import MessageCallVideo from "@/components/messages/message_call_video.vue";
 import ChatHistory from "@/components/chatHistory/index.vue";
+import Setting from "@/components/setting/index.vue";
 import contextMenu from "@/components/contextMenu/index.vue";
+import Call from "@/components/dialogs/call.vue";
 
 import Vue from "vue";
 
 export default Vue.extend({
   components: {
     ChatHistory,
+    Setting,
     ChatHeader,
     MessageText,
     MessageImgR,
@@ -312,6 +320,7 @@ export default Vue.extend({
     MessageCallVideo,
     ContactDetail,
     contextMenu,
+    Call,
   },
 
   props: ["nowChat"],
@@ -346,6 +355,8 @@ export default Vue.extend({
       constant: constant,
       event_expression: null,
       chat_manage_event: null,
+      call_event: null,
+      dashboard_event: null,
       avatars: [],
       expressions: (this as any).$expressions,
       expressionVisible: false,
@@ -384,6 +395,8 @@ export default Vue.extend({
   created() {
     this.event_expression = new EventEmitter();
     this.chat_manage_event = new EventEmitter();
+    this.call_event = new EventEmitter();
+    this.dashboard_event = new EventEmitter();
 
     window.addEventListener("keydown", this.receiveMessage);
 
@@ -428,6 +441,14 @@ export default Vue.extend({
     chatManage() {
       this.chat_manage_event.emit("open");
     },
+
+    dashBoard() {
+      this.dashboard_event.emit("open");
+    },
+    call() {
+      this.call_event.emit("open");
+    },
+
     getClass(from) {
       return from == constant.MSG_FROM_SELF ? "self" : "opposite";
     },

@@ -23,7 +23,11 @@
             >
               <span>{{ chatItem.msg.data }}</span>
             </div>
-            <div v-else :class="getClass(chatItem.msg.from)">
+            <div
+              v-else
+              @contextmenu.prevent="onContextMenu"
+              :class="getClass(chatItem.msg.from)"
+            >
               <el-popover placement="bottom" width="300" trigger="click">
                 <contact-detail :msg="chatItem"></contact-detail>
                 <img
@@ -106,6 +110,13 @@
                   alt=""
                 />
               </el-popover>
+              <context-menu
+                ref="chatContextMenu"
+                :context-menu-show.sync="contextShow"
+                :config="contextConfig"
+                @removeChat="removeChat"
+              >
+              </context-menu>
             </div>
           </div>
         </div>
@@ -161,6 +172,7 @@
             <span>
               <img
                 class="tool-icon"
+                @click="dashBoard"
                 :src="require('@/assets/chatTool/file.png')"
             /></span>
             <span>
@@ -199,6 +211,7 @@
           <button @click="submit()">发送(S)</button>
         </div>
       </footer>
+      <setting :event="dashboard_event"></setting>
 
       <chat-history :event="chat_manage_event"></chat-history
     ></el-main>
@@ -277,7 +290,7 @@ import dayjs from "dayjs";
 import { mapGetters, mapMutations } from "vuex";
 import ContactDetail from "@/components/dialogs/contact_detail.vue";
 
-import constant from "@/constant.ts";
+import constant from "@/constant";
 import ChatHeader from "@/components/chat/chat_header.vue";
 import MessageText from "@/components/messages/message_text.vue";
 import MessageImgR from "@/components/messages/message_img_r.vue";
@@ -290,12 +303,49 @@ import MessageFile from "@/components/messages/message_file.vue";
 import MessageCallVoice from "@/components/messages/message_call_voice.vue";
 import MessageCallVideo from "@/components/messages/message_call_video.vue";
 import ChatHistory from "@/components/chatHistory/index.vue";
-
+import Setting from "@/components/setting/index.vue";
+import contextMenu from "@/components/contextMenu/index.vue";
 import Vue from "vue";
+
+const GroupMsgHandler: Function = (value) => {
+  let joinIcon = require("@/assets/join.png");
+  var avatars = [];
+  avatars.push({ url: joinIcon, title: "添加" });
+
+  var nowChat = [];
+
+  value.chats.forEach((item) => {
+    var currentModel = [];
+    item.msgs.forEach((msg) => {
+      let currentMsgModel = {
+        user: item.user,
+        desc: item.desc,
+        region: item.region,
+        wechatId: item.wechatId,
+        sex: item.sex,
+        avatar: item.avatar,
+        msg: msg,
+      };
+      currentModel.push(currentMsgModel);
+    });
+    if (currentModel.length > 0) {
+      nowChat = nowChat.concat(currentModel);
+    }
+
+    avatars.push({ url: item.avatar, title: item.user });
+  });
+  nowChat.sort(function (a, b) {
+    let date1 = dayjs(a.msg.time);
+    let date2 = dayjs(b.msg.time);
+    return date1 > date2 ? 1 : -1;
+  });
+  return { avatars, nowChat };
+};
 
 export default Vue.extend({
   components: {
     ChatHistory,
+    Setting,
     ChatHeader,
     MessageText,
     MessageImgR,
@@ -308,6 +358,7 @@ export default Vue.extend({
     MessageCallVoice,
     MessageCallVideo,
     ContactDetail,
+    contextMenu,
   },
 
   props: ["nowChats"],
@@ -320,38 +371,9 @@ export default Vue.extend({
         return;
       }
       this.$nextTick(() => {
-        let joinIcon = require("@/assets/join.png");
-        this.avatars = [];
-        this.avatars.push({ url: joinIcon, title: "添加" });
-
-        var nowChat = [];
-
-        value.chats.forEach((item) => {
-          var currentModel = [];
-          item.msgs.forEach((msg) => {
-            let currentMsgModel = {
-              user: item.user,
-              desc: item.desc,
-              region: item.region,
-              wechatId: item.wechatId,
-              sex: item.sex,
-              avatar: item.avatar,
-              msg: msg,
-            };
-            currentModel.push(currentMsgModel);
-          });
-          if (currentModel.length > 0) {
-            nowChat = nowChat.concat(currentModel);
-          }
-
-          this.avatars.push({ url: item.avatar, title: item.user });
-        });
-        nowChat.sort(function (a, b) {
-          let date1 = dayjs(a.msg.time);
-          let date2 = dayjs(b.msg.time);
-          return date1 > date2 ? 1 : -1;
-        });
-        this.nowChat = nowChat;
+        var result = GroupMsgHandler(value);
+        this.avatars = result.avatars;
+        this.nowChat = result.nowChat;
       });
     },
   },
@@ -363,17 +385,37 @@ export default Vue.extend({
       constant: constant,
       event_expression: null,
       chat_manage_event: null,
+      dashboard_event: null,
       avatars: [],
       expressions: (this as any).$expressions,
       expressionVisible: false,
       value1: true,
       value2: true,
       nowChat: undefined,
+      contextShow: false,
 
       exp1: require("@/assets/expressionMenu/p0.png"),
       exp2: require("@/assets/expressionMenu/p3.png"),
       exp3: require("@/assets/expressionMenu/p1.png"),
       exp4: require("@/assets/expressionMenu/p2.png"),
+      contextConfig: {
+        // 右键点击距左位置
+        offsetLeft: 0,
+        // 右键点击距上位置
+        offsetTop: 0,
+        width: 148,
+        menuList: [
+          // 无需按键监听可以不传keyCode
+          { label: "复制", id: 1 },
+          { label: "引用", id: 2 },
+          { label: "转发", id: 3 },
+          {
+            label: "删除",
+            id: 4,
+            emitType: "removeChat",
+          },
+        ],
+      },
     };
   },
   destroyed() {
@@ -384,6 +426,7 @@ export default Vue.extend({
   created() {
     this.event_expression = new EventEmitter();
     this.chat_manage_event = new EventEmitter();
+    this.dashboard_event = new EventEmitter();
     this.changeUser(constant.MSG_FROM_SELF);
     window.addEventListener("keydown", (e) => {});
 
@@ -392,11 +435,25 @@ export default Vue.extend({
   methods: {
     ...mapMutations(["pushMessage", "changeNowUser"]),
     showDetail(msg) {},
+    removeChat() {
+      this.contextShow = false;
+    },
     onBlur() {
       this.onShowMore(false);
       (this.$refs.chatHeader as any).setShowMore(false);
     },
-
+    onContextMenu({ clientX, clientY }) {
+      Object.assign(this, {
+        contextConfig: {
+          offsetLeft: clientX,
+          offsetTop: clientY,
+        },
+        contextShow: true,
+      });
+    },
+    dashBoard() {
+      this.dashboard_event.emit("open");
+    },
     onShowMore(isShow) {
       this.showMenu = isShow;
       if (isShow) {
@@ -412,6 +469,12 @@ export default Vue.extend({
       return from == constant.MSG_FROM_SELF ? "self" : "opposite";
     },
     getNowChat() {
+      if (this.nowChat == null) {
+        var result = GroupMsgHandler(this.nowChats);
+        this.avatars = result.avatars;
+        this.nowChat = result.nowChat;
+      }
+
       return this.nowChat;
     },
     submit(user = null) {
@@ -427,6 +490,9 @@ export default Vue.extend({
       this.message = "";
     },
     onPubmsgListener() {
+      var result = GroupMsgHandler(this.nowChats);
+      this.avatars = result.avatars;
+      this.nowChat = result.nowChat;
       this.$nextTick(() => {
         (this.$refs.chatWindow as any).scrollTop =
           (this.$refs.chatWindow as any).scrollHeight + 100;

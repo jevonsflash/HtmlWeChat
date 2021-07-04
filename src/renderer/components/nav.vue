@@ -38,16 +38,6 @@
         </el-row>
       </div>
       <div class="setting-frame">
-        <el-row>
-          <el-col :span="24">
-            <svg-icon
-              name="dashboard"
-              :class="currentPannel === 'setting' ? 'active' : 'de-active'"
-              @click="switchPannel('setting')"
-              width="20"
-              height="20"
-          /></el-col>
-        </el-row>
         <el-row v-for="(item, index) in settingButtons" :key="index">
           <el-col :span="24">
             <img
@@ -71,7 +61,7 @@
 
 <script lang='ts'>
 import EventEmitter from "eventemitter3";
-import constant from "@/constant.ts";
+import constant from "@/constant";
 import DialogChangeSelfInfo from "@/components/dialogs/change_self_info.vue";
 import { Message } from "element-ui";
 import { mapGetters, mapMutations } from "vuex";
@@ -173,7 +163,6 @@ export default Vue.extend({
 </script>
 
 <style scoped lang="scss">
-
 #nav {
   width: 100%;
   height: 100%;

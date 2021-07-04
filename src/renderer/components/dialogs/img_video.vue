@@ -58,9 +58,7 @@ export default {
   },
   methods: {
     ...mapMutations(['pushMessage']),
-    rowDialogClose() {
-      this.visible = false
-    },
+  
     async submit() {
       console.log('提交')
       try {
@@ -87,9 +85,7 @@ export default {
         }
       } catch (err) {}
     },
-    open() {
-      this.visible = true
-    },
+   
     async imgUP(req) {
       try {
         let file = req.file
@@ -98,9 +94,7 @@ export default {
       } catch (err) {}
     },
   },
-  created() {
-    this.event.on('open', this.open)
-  }
+
 }
 </script>
 

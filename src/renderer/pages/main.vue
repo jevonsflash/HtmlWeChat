@@ -133,6 +133,7 @@ export default Vue.extend({
   methods: {
     closeDialog() {
       this.visible.file = false;
+      this.visible.news = false;
     },
     onGoto(page) {
       if (page == "miniprograme") {
