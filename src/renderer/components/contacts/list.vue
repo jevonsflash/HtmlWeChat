@@ -6,19 +6,38 @@
         <span>搜索</span>
       </div>
       <div class="add">
-        <svg-icon name="user" @click="addContact"></svg-icon>
+        <i class="el-icon-plus" @click="addContact"></i>
       </div>
     </header>
-    <el-scrollbar class="list-container">
+    <el-scrollbar
+      class="list-container"
+      style="margin-top: 15px; margin-bottom: 10px"
+    >
       <el-row>
         <el-col :span="24">
-          <el-divider></el-divider>
+          <span>
+            <el-row>
+              <el-col :span="24">
+                <a
+                  href="#form_checkbox"
+                  class="weui-btn weui-btn_default"
+                  style="
+                    color: black;
+                    font-weight: unset;
+                    width: 240px;
+                    background-color: white;
+                  "
+                  ><i class="el-icon-s-custom"></i>通讯录管理
+                </a>
+              </el-col></el-row
+            ></span
+          >
 
           <span class="list-title">{{ newFriendContract.name }}</span>
 
           <span>
             <div
-              @click="changeContact(newFriendContract,'newFriend')"
+              @click="changeContact(newFriendContract, 'newFriend')"
               @contextmenu.prevent="onContextMenu"
               :class="{
                 active: nowContact && nowContact.name == newFriendContract.name,
@@ -48,7 +67,7 @@
 
           <span>
             <div
-              @click="changeContact(gzhContract,'gzh')"
+              @click="changeContact(gzhContract, 'gzh')"
               @contextmenu.prevent="onContextMenu"
               :class="{
                 active: nowContact && nowContact.name == gzhContract.name,
@@ -76,7 +95,7 @@
           <span v-if="index == 0" class="list-title">朋友</span>
           <span>
             <div
-              @click="changeContact(contact,'contact')"
+              @click="changeContact(contact, 'contact')"
               @contextmenu.prevent="onContextMenu"
               :class="{
                 active: nowContact && nowContact.name == contact.name,
@@ -107,7 +126,7 @@
 
           <span>
             <div
-              @click="changeContact(group,'group')"
+              @click="changeContact(group, 'group')"
               @contextmenu.prevent="onContextMenu"
               :class="{
                 active: nowContact && nowContact.name == group.name,
@@ -142,7 +161,9 @@
       </el-row>
     </el-scrollbar>
     <!-- <dialog-add-contact :event="add_contact_event"></dialog-add-contact> -->
-    <dialog-add-group-contact :event="add_contact_event"></dialog-add-group-contact>
+    <dialog-add-group-contact
+      :event="add_contact_event"
+    ></dialog-add-group-contact>
     <dialog-change-info
       :event="edit_contact_event"
       :name="nowContact.name"
@@ -167,7 +188,8 @@ export default Vue.extend({
   components: {
     DialogAddContact,
     contextMenu,
-    DialogChangeInfo,DialogAddGroupContact
+    DialogChangeInfo,
+    DialogAddGroupContact,
   },
   computed: {
     ...mapGetters(["contacts"]),
@@ -216,7 +238,10 @@ export default Vue.extend({
   created() {
     this.add_contact_event = new EventEmitter();
     this.edit_contact_event = new EventEmitter();
-    this.changeContact(Enumerable.from(this.contacts).firstOrDefault(),"contact");
+    this.changeContact(
+      Enumerable.from(this.contacts).firstOrDefault(),
+      "contact"
+    );
   },
   methods: {
     edit() {

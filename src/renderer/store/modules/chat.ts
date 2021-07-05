@@ -5,8 +5,8 @@ import electron from 'electron';
 const ipcRenderer = require("electron").ipcRenderer
 import { Message } from "element-ui"
 import Vue from "vue"
-import { GlobalEvent, defaultCwd } from '@/constant.ts'
-import constant from '@/constant.ts'
+import { GlobalEvent, defaultCwd } from '@/constant'
+import constant from '@/constant'
 const path = require('path');
 
 const Conf = require('conf');
@@ -319,17 +319,22 @@ const mutations = {
       currentChat.msgs.push(newMsg)
 
       if (state._nowChat.id == msg.chat_id) {
-        let currentNowChat = null;
         if (msg.from != constant.MSG_FROM_SELF) {
-
-          currentNowChat = state._nowChat.chats.find(c => c.user == msg.from)
+          state._nowChat.chats.forEach(currentNowChat => {
+            if (currentNowChat.user == msg.from) {
+              Vue.set(currentNowChat.msgs, currentNowChat.msgs.length, newMsg)
+              Vue.set(state._nowChat.chats, state._nowChat.chats.indexOf(currentNowChat), currentNowChat)
+            }
+          });
         }
         else {
-          currentNowChat = state._nowChat.chats.find(c => c.id == selfId)
-
+          state._nowChat.chats.forEach(currentNowChat => {
+            if (currentNowChat.id == selfId) {
+              Vue.set(currentNowChat.msgs, currentNowChat.msgs.length, newMsg)
+              Vue.set(state._nowChat.chats, state._nowChat.chats.indexOf(currentNowChat), currentNowChat)
+            }
+          });
         }
-        Vue.set(currentNowChat.msgs, currentNowChat.msgs.length, newMsg)
-
       }
 
       GlobalEvent.emit("pubmsg")

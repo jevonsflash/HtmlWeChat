@@ -1,4 +1,10 @@
 <template>
+ <el-dialog
+    :modal="false"
+    title="发送文件"
+    :visible="visible"
+    @close="rowDialogClose"
+  >
   <div id="dialog_call">
       <el-form ref="form" :rules="rules" :model="msg" style="width:100%">
         <el-form-item label="类型" prop="type">
@@ -20,6 +26,7 @@
       
       <el-button @click="submit" style="width:100%;">发 送</el-button>
   </div>
+ </el-dialog>
 </template>
 
 <script lang="ts">

@@ -1,6 +1,7 @@
 <template>
   <div id="dialog_add_chat">
     <el-dialog
+      :modal="false"
       top="40px"
       :title="nowChat.user"
       :visible="visible"
@@ -285,11 +286,32 @@
 <script lang="ts">
 import Vue from "vue";
 import { mapGetters } from "vuex";
-import constant from "@/constant.ts";
+import constant from "@/constant";
 import dayjs from "dayjs";
-
+import MessageText from "@/components/messages/message_text.vue";
+import MessageImgR from "@/components/messages/message_img_r.vue";
+import MessageImgL from "@/components/messages/message_img_l.vue";
+import MessageTransfer from "@/components/messages/message_transfer.vue";
+import MessageVoice from "@/components/messages/message_voice.vue";
+import MessageVideoR from "@/components/messages/message_video_r.vue";
+import MessageVideoL from "@/components/messages/message_video_l.vue";
+import MessageFile from "@/components/messages/message_file.vue";
+import MessageCallVoice from "@/components/messages/message_call_voice.vue";
+import MessageCallVideo from "@/components/messages/message_call_video.vue";
 export default Vue.extend({
-  components: {},
+  components: {
+  MessageText,
+    MessageImgR,
+    MessageImgL,
+    MessageTransfer,
+    MessageVoice,
+    MessageVideoR,
+    MessageVideoL,
+    MessageFile,
+    MessageCallVoice,
+    MessageCallVideo,
+    
+  },
   props: ["event"],
   computed: {
     ...mapGetters(["self", "nowUser", "nowChat"]),
@@ -447,7 +469,7 @@ export default Vue.extend({
           white-space: nowrap;
           margin-top: 4px;
           font-size: 12px;
-          width: 160px;
+          width: 260px;
           color: #6c6a6a;
         }
       }

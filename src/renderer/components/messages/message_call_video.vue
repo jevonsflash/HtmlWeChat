@@ -4,10 +4,11 @@
       <div class="body">
         <span v-if="_direction=='right'" class="right">
           <span>通话时长 {{data.len}}</span>
-          <span class="icon-video_0"></span>
+          <svg-icon :data="require('@/assets/video_0.svg')"></svg-icon>
+
         </span>
         <span v-else class="left">
-          <span class="icon-video_0"></span>
+          <svg-icon :data="require('@/assets/video_0.svg')"></svg-icon>
           <span>通话时长 {{data.len}}</span>
         </span>
       </div>
@@ -18,7 +19,7 @@
 </template>
 
 <script>
-import constant from '@/constant.ts'
+import constant from '@/constant'
 export default {
   props: ['data', 'direction'],
   data() {

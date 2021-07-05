@@ -1,5 +1,13 @@
 <template>
   <div id="main">
+     <el-row>
+      <el-col :span="24">
+        <div class="title-frame-left">
+          <span class="title">视频号直播</span>
+        </div>
+      </el-col>
+      
+    </el-row>
     <el-row>
       <el-col :span="24">
         <div class="title-frame-left">

@@ -23,7 +23,7 @@
 </template>
 
 <script>
-import constant from '@/constant.ts'
+import constant from '@/constant'
 export default {
   props: ['data', 'direction'],
   data() {

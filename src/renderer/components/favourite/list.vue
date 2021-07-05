@@ -10,10 +10,15 @@
       <span>
         <el-row>
           <el-col :span="24">
-            <a href="#form_checkbox" class="weui-btn weui-btn_default"
-              >添加笔记 <i class="el-icon-edit"></i>
-            </a> </el-col></el-row
-      ></span>
+            <a
+              href="#form_checkbox"
+              class="weui-btn weui-btn_default"
+              style="color: black; font-weight: unset; background-color: white"
+              ><i class="el-icon-edit"></i>新建笔记
+            </a>
+          </el-col></el-row
+        ></span
+      >
       <el-divider></el-divider>
       <span>
         <el-row>
@@ -30,10 +35,37 @@
                 item: true,
               }"
             >
-              <i :class="favourite.img"></i>
+              <img :src="favourite.img" class="tool-icon" />
+
               <div class="meta">
                 <div class="top">
                   <span class="name">{{ favourite.name }}</span>
+                </div>
+              </div>
+            </div></el-col
+          >
+        </el-row></span
+      >
+      <el-divider></el-divider>
+
+      <span>
+        <el-row>
+          <el-col :span="24">
+            <div
+              @contextmenu.prevent="onContextMenu"
+              :class="{
+                active: false,
+                item: true,
+              }"
+            >
+              <img
+                :src="require('@/assets/fileManagerMenu/tag.png')"
+                class="tool-icon"
+              />
+
+              <div class="meta">
+                <div class="top">
+                  <span class="name">标签</span>
                 </div>
               </div>
             </div></el-col
@@ -56,7 +88,6 @@ export default Vue.extend({
   components: {
     contextMenu,
   },
-  computed: {},
   data() {
     return {
       visible: false,
@@ -64,33 +95,38 @@ export default Vue.extend({
 
       favourites: [
         {
-          img: "el-icon-menu",
+          img: require("@/assets/fileManagerMenu/all.png"),
           name: "全部收藏",
         },
         {
-          img: "el-icon-link",
+          img: require("@/assets/fileManagerMenu/link.png"),
           name: "链接",
         },
         {
-          img: "el-icon-picture-outline",
+          img: require("@/assets/fileManagerMenu/pic.png"),
           name: "相册",
         },
         {
-          img: "el-icon-notebook-2",
+          img: require("@/assets/fileManagerMenu/book.png"),
           name: "笔记",
         },
         {
-          img: "el-icon-tickets",
+          img: require("@/assets/fileManagerMenu/doc.png"),
           name: "文件",
         },
         {
-          img: "el-icon-headset",
+          img: require("@/assets/fileManagerMenu/music.png"),
           name: "音乐",
         },
       ],
     };
   },
 
+  created() {
+    this.$nextTick(() => {
+      this.changeFavourite("全部收藏");
+    });
+  },
   methods: {
     changeFavourite(msg) {
       this.$emit("changeFavourite", msg);
@@ -125,6 +161,7 @@ export default Vue.extend({
   background-color: #ebe8e7;
   display: flex;
   flex-direction: column;
+
   header {
     display: flex;
     align-items: center;
@@ -166,10 +203,11 @@ export default Vue.extend({
       display: flex;
       align-items: center;
       img {
-        width: 40px;
-        height: 40px;
+        width: 20px;
+        height: 20px;
         border-radius: 2px;
-        margin-right: 13px;
+        margin-right: 8px;
+        margin-left: 13px;
       }
       .meta {
         flex: 1;

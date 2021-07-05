@@ -56,6 +56,7 @@
       </el-main>
     </el-container>
     <el-dialog
+      :modal="false"
       class="zero-padding"
       top="40px"
       title="微信文件"
@@ -66,7 +67,19 @@
     >
       <file-manager></file-manager>
     </el-dialog>
-
+    <el-dialog
+      :modal="false"
+      class="zero-padding"
+      top="40px"
+      title="看一看"
+      center
+      custom-class="dialog-frame"
+      width="750px"
+      :visible="visible.news"
+      @close="closeDialog"
+    >
+      <news></news>
+    </el-dialog>
     <!-- <div class="top-tip">
       <span>当前版本仅供试用</span>
     </div> -->
@@ -83,6 +96,7 @@ import Miniprograme from "@/components/miniprograme/index.vue";
 import Phone from "@/components/phone/index.vue";
 import Menu from "@/components/menu/index.vue";
 import FileManager from "@/components/fileManager/index.vue";
+import News from "@/components/news/index.vue";
 import Vue from "vue";
 const ipcRenderer = require("electron").ipcRenderer;
 
@@ -97,6 +111,7 @@ export default Vue.extend({
     Menu,
     Phone,
     FileManager,
+    News
   },
 
   data() {
@@ -106,6 +121,7 @@ export default Vue.extend({
         menu: false,
         phone: false,
         file: false,
+        news: false,
       },
       currentPannel: "",
     };
@@ -117,6 +133,7 @@ export default Vue.extend({
   methods: {
     closeDialog() {
       this.visible.file = false;
+      this.visible.news = false;
     },
     onGoto(page) {
       if (page == "miniprograme") {
@@ -134,6 +151,8 @@ export default Vue.extend({
         this.visible.menu = false;
       } else if (page == "file") {
         this.visible.file = !this.visible.file;
+      } else if (page == "look") {
+        this.visible.news = !this.visible.news;
       }
     },
 

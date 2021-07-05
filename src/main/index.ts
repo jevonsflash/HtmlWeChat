@@ -6,7 +6,7 @@ const ipc = ipcMain
  * https://simulatedgreg.gitbooks.io/electron-vue/content/en/using-static-assets.html
  */
 if (process.env.NODE_ENV !== 'development') {
-  global.__static = require('path')
+  (global as any).__static = require('path')
     .join(__dirname, '/static')
     .replace(/\\/g, '\\\\')
 }
@@ -140,8 +140,8 @@ function createTransferWindow() {
     // 聊天区域居中转账框
     mainBound = mainWindow.getBounds()
     transferWindow.setPosition(
-      parseInt(mainBound.x + 310 + (mainBound.width - 310) / 2 - 150),
-      parseInt(mainBound.y + mainBound.height / 2 - 215)
+      mainBound.x + 310 + (mainBound.width - 310) / 2 - 150,
+      mainBound.y + mainBound.height / 2 - 215
     )
 
 

@@ -6,7 +6,7 @@
         <span>搜索</span>
       </div>
       <div class="add">
-        <svg-icon name="user" @click="addChat"></svg-icon>
+        <i class="el-icon-plus" @click="addChat"></i>
       </div>
     </header>
 
@@ -61,7 +61,7 @@
 <script lang='ts'>
 import EventEmitter from "eventemitter3";
 import dayjs from "dayjs";
-import constant from "@/constant.ts";
+import constant from "@/constant";
 import { mapGetters, mapMutations } from "vuex";
 import DialogAddGroupChat from "@/components/dialogs/add_group_contact.vue";
 import contextMenu from "@/components/contextMenu/index.vue";
