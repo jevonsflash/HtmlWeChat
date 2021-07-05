@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div style="-webkit-app-region: no-drag">
     <el-row>
       <el-col :span="12">
         <div class="title">

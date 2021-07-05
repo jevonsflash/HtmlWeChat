@@ -4,7 +4,7 @@
       <div class="body">
         <section>
           <span v-if="data.type==constant.TRANSFER_PUBLISH" class="icon-transition"></span>
-          <span v-else class="icon-confirm"></span>
+          <span v-else class="icon-transition"></span>
           <div>
             <div class="msg" v-if="data.type==constant.TRANSFER_PUBLISH">{{data.msg || '点击确认收钱'}}</div>
             <div class="msg" v-else>已收钱</div>
@@ -76,16 +76,7 @@ export default {
         font-size: 20px;
         margin-right: 8px;
       }
-      .icon-confirm {
-        height: 40px;
-        width: 40px;
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        font-size: 40px;
-        color: #fff;
-        margin-right: 8px;
-      }
+     
       > div {
         .msg {
           font-size: 14px;

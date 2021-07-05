@@ -211,7 +211,10 @@
       </footer>
 
       <setting :event="dashboard_event"></setting>
-
+      <transfer
+        :event="transfer_event"
+        @commit="commitTransferWindow"
+      ></transfer>
       <chat-history :event="chat_manage_event"></chat-history>
       <call :event="call_event"></call>
     </el-main>
@@ -302,6 +305,7 @@ import MessageCallVoice from "@/components/messages/message_call_voice.vue";
 import MessageCallVideo from "@/components/messages/message_call_video.vue";
 import ChatHistory from "@/components/chatHistory/index.vue";
 import Setting from "@/components/setting/index.vue";
+import Transfer from "@/components/transfer/index.vue";
 import contextMenu from "@/components/contextMenu/index.vue";
 import Call from "@/components/dialogs/call.vue";
 
@@ -325,6 +329,7 @@ export default Vue.extend({
     ContactDetail,
     contextMenu,
     Call,
+    Transfer,
   },
 
   props: ["nowChat"],
@@ -363,6 +368,8 @@ export default Vue.extend({
       chat_manage_event: null,
       call_event: null,
       dashboard_event: null,
+      transfer_event: null,
+
       avatars: [],
       expressions: (this as any).$expressions,
       expressionVisible: false,
@@ -403,7 +410,9 @@ export default Vue.extend({
     this.chat_manage_event = new EventEmitter();
     this.call_event = new EventEmitter();
     this.dashboard_event = new EventEmitter();
+    this.transfer_event = new EventEmitter();
 
+    this.changeUser(constant.MSG_FROM_SELF);
     window.addEventListener("keydown", this.receiveMessage);
 
     this.$globalEvent.on("pubmsg", this.onPubmsgListener);
@@ -424,6 +433,9 @@ export default Vue.extend({
       });
     },
     receiveMessage(e) {
+      if (this.nowChat.type == "groupChat") {
+        return;
+      }
       //F9
       if (e.keyCode == 120) {
         this.changeUser(constant.MSG_FROM_SELF);
@@ -530,6 +542,9 @@ export default Vue.extend({
       this.message = "";
     },
     onPubmsgListener() {
+      if (this.nowChat.type == "groupChat") {
+        return;
+      }
       this.$nextTick(() => {
         (this.$refs.chatWindow as any).scrollTop =
           (this.$refs.chatWindow as any).scrollHeight + 100;
@@ -570,16 +585,13 @@ export default Vue.extend({
       }
     },
     openTransferWindow(msg) {
-      ipcRenderer.removeAllListeners("transfer_on_msg");
-      ipcRenderer.once("transfer_on_msg", (event, _msg) => {
-        _msg = JSON.parse(_msg);
-        _msg.chat_id = this.nowChat.id;
-        _msg.id = this.nowChat.msgs.length;
-        this.pushMessage(_msg);
-        msg.data.receive_time = _msg.data.receive_time;
-      });
-      console.log("发送转账消息", msg);
-      ipcRenderer.send("open_transfer_window", JSON.stringify(msg));
+      this.transfer_event.emit("open", msg);
+    },
+
+    commitTransferWindow(_msg) {
+      _msg.chat_id = this.nowChat.id;
+      _msg.id = this.nowChat.msgs.length;
+      this.pushMessage(_msg);
     },
 
     selExpression(expression) {

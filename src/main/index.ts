@@ -12,7 +12,7 @@ if (process.env.NODE_ENV !== 'development') {
 }
 
 let mainWindow, transferWindow, loginWindow
-let mainIpc, transferIpc, loginIpc
+let mainIpc, loginIpc
 const winURL =
   process.env.NODE_ENV === 'development'
     ? `http://localhost:9080`
@@ -65,12 +65,7 @@ function createWindow() {
     mainWindow = null
   })
 
-  mainWindow.on('focus', () => {
-    if (transferWindow && transferWindow.isVisible()) {
-      transferIpc.send('hide')
-      transferWindow.hide()
-    }
-  })
+  
 }
 function createLoginWindow() {
   let msg, mainBound
@@ -105,59 +100,10 @@ function createLoginWindow() {
 
   })
 }
-function createTransferWindow() {
-  let msg, mainBound
 
-  transferWindow = new BrowserWindow({
-    height: 430,
-    width: 300,
-    frame: false,
-    show: false,
-    resizable: false,
-    minimizable: false,
-    maximizable: false,
-    parent: mainWindow,
-    webPreferences: {
-      backgroundThrottling: false
-    }
-  })
-
-  transferWindow.loadURL(winURL + '#/transfer')
-
-  transferWindow.on('closed', () => {
-    transferWindow = null
-  })
-
-  transferWindow.once('ready-to-show', event => {
-    transferIpc = event.sender
-  })
-
-  ipc.on('open_transfer_window', function (event_main, _msg) {
-    msg = _msg
-
-    transferIpc.send('transfer_show', msg)
-
-    // 聊天区域居中转账框
-    mainBound = mainWindow.getBounds()
-    transferWindow.setPosition(
-      mainBound.x + 310 + (mainBound.width - 310) / 2 - 150,
-      mainBound.y + mainBound.height / 2 - 215
-    )
-
-
-    transferWindow.show()
-
-    // 转账窗口发布消息到主窗口
-    ipc.on('transfer_pub_msg', (event, pub_msg) => {
-      // 发送到主窗口
-      event_main.sender.send('transfer_on_msg', pub_msg)
-    })
-  })
-}
 
 app.on('ready', () => {
   createWindow()
-  createTransferWindow()
   createLoginWindow()
 })
 
@@ -170,8 +116,6 @@ app.on('window-all-closed', () => {
 app.on('activate', () => {
   if (mainWindow === null) {
     createWindow()
-  } else if (transferWindow === null) {
-    createTransferWindow()
   }
   else if (loginWindow === null) {
     createLoginWindow()

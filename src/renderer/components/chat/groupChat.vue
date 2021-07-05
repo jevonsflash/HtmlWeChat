@@ -203,8 +203,8 @@
         <div>
           <textarea
             rows="3"
-            v-model="message"
-            @keyup.enter="submit()"
+            v-model.trim="message"
+            @keydown="messageSendlisten"
           ></textarea>
         </div>
         <div class="sent_warp">
@@ -212,6 +212,11 @@
         </div>
       </footer>
       <setting :event="dashboard_event"></setting>
+      <transfer
+        :event="transfer_event"
+        @commit="commitTransferWindow"
+      ></transfer>
+      <call :event="call_event"></call>
 
       <chat-history :event="chat_manage_event"></chat-history
     ></el-main>
@@ -304,7 +309,9 @@ import MessageCallVoice from "@/components/messages/message_call_voice.vue";
 import MessageCallVideo from "@/components/messages/message_call_video.vue";
 import ChatHistory from "@/components/chatHistory/index.vue";
 import Setting from "@/components/setting/index.vue";
+import Transfer from "@/components/transfer/index.vue";
 import contextMenu from "@/components/contextMenu/index.vue";
+import Call from "@/components/dialogs/call.vue";
 import Vue from "vue";
 
 const GroupMsgHandler: Function = (value) => {
@@ -359,13 +366,21 @@ export default Vue.extend({
     MessageCallVideo,
     ContactDetail,
     contextMenu,
+    Call,
+    Transfer,
   },
 
   props: ["nowChats"],
   computed: {
-    ...mapGetters(["self", "nowUser"]),
+    ...mapGetters(["self", "nowUser", "preset"]),
   },
   watch: {
+    nowUser: function (value) {
+      console.log("now user changed" + value);
+    },
+    preset: function (value) {
+      console.log("preset changed" + value);
+    },
     nowChats: function (value) {
       if (value.type == "chat") {
         return;
@@ -374,6 +389,8 @@ export default Vue.extend({
         var result = GroupMsgHandler(value);
         this.avatars = result.avatars;
         this.nowChat = result.nowChat;
+
+        this.changePreset(value.user);
       });
     },
   },
@@ -385,7 +402,10 @@ export default Vue.extend({
       constant: constant,
       event_expression: null,
       chat_manage_event: null,
+      call_event: null,
       dashboard_event: null,
+      transfer_event: null,
+
       avatars: [],
       expressions: (this as any).$expressions,
       expressionVisible: false,
@@ -426,18 +446,78 @@ export default Vue.extend({
   created() {
     this.event_expression = new EventEmitter();
     this.chat_manage_event = new EventEmitter();
+    this.call_event = new EventEmitter();
     this.dashboard_event = new EventEmitter();
+    this.transfer_event = new EventEmitter();
+
     this.changeUser(constant.MSG_FROM_SELF);
-    window.addEventListener("keydown", (e) => {});
+    window.addEventListener("keydown", this.receiveMessage);
 
     this.$globalEvent.on("pubmsg", this.onPubmsgListener);
   },
   methods: {
-    ...mapMutations(["pushMessage", "changeNowUser"]),
+    ...mapMutations(["pushMessage", "changeNowUser", "changePreset"]),
     showDetail(msg) {},
     removeChat() {
       this.contextShow = false;
     },
+    receiveMessage(e) {
+      if (this.nowChats.type == "chat") {
+        return;
+      }
+      //F9
+      if (e.keyCode == 120) {
+        this.changeUser(constant.MSG_FROM_SELF);
+      }
+      //F10
+      else if (e.keyCode == 121) {
+        this.changeUser(constant.MSG_FROM_OPPOSITE);
+      } else {
+        //F1
+        var currentPreset = null;
+        if (e.keyCode == 112) {
+          currentPreset = this.preset.f1;
+        }
+        //F2
+        else if (e.keyCode == 113) {
+          currentPreset = this.preset.f2;
+        }
+        //F3
+        else if (e.keyCode == 114) {
+          currentPreset = this.preset.f3;
+        }
+        //F4
+        else if (e.keyCode == 115) {
+          currentPreset = this.preset.f4;
+        }
+        //F5
+        else if (e.keyCode == 116) {
+          currentPreset = this.preset.f5;
+        }
+        //F6
+        else if (e.keyCode == 117) {
+          currentPreset = this.preset.f6;
+        }
+        //F7
+        else if (e.keyCode == 118) {
+          currentPreset = this.preset.f7;
+        }
+        //F8
+        else if (e.keyCode == 119) {
+          currentPreset = this.preset.f8;
+        }
+        if (currentPreset != null) {
+          this.pushMessage({
+            chat_id: this.nowChats.id,
+            type: currentPreset.type,
+            from: currentPreset.from,
+            data: currentPreset.data,
+            time: dayjs().format(),
+          });
+        }
+      }
+    },
+
     onBlur() {
       this.onShowMore(false);
       (this.$refs.chatHeader as any).setShowMore(false);
@@ -477,8 +557,17 @@ export default Vue.extend({
 
       return this.nowChat;
     },
+    messageSendlisten(event) {
+      if (event.keyCode === 13) {
+        this.submit(null); // 发送文本
+        event.preventDefault(); // 阻止浏览器默认换行操作
+        return false;
+      }
+    },
     submit(user = null) {
-      if (!this.message) return;
+      if (this.isEmpty(this.message)) {
+        return;
+      }
       this.message = this.messageTransferHTML(this.message);
       this.pushMessage({
         chat_id: this.nowChats.id,
@@ -490,6 +579,9 @@ export default Vue.extend({
       this.message = "";
     },
     onPubmsgListener() {
+      if (this.nowChats.type == "chat") {
+        return;
+      }
       var result = GroupMsgHandler(this.nowChats);
       this.avatars = result.avatars;
       this.nowChat = result.nowChat;
@@ -497,6 +589,14 @@ export default Vue.extend({
         (this.$refs.chatWindow as any).scrollTop =
           (this.$refs.chatWindow as any).scrollHeight + 100;
       });
+    },
+
+    isEmpty(str: any): boolean {
+      if (str === null || str === "" || str === undefined || str.length === 0) {
+        return true;
+      } else {
+        return false;
+      }
     },
     // 转账点击
     transferClick(msg) {
@@ -519,16 +619,15 @@ export default Vue.extend({
       }
     },
     openTransferWindow(msg) {
-      ipcRenderer.removeAllListeners("transfer_on_msg");
-      ipcRenderer.once("transfer_on_msg", (event, _msg) => {
-        _msg = JSON.parse(_msg);
-        _msg.chat_id = this.nowChats.id;
-        _msg.id = this.nowChat.msgs.length;
-        this.pushMessage(_msg);
-        msg.data.receive_time = _msg.data.receive_time;
-      });
-      console.log("发送转账消息", msg);
-      ipcRenderer.send("open_transfer_window", JSON.stringify(msg));
+      this.transfer_event.emit("open", msg);
+    },
+    call() {
+      this.call_event.emit("open");
+    },
+    commitTransferWindow(_msg) {
+      _msg.chat_id = this.nowChat.id;
+      _msg.id = this.nowChat.msgs.length;
+      this.pushMessage(_msg);
     },
 
     selExpression(expression) {

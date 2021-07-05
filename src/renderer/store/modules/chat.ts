@@ -7,6 +7,7 @@ import { Message } from "element-ui"
 import Vue from "vue"
 import { GlobalEvent, defaultCwd } from '@/constant'
 import constant from '@/constant'
+import { constants } from "original-fs";
 const path = require('path');
 
 const Conf = require('conf');
@@ -265,6 +266,9 @@ const mutations = {
     if (currentChat.wechatId instanceof Array) {
 
       var configFileName = msg.from != constant.MSG_FROM_SELF ? msg.from : groupChatSelfConfigName
+      if ((currentChat.wechatId as Array<string>).indexOf(configFileName) == -1 && configFileName != groupChatSelfConfigName) {
+        return
+      }
       var currentChatConfigOpts = {
         cwd: path.join(defaultCwd, "chat", currentChat.user),
         configName: configFileName
@@ -273,31 +277,60 @@ const mutations = {
       let currentChatPayload = currentChatstore.get('data', null)
       if (currentChatPayload == null) {
         if (msg.from != constant.MSG_FROM_SELF) {
-          currentChatPayload = {
-            id: currentChat.id,
-            user: currentChat.user,
-            desc: currentChat.desc,
-            region: currentChat.region,
-            wechatId: currentChat.wechatId,
-            sex: currentChat.sex,
-            avatar: currentChat.avatar,
-            msgs: [defaultGroupMsg]
+          var opts = {
+            cwd: defaultCwd,
+            configName: 'group_config'
+
+          };
+          var group_store = new Conf(opts);
+          var group_state = group_store.get('data', null)
+          var group_index = group_state.group.findIndex((group) => {
+            return group.name == currentChat.user
+          })
+          var currentGroup = group_state.group[group_index]
+          var currentMember = currentGroup.member.find((member) => {
+            return member.name == configFileName
+          })
+          if (currentMember != null) {
+
+            currentChatPayload = {
+              user: currentMember.name,
+              desc: currentMember.desc,
+              region: currentMember.region,
+              wechatId: currentMember.wechatId,
+              sex: currentMember.sex,
+              avatar: currentMember.avatar,
+              msgs: [defaultGroupMsg]
+            }
+            currentChat.msgs.push(defaultGroupMsg)
           }
-          currentChat.msgs.push(defaultGroupMsg)
+          else {
+            return;
+          }
         }
         else {
-          currentChatPayload = {
-            id: currentChat.id,
-            user: currentChat.user,
-            desc: currentChat.desc,
-            region: currentChat.region,
-            wechatId: currentChat.wechatId,
-            sex: currentChat.sex,
-            avatar: currentChat.avatar,
-            msgs: []
+          var opts = {
+            cwd: defaultCwd,
+            configName: 'self_config'
+          };
+          var selfState = new Conf(opts).get('data', def);
+          if (selfState != null) {
+            let currentMemberAsSelf = selfState.self;
+            currentChatPayload = {
+              id: selfId,
+              user: currentMemberAsSelf.name,
+              desc: currentMemberAsSelf.desc,
+              region: currentMemberAsSelf.region,
+              wechatId: currentMemberAsSelf.wechatId,
+              sex: currentMemberAsSelf.sex,
+              avatar: currentMemberAsSelf.avatar,
+              msgs: []
+            }
+          }
+          else {
+            return
           }
         }
-
       }
 
       let fromStr = constant.MSG_FROM_SELF
@@ -380,27 +413,27 @@ const mutations = {
     var defaultPreset = {
       f1: {
         type: 1,
-        from: 2,
+        from: constant.MSG_FROM_SELF,
         data: "你好啊，朋友",
       },
       f2: {
         type: 1,
-        from: 2,
+        from: constant.MSG_FROM_SELF,
         data: "您有深入了解过吗？",
       },
       f3: {
         type: 1,
-        from: 2,
+        from: constant.MSG_FROM_SELF,
         data: "您什么时候方便，我们通个微信电话",
       },
       f4: {
         type: 1,
-        from: 2,
+        from: constant.MSG_FROM_SELF,
         data: "我能理解您的心情",
       },
-      f5: {
+      f6: {
         type: 1,
-        from: 2,
+        from: constant.MSG_FROM_SELF,
         data: "给您造成的不便非常抱歉，我们的心情跟您一样",
       },
     };
@@ -414,13 +447,11 @@ const mutations = {
       currentChatPayload = defaultPreset;
       currentChatstore.set("data", currentChatPayload)
     }
-
-    state.preset = currentChatPayload;
-
+    Vue.set(state, "preset", currentChatPayload)
   },
 
   changeNowUser: (state, nowUser) => {
-    state.nowUser = nowUser
+    Vue.set(state, "nowUser", nowUser)
   },
   pushChat: (state, chat) => {
     let currentChat = getChatByName(state, chat.user);

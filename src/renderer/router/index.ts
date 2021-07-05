@@ -15,11 +15,6 @@ const createRouter = () => new Router({
       redirect: '/'
     },
     {
-      path: '/transfer',
-      name: 'main',
-      component: require('@/pages/transfer').default
-    },
-    {
       path: '/login',
       name: 'mainLogin',
       component: require('@/pages/login').default
