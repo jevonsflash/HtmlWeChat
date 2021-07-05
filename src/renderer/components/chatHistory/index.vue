@@ -51,7 +51,7 @@
                                 class="last_msg"
                                 v-if="msg.type == constant.MSG_TYPE_TEXT"
                               >
-                                {{ msg.data }}
+                                <div v-html="msg.data"></div>
                               </div>
 
                               <div
@@ -132,7 +132,7 @@
                                   chatItem.msg.type == constant.MSG_TYPE_TEXT
                                 "
                               >
-                                {{ chatItem.msg.data }}
+                                <div v-html="chatItem.msg.data"></div>
                               </div>
 
                               <div
@@ -379,10 +379,11 @@ export default Vue.extend({
   width: 100%;
   height: 600px;
   background-color: #f5f5f5;
-   .list-container {
+  .list-container {
     height: 450px;
     padding: 0px;
-    margin: 0px;}
+    margin: 0px;
+  }
   header {
     display: flex;
     align-items: center;

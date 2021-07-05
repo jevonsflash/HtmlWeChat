@@ -52,10 +52,11 @@ const def = {
   ],
   _nowChat: null,
   nowUser: constant.MSG_FROM_SELF,
+  preset: null,
 }
 
 var opts = {
-  cwd: defaultCwd,
+  cwd: path.join(defaultCwd, "chat-list"),
   configName: 'chat_config'
 
 };
@@ -370,8 +371,48 @@ const mutations = {
       GlobalEvent.emit("pubmsg")
     }
   },
+  changePreset: (state, name) => {
+    var defaultPreset = {
+      f1: {
+        type: 1,
+        from: 2,
+        data: "你好啊，朋友",
+      },
+      f2: {
+        type: 1,
+        from: 2,
+        data: "您有深入了解过吗？",
+      },
+      f3: {
+        type: 1,
+        from: 2,
+        data: "您什么时候方便，我们通个微信电话",
+      },
+      f4: {
+        type: 1,
+        from: 2,
+        data: "我能理解您的心情",
+      },
+      f5: {
+        type: 1,
+        from: 2,
+        data: "给您造成的不便非常抱歉，我们的心情跟您一样",
+      },
+    };
+    var currentChatConfigOpts = {
+      cwd: path.join(defaultCwd, "chat-list"),
+      configName: name
+    };
+    let currentChatstore = new Conf(currentChatConfigOpts);
+    let currentChatPayload = currentChatstore.get('data', null)
+    if (currentChatPayload == null) {
+      currentChatPayload = defaultPreset;
+      currentChatstore.set("data", currentChatPayload)
+    }
 
+    state.preset = currentChatPayload;
 
+  },
 
   changeNowUser: (state, nowUser) => {
     state.nowUser = nowUser
@@ -419,6 +460,7 @@ const mutations = {
   },
   close: (state) => {
     state._nowChat = null;
+    state.preset = null;
     store.set("data", state)
     setTimeout(() => {
       ipcRenderer.send("window-close")
@@ -431,6 +473,8 @@ const getters = {
   chats: (state) => state.chats,
   nowChat: (state) => state._nowChat,
   nowUser: (state) => state.nowUser,
+  preset: (state) => state.preset,
+
 }
 
 export default {

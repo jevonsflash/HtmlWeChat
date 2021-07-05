@@ -161,7 +161,11 @@
           </div>
         </div>
         <div>
-          <textarea rows="3" v-model="message" @keyup.enter="submit"></textarea>
+          <textarea
+            rows="3"
+            v-model.trim="message"
+            @keydown="messageSendlisten"
+          ></textarea>
         </div>
         <div class="sent_warp">
           <button @click="submit">发送(S)</button>
@@ -278,7 +282,7 @@ export default Vue.extend({
 
   props: ["nowChat"],
   computed: {
-    ...mapGetters(["self", "nowUser"]),
+    ...mapGetters(["self", "nowUser", "preset"]),
   },
 
   watch: {
@@ -296,6 +300,8 @@ export default Vue.extend({
           title: value.user,
           entity: value,
         });
+
+        this.changePreset(value.user);
       });
     },
   },
@@ -332,14 +338,60 @@ export default Vue.extend({
     this.$globalEvent.on("pubmsg", this.onPubmsgListener);
   },
   methods: {
-    ...mapMutations(["pushMessage", "changeNowUser"]),
+    ...mapMutations(["pushMessage", "changeNowUser", "changePreset"]),
     showDetail(msg) {},
 
     receiveMessage(e) {
+      //F9
       if (e.keyCode == 120) {
         this.changeUser(constant.MSG_FROM_SELF);
-      } else if (e.keyCode == 121) {
+      }
+      //F10
+      else if (e.keyCode == 121) {
         this.changeUser(constant.MSG_FROM_OPPOSITE);
+      } else {
+        //F1
+        var currentPreset = null;
+        if (e.keyCode == 112) {
+          currentPreset = this.preset.f1;
+        }
+        //F2
+        else if (e.keyCode == 113) {
+          currentPreset = this.preset.f2;
+        }
+        //F3
+        else if (e.keyCode == 114) {
+          currentPreset = this.preset.f3;
+        }
+        //F4
+        else if (e.keyCode == 115) {
+          currentPreset = this.preset.f4;
+        }
+        //F5
+        else if (e.keyCode == 116) {
+          currentPreset = this.preset.f5;
+        }
+        //F6
+        else if (e.keyCode == 117) {
+          currentPreset = this.preset.f6;
+        }
+        //F7
+        else if (e.keyCode == 118) {
+          currentPreset = this.preset.f7;
+        }
+        //F8
+        else if (e.keyCode == 119) {
+          currentPreset = this.preset.f8;
+        }
+        if (currentPreset != null) {
+          this.pushMessage({
+            chat_id: this.nowChat.id,
+            type: currentPreset.type,
+            from: currentPreset.from,
+            data: currentPreset.data,
+            time: dayjs().format(),
+          });
+        }
       }
     },
 
@@ -365,8 +417,18 @@ export default Vue.extend({
     getNowChat() {
       return this.nowChat;
     },
+    messageSendlisten(event) {
+      if (event.keyCode === 13) {
+        this.submit(); // 发送文本
+        event.preventDefault(); // 阻止浏览器默认换行操作
+        return false;
+      }
+    },
+
     submit() {
-      if (!this.message) return;
+      if (this.isEmpty(this.message)) {
+        return;
+      }
       this.message = this.messageTransferHTML(this.message);
       this.pushMessage({
         chat_id: this.nowChat.id,
@@ -382,6 +444,14 @@ export default Vue.extend({
         (this.$refs.chatWindow as any).scrollTop =
           (this.$refs.chatWindow as any).scrollHeight + 100;
       });
+    },
+
+    isEmpty(str: any): boolean {
+      if (str === null || str === "" || str === undefined || str.length === 0) {
+        return true;
+      } else {
+        return false;
+      }
     },
     // 转账点击
     transferClick(msg) {
