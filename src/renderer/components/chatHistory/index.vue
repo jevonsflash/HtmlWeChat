@@ -12,7 +12,7 @@
         <el-container>
           <el-header style="height: 25px">
             <div class="search">
-              <span class="icon-sreach"></span>
+              <i class="el-icon-search" />
               <span>搜索</span>
             </div></el-header
           >
@@ -300,7 +300,7 @@ import MessageCallVoice from "@/components/messages/message_call_voice.vue";
 import MessageCallVideo from "@/components/messages/message_call_video.vue";
 export default Vue.extend({
   components: {
-  MessageText,
+    MessageText,
     MessageImgR,
     MessageImgL,
     MessageTransfer,
@@ -310,7 +310,6 @@ export default Vue.extend({
     MessageFile,
     MessageCallVoice,
     MessageCallVideo,
-    
   },
   props: ["event"],
   computed: {
@@ -419,8 +418,13 @@ export default Vue.extend({
       background-color: #dbd9d8;
       display: flex;
       align-items: center;
+      border-radius: 5px;
       .icon-sreach {
         margin: 0 8px;
+      }
+      i {
+        font-size: 12px;
+        margin: 0 5px;
       }
       span {
         font-size: 13px;

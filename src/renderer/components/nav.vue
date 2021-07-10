@@ -174,7 +174,7 @@ export default Vue.extend({
     cursor: pointer;
     width: 35px;
     height: 35px;
-    margin-top: 16px;
+    margin-top: 36px;
     img {
       border-radius: 2px;
       width: 100%;

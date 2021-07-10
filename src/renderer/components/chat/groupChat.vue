@@ -136,8 +136,7 @@
                 slot="reference"
               >
                 <img
-                  style="margin-top: 5px"
-                  class="tool-icon"
+                  class="tool-icon fix"
                   :src="require('@/assets/chatTool/expression.png')"
               /></span>
 
@@ -170,11 +169,16 @@
               </div>
             </el-popover>
             <span>
-              <img
-                class="tool-icon"
-                @click="dashBoard"
-                :src="require('@/assets/chatTool/file.png')"
-            /></span>
+              <el-upload
+                action="#"
+                :show-file-list="false"
+                :http-request="imgUP"
+              >
+                <img
+                  class="tool-icon fix"
+                  :src="require('@/assets/chatTool/file.png')"
+                /> </el-upload
+            ></span>
             <span>
               <img
                 class="tool-icon"
@@ -224,6 +228,14 @@
       <div class="menu-frame" ref="menu" :tabindex="1" @blur="onBlur">
         <el-row>
           <el-col :span="24">
+            <div class="search">
+              <i class="el-icon-search" />
+              <span>搜索群成员</span>
+            </div>
+          </el-col></el-row
+        >
+        <el-row>
+          <el-col :span="24">
             <div class="weui-grids">
               <div
                 class="weui-grid"
@@ -242,7 +254,7 @@
                     ></el-col>
                   </el-row>
                   <el-row>
-                    <el-col :span="24">
+                    <el-col :span="24" style="height:22px;overflow:hidden">
                       <span class="title">{{ item.title }}</span></el-col
                     >
                   </el-row>
@@ -253,6 +265,39 @@
         </el-row>
         <el-row>
           <div class="weui-loadmore_line"></div>
+        </el-row>
+
+        <el-row class="option-frame">
+          <el-col :span="24">
+            <span class="option-text">群聊名称</span>
+          </el-col>
+          <el-col :span="24">
+            <span class="option-text b">{{ nowChats.user }}</span>
+          </el-col>
+        </el-row>
+        <el-row class="option-frame">
+          <el-col :span="24">
+            <span class="option-text">备注</span>
+          </el-col>
+          <el-col :span="24">
+            <span class="option-text b">群聊的备注仅自己可见</span>
+          </el-col>
+        </el-row>
+         <el-row class="option-frame">
+          <el-col :span="24">
+            <span class="option-text">群公告</span>
+          </el-col>
+          <el-col :span="24">
+            <span class="option-text b">暂无群公告</span>
+          </el-col>
+        </el-row>
+         <el-row class="option-frame">
+          <el-col :span="24">
+            <span class="option-text">我在本群的昵称</span>
+          </el-col>
+          <el-col :span="24">
+            <span class="option-text b">{{self.name}}</span>
+          </el-col>
         </el-row>
         <el-row class="option-frame">
           <el-col :span="12">
@@ -312,6 +357,7 @@ import Setting from "@/components/setting/index.vue";
 import Transfer from "@/components/transfer/index.vue";
 import contextMenu from "@/components/contextMenu/index.vue";
 import Call from "@/components/dialogs/call.vue";
+import lrz from "lrz";
 import Vue from "vue";
 
 const GroupMsgHandler: Function = (value) => {
@@ -457,6 +503,20 @@ export default Vue.extend({
   },
   methods: {
     ...mapMutations(["pushMessage", "changeNowUser", "changePreset"]),
+    async imgUP(req) {
+      try {
+        let file = req.file;
+        let lrzfile = await lrz(file);
+        this.pushMessage({
+          chat_id: this.nowChats.id,
+
+          type: constant.MSG_TYPE_IMG,
+          from: this.nowUser,
+          data: lrzfile.base64,
+          time: dayjs().format(),
+        });
+      } catch (err) {}
+    },
     showDetail(msg) {},
     removeChat() {
       this.contextShow = false;
@@ -472,6 +532,10 @@ export default Vue.extend({
       //F10
       else if (e.keyCode == 121) {
         this.changeUser(constant.MSG_FROM_OPPOSITE);
+      }
+      //Ctrl+A
+      else if (e.ctrlKey && e.keyCode == 65) {
+        this.dashBoard();
       } else {
         //F1
         var currentPreset = null;
@@ -699,6 +763,9 @@ export default Vue.extend({
 #chat {
   width: 100%;
   height: 100%;
+  .fix {
+    margin-top: 5px;
+  }
   .tool-icon {
     height: 20px;
     width: 20px;
@@ -847,6 +914,28 @@ export default Vue.extend({
     padding: 20px;
     width: 250px;
     height: 100%;
+    .search {
+      margin: 0 0 15px 0;
+      height: 25px;
+      width: 100%;
+      margin-right: 10px;
+      background-color: #dbd9d8;
+      display: flex;
+      align-items: center;
+      border-radius: 5px;
+      .icon-sreach {
+        margin: 0 8px;
+      }
+      i {
+        font-size: 12px;
+        margin: 0 5px;
+      }
+      span {
+        font-size: 13px;
+        color: #6c6a6a;
+      }
+    }
+
     .weui-grid {
       width: 25%;
       padding: 10px 0px;
@@ -856,6 +945,7 @@ export default Vue.extend({
       margin-bottom: 10px;
       font-size: 12px;
       color: #8492a6;
+      
     }
     .block {
       text-align: center;
@@ -864,8 +954,11 @@ export default Vue.extend({
 
     .option-text {
       font-size: 14px;
-    }
 
+    }
+      .b {
+        color: gray;
+      }
     .switch {
       float: right;
       margin-right: 10px;

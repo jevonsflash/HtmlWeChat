@@ -1,12 +1,11 @@
 <template>
   <div id="submain">
     <el-container>
-      <el-header style="height:25px">
+      <el-header style="height: 25px">
         <div class="search">
-          <span class="icon-sreach"></span>
-          <span>搜索</span>
-        </div></el-header
-      >
+          <el-col :span="20"> <span style="margin-left:10px">搜索文件名/联系人/群聊名称</span></el-col>
+          <el-col :span="20"> <i class="el-icon-search" /></el-col></div
+      ></el-header>
       <el-container>
         <el-aside width="120px">
           <list @changeFile="onChangeFile"></list>
@@ -57,6 +56,12 @@ export default Vue.extend({
       background-color: #dbd9d8;
       display: flex;
       align-items: center;
+      border-radius: 5px;
+      i {
+        font-size: 12px;
+        margin: 0 5px;
+        float: right;
+      }
       .icon-sreach {
         margin: 0 8px;
       }

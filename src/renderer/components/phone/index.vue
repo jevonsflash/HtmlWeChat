@@ -3,12 +3,13 @@
     <el-row>
       <el-col :span="24">
         <div class="desc-frame">
-          <span class="next-desc"
-            >手机上正在浏览和浮窗的内容将会在这里显示</span
-          >
+          <span class="first-desc">手机正在浏览和浮窗的内容将会在这里显示</span>
         </div>
       </el-col> </el-row
-    ><el-row>
+    >
+                        <el-divider class="divider"></el-divider>
+    
+    <el-row>
       <el-col :span="12">
         <el-avatar
           class="avatar"
@@ -19,7 +20,7 @@
       </el-col>
       <el-col :span="12">
         <div class="meta">
-          <span class="next-desc">文件传输助手</span>
+          <span class="sec-desc">文件传输助手</span>
         </div>
       </el-col>
     </el-row>
@@ -38,7 +39,7 @@ export default Vue.extend({
   },
 
   created() {
-    this.imgSrc = require("@/assets/img_assistant.png");
+    this.imgSrc = require("@/assets/img_ass2.png");
   },
 });
 </script>
@@ -46,12 +47,16 @@ export default Vue.extend({
 <style lang="scss" scoped>
 #main {
   background-color: #2e2e2e;
-  padding-bottom: 30px;
+  padding-bottom: 10px;
   .title {
     color: white;
     font-size: 14px;
   }
-
+ .divider {
+      margin: 5px 15px;
+      width: auto;
+      background-color: #474747;
+    }
   .avatar {
     margin-top: 10px;
     margin-left: auto;
@@ -64,7 +69,7 @@ export default Vue.extend({
 
   .desc-frame {
     margin: 20px;
-    .next-desc {
+    .first-desc {
       margin-left: auto;
       margin-right: auto;
       display: block;
@@ -72,6 +77,9 @@ export default Vue.extend({
       color: white;
       font-size: 14px;
     }
+  }
+  .sec-desc {
+    color: white;
   }
 }
 </style>

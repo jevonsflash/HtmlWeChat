@@ -131,8 +131,7 @@
                 slot="reference"
               >
                 <img
-                  style="margin-top: 5px"
-                  class="tool-icon"
+                  class="tool-icon fix"
                   :src="require('@/assets/chatTool/expression.png')"
                 />
               </span>
@@ -167,11 +166,17 @@
             </el-popover>
 
             <span>
-              <img
-                class="tool-icon"
-                @click="dashBoard"
-                :src="require('@/assets/chatTool/file.png')"
-            /></span>
+              <el-upload
+                action="#"
+                :show-file-list="false"
+                :http-request="imgUP"
+              >
+                <img
+                  class="tool-icon fix"
+                  :src="require('@/assets/chatTool/file.png')"
+                />
+              </el-upload>
+            </span>
             <span>
               <img
                 class="tool-icon"
@@ -184,7 +189,7 @@
                 :src="require('@/assets/chatTool/msg.png')"
             /></span>
           </div>
-          <div>
+          <div v-if="getNowChat().user!='文件传输助手'">
             <span>
               <img
                 class="tool-icon"
@@ -237,7 +242,7 @@
                       </el-col>
                     </el-row>
                     <el-row>
-                      <el-col :span="24">
+                      <el-col :span="24" style="height:22px;overflow:hidden">
                         <span class="title">{{ item.title }}</span></el-col
                       >
                     </el-row>
@@ -308,6 +313,7 @@ import Setting from "@/components/setting/index.vue";
 import Transfer from "@/components/transfer/index.vue";
 import contextMenu from "@/components/contextMenu/index.vue";
 import Call from "@/components/dialogs/call.vue";
+import lrz from "lrz";
 
 import Vue from "vue";
 
@@ -419,6 +425,20 @@ export default Vue.extend({
   },
   methods: {
     ...mapMutations(["pushMessage", "changeNowUser", "changePreset"]),
+
+    async imgUP(req) {
+      try {
+        let file = req.file;
+        let lrzfile = await lrz(file);
+        this.pushMessage({
+          chat_id: this.nowChat.id,
+          type: constant.MSG_TYPE_IMG,
+          from: this.nowUser,
+          data: lrzfile.base64,
+          time: dayjs().format(),
+        });
+      } catch (err) {}
+    },
     showDetail(msg) {},
     removeChat() {
       this.contextShow = false;
@@ -443,6 +463,10 @@ export default Vue.extend({
       //F10
       else if (e.keyCode == 121) {
         this.changeUser(constant.MSG_FROM_OPPOSITE);
+      }
+      //Ctrl+A
+      else if (e.ctrlKey && e.keyCode == 65) {
+        this.dashBoard();
       } else {
         //F1
         var currentPreset = null;
@@ -663,6 +687,9 @@ export default Vue.extend({
 #chat {
   width: 100%;
   height: 100%;
+  .fix {
+    margin-top: 5px;
+  }
   .tool-icon {
     height: 20px;
     width: 20px;

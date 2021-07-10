@@ -9,7 +9,7 @@
           ref="popframe"
           :offset="460"
           :visible-arrow="false"
-          width="300"
+          width="360"
           v-model="visible.miniprograme"
           trigger="manual"
           popper-class="popover-frame"

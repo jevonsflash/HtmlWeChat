@@ -14,7 +14,7 @@
                   item: true,
                 }"
               >
-                <i :class="file.img"></i>
+                <i :class="file.img" style="font-size:18px;color: black;"></i>
                 <div class="meta">
                   <div class="top">
                     <span class="name">{{ file.name }}</span>
@@ -49,23 +49,23 @@ export default Vue.extend({
 
       files: [
         {
-          img: "el-icon-menu",
+          img: "el-icon-folder",
           name: "全部",
         },
         {
-          img: "el-icon-link",
+          img: "el-icon-time",
           name: "最近使用",
         },
         {
-          img: "el-icon-picture-outline",
+          img: "el-icon-user",
           name: "发送者",
         },
         {
-          img: "el-icon-notebook-2",
+          img: "el-icon-chat-square",
           name: "聊天",
         },
         {
-          img: "el-icon-tickets",
+          img: "el-icon-document",
           name: "类型",
         },
       ],
@@ -139,6 +139,7 @@ export default Vue.extend({
         width: 100%;
         display: flex;
         justify-content: space-between;
+        color: black;
       }
       .last_msg {
         overflow: hidden;

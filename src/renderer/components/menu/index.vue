@@ -1,13 +1,13 @@
 <template>
   <div id="main">
-     <el-row>
+     <!-- <el-row>
       <el-col :span="24">
         <div class="title-frame-left">
           <span class="title">视频号直播</span>
         </div>
       </el-col>
       
-    </el-row>
+    </el-row> -->
     <el-row>
       <el-col :span="24">
         <div class="title-frame-left">
@@ -50,7 +50,7 @@ export default Vue.extend({
   background-color: #2e2e2e;
   
   .title{
-    color:white;
+    color:#8c8c8c;
     font-size: 14px;
   }
   .title-frame-left {

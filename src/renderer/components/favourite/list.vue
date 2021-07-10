@@ -2,8 +2,8 @@
   <div id="list">
     <header>
       <div class="search">
-        <span class="icon-sreach"></span>
-        <span>搜索</span>
+        <i class="el-icon-search" />
+        <span>搜索搜藏内容</span>
       </div>
     </header>
     <el-scrollbar class="list-container" style="margin-top: 20px">
@@ -175,6 +175,11 @@ export default Vue.extend({
       background-color: #dbd9d8;
       display: flex;
       align-items: center;
+      border-radius: 5px;
+      i {
+        font-size: 12px;
+        margin: 0 5px;
+      }
       .icon-sreach {
         margin: 0 8px;
       }
@@ -184,6 +189,7 @@ export default Vue.extend({
       }
     }
     .add {
+      border-radius: 5px;
       cursor: pointer;
       display: flex;
       align-items: center;

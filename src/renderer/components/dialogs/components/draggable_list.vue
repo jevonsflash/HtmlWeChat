@@ -2,7 +2,7 @@
   <div class="draggableList">
     <div :style="{ width: list2width }" class="draggableList-list">
       <div class="search">
-        <span class="icon-sreach"></span>
+        <i class="el-icon-search" />
         <span>搜索</span>
       </div>
       <el-scrollbar style="height: 400px">
@@ -134,6 +134,11 @@ export default Vue.extend({
   background-color: #dbd9d8;
   display: flex;
   align-items: center;
+  border-radius: 5px;
+  i {
+    font-size: 12px;
+    margin: 0 5px;
+  }
   .icon-sreach {
     margin: 0 8px;
   }

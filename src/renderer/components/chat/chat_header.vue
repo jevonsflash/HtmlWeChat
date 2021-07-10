@@ -20,7 +20,7 @@
           <svg-icon name="close" @click="cross"></svg-icon>
         </div>
       </div>
-      <div class="more">
+      <div class="more" v-if="title!='文件传输助手'">
         <i class="el-icon-more" @click="showMore = !showMore" />
       </div>
     </div>

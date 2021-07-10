@@ -1,15 +1,16 @@
 <template>
   <div id="list">
-    <header>
-      <div class="search">
-        <span class="icon-sreach"></span>
-        <span>搜索</span>
-      </div>
-      <div class="add">
-        <i class="el-icon-plus" @click="addChat"></i>
-      </div>
-    </header>
-
+    <div class="search-frame">
+      <header>
+        <div class="search">
+          <i class="el-icon-search" />
+          <span>搜索</span>
+        </div>
+        <div class="add">
+          <i class="el-icon-plus" @click="addChat"></i>
+        </div>
+      </header>
+    </div>
     <el-scrollbar class="list-container">
       <el-row>
         <el-col :span="24" v-for="(chat, index) in chats" :key="index">
@@ -33,7 +34,9 @@
             <div class="meta">
               <div class="top">
                 <span class="name">{{ chat.user }}</span>
-                <span class="time">{{ getLastMsg(chat).time | moment("HH:mm") }}</span>
+                <span class="time">{{
+                  getLastMsg(chat).time | moment("HH:mm")
+                }}</span>
               </div>
               <div class="last_msg">{{ msgContentText(getLastMsg(chat)) }}</div>
             </div>
@@ -162,7 +165,7 @@ export default Vue.extend({
       return {
         type: constant.MSG_TYPE_TEXT,
         data: "暂无消息",
-        time: dayjs().format( ),
+        time: dayjs().format(),
       };
     },
     msgContentText(last_msg) {
@@ -206,6 +209,10 @@ export default Vue.extend({
   background-color: #ebe8e7;
   display: flex;
   flex-direction: column;
+  .search-frame {
+    background-color: rgb(247, 247, 247);
+    border-right: 1px solid #e5e5e5;
+  }
   header {
     display: flex;
     align-items: center;
@@ -219,8 +226,13 @@ export default Vue.extend({
       background-color: #dbd9d8;
       display: flex;
       align-items: center;
+      border-radius: 5px;
       .icon-sreach {
         margin: 0 8px;
+      }
+      i {
+        font-size: 12px;
+        margin: 0 5px;
       }
       span {
         font-size: 13px;
@@ -228,6 +240,7 @@ export default Vue.extend({
       }
     }
     .add {
+      border-radius: 5px;
       cursor: pointer;
       display: flex;
       align-items: center;
