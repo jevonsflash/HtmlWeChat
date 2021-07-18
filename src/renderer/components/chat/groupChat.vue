@@ -2,7 +2,7 @@
   <el-container id="chat">
     <el-main class="frame">
       <chat-header
-        :title="nowChats.user"
+        :title="nowChats != null ? nowChats.user : ''"
         ref="chatHeader"
         class="header"
         style="-webkit-app-region: drag"
@@ -28,7 +28,12 @@
               @contextmenu.prevent="onContextMenu"
               :class="getClass(chatItem.msg.from)"
             >
-              <el-popover placement="bottom" width="300" trigger="click">
+              <el-popover
+                placement="bottom"
+                width="300"
+                trigger="click"
+                :visible-arrow="false"
+              >
                 <contact-detail :msg="chatItem"></contact-detail>
                 <img
                   slot="reference"
@@ -100,7 +105,12 @@
                 :direction="chatItem.msg.from"
                 :data="chatItem.msg.data"
               ></message-call-video>
-              <el-popover placement="bottom" width="300" trigger="click">
+              <el-popover
+                placement="bottom"
+                width="300"
+                trigger="click"
+                :visible-arrow="false"
+              >
                 <contact-detail :msg="chatItem"></contact-detail>
                 <img
                   slot="reference"
@@ -114,7 +124,7 @@
                 ref="chatContextMenu"
                 :context-menu-show.sync="contextShow"
                 :config="contextConfig"
-                @removeChat="removeChat"
+                @removeChat="removeChat(chatItem)"
               >
               </context-menu>
             </div>
@@ -126,6 +136,7 @@
         <div class="toolbar">
           <div>
             <el-popover
+              :visible-arrow="false"
               placement="top"
               trigger="manual"
               width="475"
@@ -254,7 +265,7 @@
                     ></el-col>
                   </el-row>
                   <el-row>
-                    <el-col :span="24" style="height:22px;overflow:hidden">
+                    <el-col :span="24" style="height: 22px; overflow: hidden">
                       <span class="title">{{ item.title }}</span></el-col
                     >
                   </el-row>
@@ -272,7 +283,9 @@
             <span class="option-text">群聊名称</span>
           </el-col>
           <el-col :span="24">
-            <span class="option-text b">{{ nowChats.user }}</span>
+            <span class="option-text b">{{
+              nowChats != null ? nowChats.user : ""
+            }}</span>
           </el-col>
         </el-row>
         <el-row class="option-frame">
@@ -283,7 +296,7 @@
             <span class="option-text b">群聊的备注仅自己可见</span>
           </el-col>
         </el-row>
-         <el-row class="option-frame">
+        <el-row class="option-frame">
           <el-col :span="24">
             <span class="option-text">群公告</span>
           </el-col>
@@ -291,12 +304,12 @@
             <span class="option-text b">暂无群公告</span>
           </el-col>
         </el-row>
-         <el-row class="option-frame">
+        <el-row class="option-frame">
           <el-col :span="24">
             <span class="option-text">我在本群的昵称</span>
           </el-col>
           <el-col :span="24">
-            <span class="option-text b">{{self.name}}</span>
+            <span class="option-text b">{{ self.name }}</span>
           </el-col>
         </el-row>
         <el-row class="option-frame">
@@ -426,6 +439,9 @@ export default Vue.extend({
     },
     preset: function (value) {
       console.log("preset changed" + value);
+      if (value != null && !this.isRandomSubitRunning) {
+        this.randomSubmitMsg();
+      }
     },
     nowChats: function (value) {
       if (value.type == "chat") {
@@ -437,6 +453,9 @@ export default Vue.extend({
         this.nowChat = result.nowChat;
 
         this.changePreset(value.user);
+
+        (this.$refs.chatWindow as any).scrollTop =
+          (this.$refs.chatWindow as any).scrollHeight + 100;
       });
     },
   },
@@ -459,6 +478,8 @@ export default Vue.extend({
       value2: true,
       nowChat: undefined,
       contextShow: false,
+      isRandomSubitMsg: false,
+      isRandomSubitRunning: false,
 
       exp1: require("@/assets/expressionMenu/p0.png"),
       exp2: require("@/assets/expressionMenu/p3.png"),
@@ -502,7 +523,12 @@ export default Vue.extend({
     this.$globalEvent.on("pubmsg", this.onPubmsgListener);
   },
   methods: {
-    ...mapMutations(["pushMessage", "changeNowUser", "changePreset"]),
+    ...mapMutations([
+      "pushMessage",
+      "changeNowUser",
+      "changePreset",
+      "delMessage",
+    ]),
     async imgUP(req) {
       try {
         let file = req.file;
@@ -518,8 +544,19 @@ export default Vue.extend({
       } catch (err) {}
     },
     showDetail(msg) {},
-    removeChat() {
+    removeChat(chatItem) {
       this.contextShow = false;
+      let args = {
+        id: chatItem.msg.id,
+
+        from:
+          chatItem.msg.from == constant.MSG_FROM_SELF
+            ? chatItem.msg.from
+            : chatItem.user,
+        chat_id: this.nowChats.id,
+        name: chatItem.user,
+      };
+      this.delMessage(args);
     },
     receiveMessage(e) {
       if (this.nowChats.type == "chat") {
@@ -540,35 +577,39 @@ export default Vue.extend({
         //F1
         var currentPreset = null;
         if (e.keyCode == 112) {
-          currentPreset = this.preset.f1;
+          currentPreset = this.preset.static.f1;
         }
         //F2
         else if (e.keyCode == 113) {
-          currentPreset = this.preset.f2;
+          currentPreset = this.preset.static.f2;
         }
         //F3
         else if (e.keyCode == 114) {
-          currentPreset = this.preset.f3;
+          currentPreset = this.preset.static.f3;
         }
         //F4
         else if (e.keyCode == 115) {
-          currentPreset = this.preset.f4;
+          currentPreset = this.preset.static.f4;
         }
         //F5
         else if (e.keyCode == 116) {
-          currentPreset = this.preset.f5;
+          currentPreset = this.preset.static.f5;
         }
         //F6
         else if (e.keyCode == 117) {
-          currentPreset = this.preset.f6;
+          this.isRandomSubitMsg = !this.isRandomSubitMsg;
         }
         //F7
         else if (e.keyCode == 118) {
-          currentPreset = this.preset.f7;
+          var nowchat = this.getNowChat();
+          if (nowchat.length > 0) {
+            var currentChat = nowchat[nowchat.length - 1];
+            this.removeChat(currentChat);
+          }
         }
         //F8
         else if (e.keyCode == 119) {
-          currentPreset = this.preset.f8;
+          currentPreset = this.preset.static.f8;
         }
         if (currentPreset != null) {
           this.pushMessage({
@@ -738,6 +779,42 @@ export default Vue.extend({
       });
       console.log(rep);
       return rep;
+    },
+
+    randomSubmitMsg() {
+      if (this.nowChats.type == "chat") {
+        this.isRandomSubitRunning = false;
+        return;
+      }
+      this.isRandomSubitRunning = true;
+      console.info("start random submit mssage");
+      setTimeout(() => {
+        if (
+          this.preset.random != null &&
+          this.preset.random.list.length > 0 &&
+          this.isRandomSubitMsg
+        ) {
+          let maxIndex = this.preset.random.list.length - 1;
+          let currentIndex = Math.floor(this.getRandom(maxIndex, 0));
+          let currentPreset = this.preset.random.list[currentIndex];
+          if (currentPreset != null) {
+            this.pushMessage({
+              chat_id: this.nowChats.id,
+              type: currentPreset.type,
+              from: currentPreset.from,
+              data: currentPreset.data,
+              time: dayjs().format(),
+            });
+          }
+        }
+        this.randomSubmitMsg();
+      }, this.getRandom(this.preset.random.maxNum, this.preset.random.minNum) * 1000);
+    },
+
+    getRandom(maxNum, minNum) {
+      var result = Math.floor(Math.random() * (maxNum - minNum + 1) + minNum);
+      console.info("next auto-submit will invoke in " + result + "second(s)");
+      return result;
     },
   },
 });
@@ -945,7 +1022,6 @@ export default Vue.extend({
       margin-bottom: 10px;
       font-size: 12px;
       color: #8492a6;
-      
     }
     .block {
       text-align: center;
@@ -954,11 +1030,10 @@ export default Vue.extend({
 
     .option-text {
       font-size: 14px;
-
     }
-      .b {
-        color: gray;
-      }
+    .b {
+      color: gray;
+    }
     .switch {
       float: right;
       margin-right: 10px;

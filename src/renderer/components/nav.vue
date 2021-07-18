@@ -1,7 +1,12 @@
 <template>
   <div id="nav">
     <div class="avatar">
-      <img @click="editSelf()" :src="self.avatar" alt="" />
+      <el-popover width="300" :visible-arrow="false" trigger="click">
+        <contact-detail :msg="self"> </contact-detail>
+        <span slot="reference">
+          <img :src="self.avatar" alt="" />
+        </span>
+      </el-popover>
     </div>
 
     <div>
@@ -63,12 +68,13 @@
 import EventEmitter from "eventemitter3";
 import constant from "@/constant";
 import DialogChangeSelfInfo from "@/components/dialogs/change_self_info.vue";
-import { Message } from "element-ui";
+import ContactDetail from "@/components/dialogs/contact_detail.vue";
 import { mapGetters, mapMutations } from "vuex";
 import Vue from "vue";
 export default Vue.extend({
   components: {
     DialogChangeSelfInfo,
+    ContactDetail,
   },
   computed: {
     ...mapGetters(["self"]),
@@ -129,13 +135,26 @@ export default Vue.extend({
     };
   },
 
+  destroyed() {
+    // 在组件生命周期结束的时候销毁。
+    window.removeEventListener("keydown", this.receiveMessage, false);
+    this.$globalEvent.removeAllListeners("switch-pannel");
+  },
   created() {
     this.$globalEvent.on("switch-pannel", this.switchPannel);
 
     this.chat_manage_event = new EventEmitter();
     this.edit_contact_event = new EventEmitter();
+    window.addEventListener("keydown", this.receiveMessage);
   },
   methods: {
+    receiveMessage(e) {
+      //Ctrl+B
+      if (e.ctrlKey && e.keyCode == 66) {
+        this.editSelf();
+      }
+    },
+
     goTo(page) {
       console.log("goto" + page);
       this.$emit("goto", page);

@@ -11,7 +11,7 @@
         <el-main>
           <div class="grid">
             <div v-for="(item, index) of msg.member" :key="index">
-              <el-popover placement="bottom" width="300" trigger="click">
+              <el-popover placement="bottom" width="300" trigger="click"  :visible-arrow="false">
                 <contact-detail :msg="item"></contact-detail>
                 <div class="block" slot="reference">
                   <el-avatar

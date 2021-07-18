@@ -11,7 +11,7 @@ const { loader } = require('mini-css-extract-plugin')
 
 let mainConfig = {
   entry: {
-    main: path.join(__dirname, '../src/main/index.ts')
+    main: path.join(__dirname, '../src/main/index.js')
   },
   externals: [
     ...Object.keys(dependencies || {})

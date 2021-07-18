@@ -2,7 +2,7 @@
   <el-container id="chat">
     <el-main class="frame">
       <chat-header
-        :title="getNowChat().user"
+        :title="getNowChat() != null ? getNowChat().user : ''"
         ref="chatHeader"
         class="header"
         style="-webkit-app-region: drag"
@@ -25,7 +25,12 @@
               @contextmenu.prevent="onContextMenu"
               :class="getClass(msg.from)"
             >
-              <el-popover placement="bottom" width="300" trigger="click">
+              <el-popover
+                placement="bottom"
+                width="300"
+                trigger="click"
+                :visible-arrow="false"
+              >
                 <contact-detail :msg="nowChat"></contact-detail>
                 <img
                   slot="reference"
@@ -94,7 +99,12 @@
                 :direction="msg.from"
                 :data="msg.data"
               ></message-call-video>
-              <el-popover placement="bottom" width="300" trigger="click">
+              <el-popover
+                placement="bottom"
+                width="300"
+                trigger="click"
+                :visible-arrow="false"
+              >
                 <contact-detail :msg="self"></contact-detail>
                 <img
                   slot="reference"
@@ -121,6 +131,7 @@
         <div class="toolbar">
           <div>
             <el-popover
+              :visible-arrow="false"
               placement="top"
               trigger="manual"
               width="475"
@@ -189,7 +200,9 @@
                 :src="require('@/assets/chatTool/msg.png')"
             /></span>
           </div>
-          <div v-if="getNowChat().user!='文件传输助手'">
+          <div
+            v-if="getNowChat() != null && getNowChat().user != '文件传输助手'"
+          >
             <span>
               <img
                 class="tool-icon"
@@ -229,7 +242,12 @@
           <el-col :span="24">
             <div class="weui-grids">
               <div class="weui-grid" v-for="item of avatars" :key="item.title">
-                <el-popover placement="bottom" width="300" trigger="click">
+                <el-popover
+                  placement="bottom"
+                  width="300"
+                  trigger="click"
+                  :visible-arrow="false"
+                >
                   <contact-detail :msg="item"></contact-detail>
                   <div class="block" slot="reference">
                     <el-row>
@@ -242,7 +260,7 @@
                       </el-col>
                     </el-row>
                     <el-row>
-                      <el-col :span="24" style="height:22px;overflow:hidden">
+                      <el-col :span="24" style="height: 22px; overflow: hidden">
                         <span class="title">{{ item.title }}</span></el-col
                       >
                     </el-row>
@@ -360,6 +378,8 @@ export default Vue.extend({
         });
 
         this.changePreset(value.user);
+        (this.$refs.chatWindow as any).scrollTop =
+          (this.$refs.chatWindow as any).scrollHeight + 100;
       });
     },
   },
@@ -471,35 +491,35 @@ export default Vue.extend({
         //F1
         var currentPreset = null;
         if (e.keyCode == 112) {
-          currentPreset = this.preset.f1;
+          currentPreset = this.preset.static.f1;
         }
         //F2
         else if (e.keyCode == 113) {
-          currentPreset = this.preset.f2;
+          currentPreset = this.preset.static.f2;
         }
         //F3
         else if (e.keyCode == 114) {
-          currentPreset = this.preset.f3;
+          currentPreset = this.preset.static.f3;
         }
         //F4
         else if (e.keyCode == 115) {
-          currentPreset = this.preset.f4;
+          currentPreset = this.preset.static.f4;
         }
         //F5
         else if (e.keyCode == 116) {
-          currentPreset = this.preset.f5;
+          currentPreset = this.preset.static.f5;
         }
         //F6
         else if (e.keyCode == 117) {
-          currentPreset = this.preset.f6;
+          currentPreset = this.preset.static.f6;
         }
         //F7
         else if (e.keyCode == 118) {
-          currentPreset = this.preset.f7;
+          currentPreset = this.preset.static.f7;
         }
         //F8
         else if (e.keyCode == 119) {
-          currentPreset = this.preset.f8;
+          currentPreset = this.preset.static.f8;
         }
         if (currentPreset != null) {
           this.pushMessage({

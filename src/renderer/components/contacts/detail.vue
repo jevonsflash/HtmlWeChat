@@ -34,20 +34,30 @@
       </span>
       <el-divider></el-divider>
       <span>
-        <div class="weui-form-preview__bd">
-          <div class="weui-form-preview__item">
-            <label class="weui-form-preview__label">备注</label>
-            <span class="weui-form-preview__value">{{ msg.remark }}</span>
-          </div>
-          <div class="weui-form-preview__item">
-            <label class="weui-form-preview__label">地区</label>
-            <span class="weui-form-preview__value">{{ msg.region }}</span>
-          </div>
-          <div class="weui-form-preview__item">
-            <label class="weui-form-preview__label">微信号</label>
-            <span class="weui-form-preview__value">{{ msg.wechatId }}</span>
-          </div>
-        </div>
+        <el-row class="option-frame">
+          <el-col :span="6">
+            <span class="option-text b">备注</span>
+          </el-col>
+          <el-col :span="18">
+            <span class="option-text">{{ msg.name }}</span>
+          </el-col>
+        </el-row>
+        <el-row class="option-frame">
+          <el-col :span="6">
+            <span class="option-text b">地区</span>
+          </el-col>
+          <el-col :span="18">
+            <span class="option-text">{{ msg.region }}</span>
+          </el-col>
+        </el-row>
+        <el-row class="option-frame">
+          <el-col :span="6">
+            <span class="option-text b">微信号</span>
+          </el-col>
+          <el-col :span="18">
+            <span class="option-text">{{ msg.wechatId }}</span>
+          </el-col>
+        </el-row>
       </span>
       <el-divider></el-divider>
 
@@ -151,6 +161,12 @@ export default Vue.extend({
     text-align: left;
     font-size: 20px;
     font-weight: 400;
+  }
+  .option-text {
+    font-size: 14px;
+  }
+  .b {
+    color: gray;
   }
 }
 </style>

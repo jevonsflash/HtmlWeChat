@@ -77,9 +77,9 @@
     >
       <news></news>
     </el-dialog>
-    <!-- <div class="top-tip">
-      <span>当前版本仅供试用</span>
-    </div> -->
+    <div class="top-tip">
+      <span>version 1.1</span>
+    </div>
   </div>
 </template>
 

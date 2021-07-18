@@ -223,16 +223,16 @@ const mutations = {
         }
         Vue.set(currentChatPayloads, currentChatPayloads.length, currentChatPayload)
       }
-      var newModel = {}
-      newModel['id'] = currentChat.id;
-      newModel['wechatId'] = currentGroup.id;
-      newModel['user'] = currentGroup.name;
-      newModel['notice'] = currentGroup.notice;
-      newModel['myName'] = currentGroup.myName;
-      newModel['remarkName'] = currentGroup.remarkName;
-      newModel['type'] = "groupChat";
-
-      newModel['chats'] = currentChatPayloads;
+      let newModel = {
+        id: currentChat.id,
+        wechatId: currentGroup.id,
+        user: currentGroup.name,
+        notice: currentGroup.notice,
+        myName: currentGroup.myName,
+        remarkName: currentGroup.remarkName,
+        type: "groupChat",
+        chats: currentChatPayloads
+      }
       state._nowChat = newModel;
 
     }
@@ -266,15 +266,20 @@ const mutations = {
     if (currentChat.wechatId instanceof Array) {
 
       var configFileName = msg.from != constant.MSG_FROM_SELF ? msg.from : groupChatSelfConfigName
+      //如果添加消息的from字段不存在于聊天id则不合法
       if ((currentChat.wechatId as Array<string>).indexOf(configFileName) == -1 && configFileName != groupChatSelfConfigName) {
         return
       }
+
+      //聊天列表中取数据
       var currentChatConfigOpts = {
         cwd: path.join(defaultCwd, "chat", currentChat.user),
         configName: configFileName
       };
       let currentChatstore = new Conf(currentChatConfigOpts);
       let currentChatPayload = currentChatstore.get('data', null)
+
+      //如果不存在则从group_config中组装聊天数据
       if (currentChatPayload == null) {
         if (msg.from != constant.MSG_FROM_SELF) {
           var opts = {
@@ -332,7 +337,7 @@ const mutations = {
           }
         }
       }
-
+      //读取，或者组装完成后，写入要添加的聊天数据
       let fromStr = constant.MSG_FROM_SELF
       if (msg.from != constant.MSG_FROM_SELF) {
         fromStr = constant.MSG_FROM_OPPOSITE
@@ -351,6 +356,7 @@ const mutations = {
       currentChat.msgs = [];
       currentChat.msgs.push(newMsg)
 
+      //如果当前聊天正好为要添加的消息所在的聊天，则处理nowchat
       if (state._nowChat.id == msg.chat_id) {
         if (msg.from != constant.MSG_FROM_SELF) {
           state._nowChat.chats.forEach(currentNowChat => {
@@ -409,6 +415,70 @@ const mutations = {
       GlobalEvent.emit("pubmsg")
     }
   },
+
+  delMessage: (state, msg) => {
+    let currentChat = getChat(state, msg.chat_id);
+    if (currentChat.wechatId instanceof Array) {
+      var configFileName = msg.from != constant.MSG_FROM_SELF ? msg.from : groupChatSelfConfigName
+      //如果添加消息的from字段不存在于聊天id则不合法
+      if ((currentChat.wechatId as Array<string>).indexOf(configFileName) == -1 && configFileName != groupChatSelfConfigName) {
+        return
+      }
+      //聊天列表中取数据
+      var currentChatConfigOpts = {
+        cwd: path.join(defaultCwd, "chat", currentChat.user),
+        configName: configFileName
+      };
+      let currentChatstore = new Conf(currentChatConfigOpts);
+      let currentChatPayload = currentChatstore.get('data', null)
+
+      //如果不存在则不合法
+      if (currentChatPayload == null) {
+        return
+
+      }
+      var defaultTipMsg = {
+        from: constant.MSG_FROM_SYSTEM,
+        data: '撤回了一条消息',
+      }
+      let currentChatPayloadMsg = currentChatPayload.msgs.find((d) => d.id == msg.id)
+      currentChatPayloadMsg.from = defaultTipMsg.from;
+      currentChatPayloadMsg.data = "\"" + msg.name + "\"" + defaultTipMsg.data;
+      currentChatstore.set("data", currentChatPayload)
+      //如果当前聊天正好为要添加的消息所在的聊天，则处理nowchat
+      if (state._nowChat.id == msg.chat_id) {
+        if (msg.from != constant.MSG_FROM_SELF) {
+          state._nowChat.chats.forEach(currentNowChat => {
+            if (currentNowChat.user == msg.from) {
+              let currentNowChatMsg = currentNowChat.msgs.find((d) => d.id == msg.id)
+              currentNowChatMsg.from = defaultTipMsg.from;
+              currentNowChatMsg.data = "\"" + msg.name + "\"" + defaultTipMsg.data;
+
+
+              Vue.set(state._nowChat.chats, state._nowChat.chats.indexOf(currentNowChat), currentNowChat)
+            }
+          });
+        }
+        else {
+          state._nowChat.chats.forEach(currentNowChat => {
+            if (currentNowChat.id == selfId) {
+              let currentNowChatMsg = currentNowChat.msgs.find((d) => d.id == msg.id)
+              currentNowChatMsg.from = defaultTipMsg.from;
+              currentNowChatMsg.data = "\"" + msg.name + "\"" + defaultTipMsg.data;
+
+              Vue.set(state._nowChat.chats, state._nowChat.chats.indexOf(currentNowChat), currentNowChat)
+            }
+          });
+        }
+      }
+
+      GlobalEvent.emit("pubmsg")
+    }
+    else {
+
+    }
+  },
+
   changePreset: (state, name) => {
     var defaultPreset = {
       f1: {
@@ -437,6 +507,36 @@ const mutations = {
         data: "给您造成的不便非常抱歉，我们的心情跟您一样",
       },
     };
+
+    var maxNum = 10;
+    var minNum = 3;
+    var defaultPresetRandom = [
+      {
+        type: 1,
+        from: constant.MSG_FROM_SELF,
+        data: "随机消息1",
+      },
+      {
+        type: 1,
+        from: constant.MSG_FROM_SELF,
+        data: "随机消息2",
+      },
+      {
+        type: 1,
+        from: constant.MSG_FROM_SELF,
+        data: "随机消息3",
+      },
+      {
+        type: 1,
+        from: constant.MSG_FROM_SELF,
+        data: "随机消息4",
+      },
+      {
+        type: 1,
+        from: constant.MSG_FROM_SELF,
+        data: "随机消息5",
+      }]
+
     var currentChatConfigOpts = {
       cwd: path.join(defaultCwd, "chat-list"),
       configName: name
@@ -444,7 +544,7 @@ const mutations = {
     let currentChatstore = new Conf(currentChatConfigOpts);
     let currentChatPayload = currentChatstore.get('data', null)
     if (currentChatPayload == null) {
-      currentChatPayload = defaultPreset;
+      currentChatPayload = { static: defaultPreset, random: { list: defaultPresetRandom, maxNum, minNum } };
       currentChatstore.set("data", currentChatPayload)
     }
     Vue.set(state, "preset", currentChatPayload)
